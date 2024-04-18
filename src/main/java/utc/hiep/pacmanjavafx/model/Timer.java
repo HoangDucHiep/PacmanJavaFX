@@ -5,7 +5,8 @@ import javafx.animation.AnimationTimer;
 public class Timer {
     private static final long ONE_SECOND = 1_000_000_000; // One second in nanoseconds
 
-    private long tick;              //timer
+    private long tick;                          //tick time
+    private long secondClock;                   //second time
 
     private long lastUpdate;
     public Timer() {
@@ -19,12 +20,16 @@ public class Timer {
      */
     public void updateTimer(long now) {
         if(now - lastUpdate > ONE_SECOND) {
-            tick++;
+            secondClock++;
             lastUpdate = now;
         }
+        tick++;
     }
 
     public long getTick() {
         return tick;
+    }
+    public long getSecondTimer() {
+        return secondClock;
     }
 }
