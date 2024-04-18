@@ -8,8 +8,6 @@ public class WelcomeScene extends GeneralScene {
     }
 
     private void showWelcomeMessage() {
-        //gc.fillText("Welcome to Pacman", 100, 100);
-        //gc.fillText("Press Enter to start", 100, 150);
     }
 
     @Override
