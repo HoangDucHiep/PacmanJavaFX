@@ -34,5 +34,5 @@ public abstract class GeneralScene extends Scene {
         return root;
     }
 
-    public abstract void draw();
+    public abstract void render();
 }

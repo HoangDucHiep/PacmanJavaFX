@@ -2,7 +2,8 @@ package utc.hiep.pacmanjavafx;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-import utc.hiep.pacmanjavafx.scene.GameScene;
+import utc.hiep.pacmanjavafx.controller.GameController;
+import utc.hiep.pacmanjavafx.scene.GameView;
 import utc.hiep.pacmanjavafx.scene.GeneralScene;
 import utc.hiep.pacmanjavafx.scene.ScoreScene;
 import utc.hiep.pacmanjavafx.scene.WelcomeScene;
@@ -17,6 +18,7 @@ public class PacManApplication extends Application {
 
     private static Stage stage;
 
+    private static GameController gController = new GameController();
 
     public static void main(String[] args) {
         launch(args);
@@ -27,11 +29,11 @@ public class PacManApplication extends Application {
         PacManApplication.stage = stage;
 
         scenes[0] = new WelcomeScene();
-        scenes[1] = new GameScene();
+        scenes[1] = gController.getGameView();
         scenes[2] = new ScoreScene();
 
 
-        stage.setTitle("Bear Fruit Challenge");
+        stage.setTitle("Pacman");
         setScene(GAME_SCENE);
         stage.show();
     }
@@ -39,7 +41,7 @@ public class PacManApplication extends Application {
 
     public static void setScene(int numScene) {
         stage.setScene(scenes[numScene]);
-        scenes[numScene].draw();
+        scenes[numScene].render();
     }
 
     public static void exit() {

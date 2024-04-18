@@ -23,6 +23,11 @@ public class Portal {
         return rightTunnelEnd;
     }
 
+
+    /**
+     * @param tile tile
+     * @return return true if the given tile is part of this portal, false otherwise.
+     */
     public boolean contains(Vector2i tile) {
         for(int i = 1; i <= depth; i++) {
             if(tile.equals(leftTunnelEnd.minus(i, 0))) {

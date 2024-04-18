@@ -9,9 +9,9 @@ import static utc.hiep.pacmanjavafx.lib.Global.HALF_TILE_SIZE;
 
 public class House {
 
-    private Vector2i minTile;
-    private Vector2i size;
-    private Door door;
+    private Vector2i minTile;       // top left tile
+    private Vector2i size;          // size in tiles of the house
+    private Door door;              //house's door
 
     public void setTopLeftTile(Vector2i minTile) {
         Objects.requireNonNull(minTile);
@@ -49,6 +49,10 @@ public class House {
     }
 
 
+    /**
+     * @param tile some tile
+     * @return true if the given tile is part of this house
+     */
     public boolean contains(Vector2i tile) {
         Vector2i max = minTile.plus(size().minus(1, 1));
         return tile.x() >= minTile.x() && tile.x() <= max.x() //

@@ -11,7 +11,7 @@ public class WelcomeScene extends GeneralScene {
     }
 
     @Override
-    public void draw() {
+    public void render() {
         showWelcomeMessage();
     }
 }
