@@ -8,8 +8,8 @@ import javafx.scene.layout.StackPane;
 import java.util.HashSet;
 import java.util.Set;
 
-import static utc.hiep.pacmanjavafx.lib.settings.WINDOW_HEIGHT;
-import static utc.hiep.pacmanjavafx.lib.settings.WINDOW_WIDTH;
+import static utc.hiep.pacmanjavafx.lib.Global.WINDOW_HEIGHT;
+import static utc.hiep.pacmanjavafx.lib.Global.WINDOW_WIDTH;
 
 public abstract class GeneralScene extends Scene {
 

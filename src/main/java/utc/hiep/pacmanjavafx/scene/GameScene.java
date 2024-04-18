@@ -1,15 +1,10 @@
 package utc.hiep.pacmanjavafx.scene;
 
-import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import utc.hiep.pacmanjavafx.lib.IMAGE_LIB;
-
-import static utc.hiep.pacmanjavafx.lib.settings.*;
+import utc.hiep.pacmanjavafx.model.world.World;
 
 public class GameScene extends GeneralScene{
     public static final int GAME_WIDTH = 448;   //all size is pixel
@@ -18,6 +13,10 @@ public class GameScene extends GeneralScene{
     //private AnchorPane gameBorder;
     private Canvas canvas;
     private GraphicsContext gc;
+
+
+    //Object in game
+    private World world;
 
 
     public GameScene() {
@@ -30,20 +29,16 @@ public class GameScene extends GeneralScene{
         canvas = new Canvas(GAME_WIDTH, GAME_HEIGHT);
         gc = canvas.getGraphicsContext2D();
         getRootPane().getChildren().add(canvas);
-        gc.setFill(Color.RED);
-        gc.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+//        gc.setFill(Color.RED);
+//        gc.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
 
-        drawMap();
+        world = new World();
+        world.drawMap(gc);
 
     }
 
 
-    private void drawMap() {
-        Image map = IMAGE_LIB.MAP_EMPTY;
-        gc.drawImage(map, 0, TILE_SIZE * 3, MAP_WIDTH, MAP_HEIGHT);
-    }
-
-
+    //Set background for mainPain - game window background
     public void setBackGround() {
         BackgroundImage background = new BackgroundImage(IMAGE_LIB.BACKGROUND_IMAGE, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT);
         getRootPane().setBackground(new Background(background));
