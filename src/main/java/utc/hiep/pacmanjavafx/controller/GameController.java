@@ -4,18 +4,19 @@ import javafx.animation.AnimationTimer;
 import utc.hiep.pacmanjavafx.model.world.PacmanMap;
 import utc.hiep.pacmanjavafx.model.world.World;
 import utc.hiep.pacmanjavafx.scene.GameView;
+import utc.hiep.pacmanjavafx.model.Timer;
 
 public class GameController {
-    GameView gameView;
-    World map;
+    private final GameView gameView;
 
-    private static final long ONE_SECOND = 1_000_000_000; // One second in nanoseconds
 
-    private long lastUpdate = 0;
-    private int seconds = 0;
+    private final World map;
+    private Timer timer;
 
     public GameController() {
         this.gameView = new GameView();
+        timer = new Timer();
+
         map = gameView.getWorld();
         running();
     }
@@ -26,12 +27,9 @@ public class GameController {
         new AnimationTimer() {
             @Override
             public void handle(long now) {
-                if ((now - lastUpdate) >= ONE_SECOND) {
-                    seconds++;
-                    System.out.println("Seconds: " + seconds);
-                    lastUpdate = now;
-                }
+                timer.updateTimer(now);
                 gameView.render();
+                System.out.println("Current tick: " + timer.getTick());
             }
         }.start();
     }
