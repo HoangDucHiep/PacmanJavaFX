@@ -1,7 +1,6 @@
 package utc.hiep.pacmanjavafx.controller;
 
 import javafx.animation.AnimationTimer;
-import utc.hiep.pacmanjavafx.model.world.PacmanMap;
 import utc.hiep.pacmanjavafx.model.world.World;
 import utc.hiep.pacmanjavafx.scene.GameView;
 import utc.hiep.pacmanjavafx.model.Timer;
@@ -30,6 +29,7 @@ public class GameController {
                 timer.updateTimer(now);
                 gameView.render();
                 System.out.println("Current tick: " + timer.getTick());
+                System.out.println("Current second: " + timer.getSecondTimer());
             }
         }.start();
     }

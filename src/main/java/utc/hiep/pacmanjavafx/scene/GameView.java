@@ -41,8 +41,7 @@ public class GameView extends GeneralScene{
         world = PacmanMap.createPacManWorld();
 
 
-        //First rendering
-        render();
+
     }
 
 
@@ -64,6 +63,7 @@ public class GameView extends GeneralScene{
      */
     @Override
     public void render() {
+        gc.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT); //clear last frame rendering
         world.drawMap(gc);
     }
 }

@@ -3,7 +3,6 @@ package utc.hiep.pacmanjavafx;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import utc.hiep.pacmanjavafx.controller.GameController;
-import utc.hiep.pacmanjavafx.scene.GameView;
 import utc.hiep.pacmanjavafx.scene.GeneralScene;
 import utc.hiep.pacmanjavafx.scene.ScoreScene;
 import utc.hiep.pacmanjavafx.scene.WelcomeScene;
