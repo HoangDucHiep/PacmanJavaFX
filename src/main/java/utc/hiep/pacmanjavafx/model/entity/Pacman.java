@@ -2,10 +2,9 @@ package utc.hiep.pacmanjavafx.model.entity;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import javafx.scene.paint.Color;
 import utc.hiep.pacmanjavafx.lib.ImageLibrary;
-import utc.hiep.pacmanjavafx.lib.Vector2f;
 import utc.hiep.pacmanjavafx.lib.Vector2i;
+import utc.hiep.pacmanjavafx.model.Timer;
 import utc.hiep.pacmanjavafx.model.world.PacmanMap;
 import utc.hiep.pacmanjavafx.model.world.World;
 
@@ -16,6 +15,7 @@ public class Pacman extends MovableEntity{
     private static final int PAC_UI_SIZE = 15;  //px
 
     private final String name;
+    private Timer ticker;
 
 
     //to turn it to x and y: x = value / 224, y = value % 224
@@ -33,6 +33,10 @@ public class Pacman extends MovableEntity{
         this.name = name;
         spriteSheet = ImageLibrary.SPRITE_SHEET;
         placeAtTile(PacmanMap.PAC_POSITION);
+    }
+
+    public void setTicker(Timer ticker) {
+        this.ticker = ticker;
     }
 
     @Override
@@ -58,6 +62,7 @@ public class Pacman extends MovableEntity{
 
     @Override
     public void render(GraphicsContext gc) {
-        gc.drawImage(spriteSheet, RIGHT_DIR_ANI[1] % 224, RIGHT_DIR_ANI[1] / 224, 15, 15, posX() - HALF_TILE_SIZE, posY() - HALF_TILE_SIZE, 32, 32);
+        int animationCount = (int) (ticker.getTick() % 2);
+        gc.drawImage(spriteSheet, RIGHT_DIR_ANI[animationCount] % 224, RIGHT_DIR_ANI[animationCount] / 224, 15, 15, posX() - HALF_TILE_SIZE, posY() - HALF_TILE_SIZE, 32, 32);
     }
 }

@@ -40,7 +40,6 @@ public class PacManApplication extends Application {
 
     public static void setScene(int numScene) {
         stage.setScene(scenes[numScene]);
-        scenes[numScene].render();
     }
 
     public static void exit() {

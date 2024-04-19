@@ -31,6 +31,7 @@ public class GameController {
 
         map = gameView.getWorld();
         pacman = gameView.getPacman();
+        pacman.setTicker(timer);
         kl = new KeyListener(gameView);
         running();
     }

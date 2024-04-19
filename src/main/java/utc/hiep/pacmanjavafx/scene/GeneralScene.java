@@ -33,6 +33,5 @@ public abstract class GeneralScene extends Scene {
     public StackPane getRootPane() {
         return root;
     }
-
     public abstract void render();
 }

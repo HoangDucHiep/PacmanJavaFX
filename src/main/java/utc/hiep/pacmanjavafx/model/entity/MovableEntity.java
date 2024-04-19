@@ -1,5 +1,6 @@
 package utc.hiep.pacmanjavafx.model.entity;
 
+import javafx.scene.canvas.GraphicsContext;
 import utc.hiep.pacmanjavafx.lib.Direction;
 import utc.hiep.pacmanjavafx.lib.Vector2f;
 import utc.hiep.pacmanjavafx.lib.Vector2i;

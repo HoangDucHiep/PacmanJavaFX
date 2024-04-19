@@ -7,11 +7,13 @@ public class WelcomeScene extends GeneralScene {
         showWelcomeMessage();
     }
 
+    @Override
+    public void render() {
+
+    }
+
     private void showWelcomeMessage() {
     }
 
-    @Override
-    public void render() {
-        showWelcomeMessage();
-    }
+
 }
