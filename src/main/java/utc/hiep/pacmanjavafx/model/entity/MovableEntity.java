@@ -4,6 +4,7 @@ import javafx.scene.canvas.GraphicsContext;
 import utc.hiep.pacmanjavafx.lib.Direction;
 import utc.hiep.pacmanjavafx.lib.Vector2f;
 import utc.hiep.pacmanjavafx.lib.Vector2i;
+import utc.hiep.pacmanjavafx.model.Timer;
 import utc.hiep.pacmanjavafx.model.world.World;
 
 import java.util.Optional;
@@ -31,6 +32,11 @@ public abstract class MovableEntity extends Entity {
     private float accY;
 
 
+
+
+
+
+
     public MovableEntity() {
         super();
         velX = 0;
@@ -41,13 +47,16 @@ public abstract class MovableEntity extends Entity {
 
     public void reset() {
         super.reset();
-        movingDir = Direction.RIGHT;
-        nextDir = Direction.RIGHT;
+        movingDir = Direction.LEFT;
+        nextDir = Direction.LEFT;
         targetTile = null;
         newTileEntered = true;
         gotReverseCommand = false;
         canTeleport = true;
     }
+
+
+
 
 
     public void setDefaultSpeed(float pixelsPerTick) {

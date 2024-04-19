@@ -17,6 +17,9 @@ public class Global {
     public static final int TILES_X = 28;
     public static final int TILES_Y = 36;
 
+    public static final int SPRITE_SHEET_WIDTH = 224;
+
+
 
     public static void checkNotNull(Object value) {
         Objects.requireNonNull(value, "");
