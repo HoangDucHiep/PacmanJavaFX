@@ -8,8 +8,8 @@ import static utc.hiep.pacmanjavafx.lib.Global.*;
 
 public abstract class Entity {
     protected boolean visible = false;
-    private float posX;
-    private float posY;
+    private float posX;                     //coordinate in world
+    private float posY;                     //coordinate in world
 
 
 

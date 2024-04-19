@@ -15,6 +15,8 @@ public class GameView extends GeneralScene{
     public static final int GAME_WIDTH = TILE_SIZE * TILES_X;   //all size is pixel
     public static final int GAME_HEIGHT = TILE_SIZE * TILES_Y;
 
+    private boolean isGridDisplayed = false;
+
     private Canvas canvas;
     private GraphicsContext gc;
 
@@ -74,18 +76,26 @@ public class GameView extends GeneralScene{
     @Override
     public void render() {
         gc.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT); //clear last frame rendering
-        drawTileSystem();
+
+        if(isGridDisplayed)
+            drawTileSystem();
+
         world.drawMap(gc);
         pacman.render(gc);
     }
 
 
 
+    public void switchGridDisplay() {
+        isGridDisplayed = !isGridDisplayed;
+    }
+
+
     //Use only for testing things
     private void drawTileSystem() {
         for (int i = 0; i < TILES_X; i++) {
             for (int j = 0; j < TILES_Y; j++) {
-                gc.setStroke(Color.GREEN);
+                gc.setStroke(Color.color(0.12, 0.23, 0.12));
                 gc.strokeRect(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE);
             }
         }

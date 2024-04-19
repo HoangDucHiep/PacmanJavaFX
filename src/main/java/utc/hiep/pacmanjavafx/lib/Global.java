@@ -54,8 +54,8 @@ public class Global {
 
 
     /**
-     * @param tileX tile x coordinate
-     * @param tileY tile y coordinate
+     * @param tileX tile x Index
+     * @param tileY tile y Index
      * @return position half tile right of tile origin
      */
     public static Vector2f halfTileRightOf(int tileX, int tileY) {
@@ -64,12 +64,21 @@ public class Global {
 
 
     /**
-     * @param tileX tile x coordinate
-     * @param tileY tile y coordinate
-     * @return position the center of the given tile
+     * @param tileX tile x index
+     * @param tileY tile y index
+     * @return position the center of the given tile in coordinate base
      */
     public static Vector2f centerOfTile(int tileX, int tileY) {
         return new Vector2f(TILE_SIZE * tileX + HALF_TILE_SIZE, TILE_SIZE * tileY + HALF_TILE_SIZE);
+    }
+
+
+    /**
+     * @param tile tile in grid
+     * @return position of the given tile in coordinate base
+     */
+    public static Vector2f centerOfTile(Vector2i tile) {
+        return new Vector2f(TILE_SIZE * tile.x() + HALF_TILE_SIZE, TILE_SIZE * tile.y() + HALF_TILE_SIZE);
     }
 
 

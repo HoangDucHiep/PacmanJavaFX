@@ -2,10 +2,8 @@ package utc.hiep.pacmanjavafx.event;
 
 import javafx.event.EventHandler;
 import javafx.scene.input.KeyEvent;
-import utc.hiep.pacmanjavafx.controller.KeyType;
 import utc.hiep.pacmanjavafx.scene.GeneralScene;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
@@ -31,14 +29,15 @@ public class KeyListener {
                         System.out.println("Pressed Left");}
                     case RIGHT, D -> {pressedKey.add(KeyType.TURN_RIGHT);
                         System.out.println("Pressed Right");}
+                    case G -> {pressedKey.add(KeyType.GRID_SWITCH);}
                     default -> System.out.println("Hello");
                 }
             }
         });
     }
 
-    public Iterator<KeyType> getPressedKey() {
-        return pressedKey.iterator();
+    public List<KeyType> getPressedKey() {
+        return pressedKey;
     }
 
 

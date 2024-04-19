@@ -26,14 +26,10 @@ public abstract class MovableEntity extends Entity {
     protected float corneringSpeedUp;
 
 
-    private float velX;
+    private float velX;                 //velocity
     private float velY;
-    private float accX;
+    private float accX;                 //acceleration
     private float accY;
-
-
-
-
 
 
 
@@ -54,9 +50,6 @@ public abstract class MovableEntity extends Entity {
         gotReverseCommand = false;
         canTeleport = true;
     }
-
-
-
 
 
     public void setDefaultSpeed(float pixelsPerTick) {
@@ -187,7 +180,7 @@ public abstract class MovableEntity extends Entity {
         setSpeed((float) 0.01 * percentage * defaultSpeed);
     }
 
-    public void setSpeed(float pixelSpeed) {
+    private void setSpeed(float pixelSpeed) {
         if (pixelSpeed < 0) {
             throw new IllegalArgumentException("Negative pixel speed: " + pixelSpeed);
         }

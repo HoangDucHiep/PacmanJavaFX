@@ -46,10 +46,10 @@ public interface PacmanMap {
     };
 
 
-    Vector2i SCATTER_TARGET_LEFT_UPPER_CORNER  = tileAt(centerOfTile(2, 0));
-    Vector2i SCATTER_TARGET_RIGHT_UPPER_CORNER = tileAt(centerOfTile(25, 0));
-    Vector2i SCATTER_TARGET_LEFT_LOWER_CORNER  = tileAt(centerOfTile(0, 34));
-    Vector2i SCATTER_TARGET_RIGHT_LOWER_CORNER = tileAt(centerOfTile(27, 34));
+    Vector2i SCATTER_TARGET_LEFT_UPPER_CORNER  = new Vector2i(2, 0);
+    Vector2i SCATTER_TARGET_RIGHT_UPPER_CORNER = new Vector2i(25, 0);
+    Vector2i SCATTER_TARGET_LEFT_LOWER_CORNER  = new Vector2i(0, 34);
+    Vector2i SCATTER_TARGET_RIGHT_LOWER_CORNER = new Vector2i(27, 34);
 
 
     Vector2f BONUS_POSITION = halfTileRightOf(13, 20);

@@ -15,14 +15,12 @@ import static utc.hiep.pacmanjavafx.lib.Global.*;
 public class Pacman extends MovableEntity{
 
     private static final int PAC_UI_SIZE = 15;  //size of pacman int sprite_sheet.png
-    private static final int ANIMATION_TICK = 12;
+    private static final int ANIMATION_TICK = 10;
 
 
     private String name;
     private Timer ticker;
     private Animator animator;
-
-
 
 
 
@@ -43,7 +41,7 @@ public class Pacman extends MovableEntity{
                         {32, 448, 464},
                         {32, 672, 688}
                 });
-        animator.setSpirteSize(PAC_UI_SIZE + 1); //plus 1 of gap between each sprite state
+        animator.setSpirteSize(PAC_UI_SIZE + 1); //plus 1 for gap between each sprite state in png
         reset();
         placeAtTile(PacmanMap.PAC_POSITION);
     }
@@ -82,7 +80,7 @@ public class Pacman extends MovableEntity{
 
     @Override
     public void render(GraphicsContext gc) {
-        animator.update(Direction.LEFT);
+        animator.update(movingDir());
         gc.drawImage(spriteSheet, animator.animatorX(), animator.animatorY(), PAC_UI_SIZE, PAC_UI_SIZE, posX() - HALF_TILE_SIZE, posY() - HALF_TILE_SIZE, 32, 32);
     }
 }
