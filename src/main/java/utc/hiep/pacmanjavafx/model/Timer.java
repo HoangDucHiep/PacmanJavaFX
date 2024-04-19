@@ -8,7 +8,7 @@ public class Timer {
     private long tick;                          //tick time
     private long secondClock;                   //second time
 
-    private long lastUpdate;
+    private long lastUpdate;                    //used for tracking time
     public Timer() {
         tick = 0;
         lastUpdate = 0;
@@ -29,6 +29,7 @@ public class Timer {
     public long getTick() {
         return tick;
     }
+
     public long getSecondTimer() {
         return secondClock;
     }

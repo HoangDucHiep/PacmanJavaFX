@@ -3,19 +3,24 @@ package utc.hiep.pacmanjavafx.scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import utc.hiep.pacmanjavafx.lib.ImageLibrary;
+import utc.hiep.pacmanjavafx.model.entity.Pacman;
 import utc.hiep.pacmanjavafx.model.world.PacmanMap;
 import utc.hiep.pacmanjavafx.model.world.World;
 
+import static utc.hiep.pacmanjavafx.lib.Global.*;
+
 public class GameView extends GeneralScene{
-    public static final int GAME_WIDTH = 448;   //all size is pixel
-    public static final int GAME_HEIGHT = 576;
+    public static final int GAME_WIDTH = TILE_SIZE * TILES_X;   //all size is pixel
+    public static final int GAME_HEIGHT = TILE_SIZE * TILES_Y;
 
     private Canvas canvas;
     private GraphicsContext gc;
 
 
     private World world;
+    private Pacman pacman;
 
 
 
@@ -37,11 +42,12 @@ public class GameView extends GeneralScene{
         getRootPane().getChildren().add(canvas);
 
 
+
         //World
         world = PacmanMap.createPacManWorld();
 
-
-
+        //Pacman
+        pacman = new Pacman("PACMAN");
     }
 
 
@@ -58,12 +64,30 @@ public class GameView extends GeneralScene{
         return world;
     }
 
+    public Pacman getPacman() {
+        return pacman;
+    }
+
     /**
      * Drawing game each pulse
      */
     @Override
     public void render() {
         gc.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT); //clear last frame rendering
+        drawTileSystem();
         world.drawMap(gc);
+        pacman.render(gc);
+    }
+
+
+
+    //Use only for testing things
+    private void drawTileSystem() {
+        for (int i = 0; i < TILES_X; i++) {
+            for (int j = 0; j < TILES_Y; j++) {
+                gc.setStroke(Color.GREEN);
+                gc.strokeRect(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+            }
+        }
     }
 }

@@ -24,8 +24,18 @@ public abstract class MovableEntity extends Entity {
     protected float corneringSpeedUp;
 
 
+    private float velX;
+    private float velY;
+    private float accX;
+    private float accY;
+
+
     public MovableEntity() {
         super();
+        velX = 0;
+        velY = 0;
+        accX = 0;
+        accY = 0;
     }
 
     public void reset() {
@@ -43,6 +53,46 @@ public abstract class MovableEntity extends Entity {
         defaultSpeed = pixelsPerTick;
     }
 
+    public Vector2f velocity() {
+        return new Vector2f(velX, velY);
+    }
+
+    public void setVelocity(Vector2f velocity) {
+        checkNotNull(velocity);
+        velX = velocity.x();
+        velY = velocity.y();
+    }
+
+
+    public void setVelocity(float x, float y) {
+        velX = x;
+        velY = y;
+    }
+
+
+    public Vector2f acceleration() {
+        return new Vector2f(accX, accY);
+    }
+
+    public void setAcceleration(Vector2f acceleration) {
+        checkNotNull(acceleration, "Acceleration of entity must not be null");
+        accX = acceleration.x();
+        accY = acceleration.y();
+    }
+
+    public void setAcceleration(float ax, float ay) {
+        accX = ax;
+        accY = ay;
+    }
+
+
+    public void move() {
+        setPosition(posX() + velX, posY() + velY);
+        velX += accX;
+        velY += accY;
+    }
+
+
 
     public abstract String name();
 
@@ -50,6 +100,10 @@ public abstract class MovableEntity extends Entity {
     public abstract boolean canTurnBack();
 
 
+    /**
+     * @param tile some tile inside or outside the world
+     * @return if this creature can access the given tile
+     */
     public abstract boolean canAccessTile(Vector2i tile, World world);
 
 
@@ -63,14 +117,14 @@ public abstract class MovableEntity extends Entity {
     }
 
 
-    public void placeAtTile(int tx, int ty, float ox, float oy) {
+    public void placeAtTile(float tx, float ty, float ox, float oy) {
         var prevTile = atTile();
         setPosition(tx * TILE_SIZE + ox, ty * TILE_SIZE + oy);
         newTileEntered = !atTile().equals(prevTile);
     }
 
 
-    public void placeAtTile(Vector2i tile) {
+    public void placeAtTile(Vector2f tile) {
         placeAtTile(tile.x(), tile.y(), 0, 0);
     }
 
@@ -110,6 +164,7 @@ public abstract class MovableEntity extends Entity {
 
     public void turnBackInstantly() {
        gotReverseCommand = true;
+
        newTileEntered = false;
        System.out.println("Turn back instantly: " + this);
     }

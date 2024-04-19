@@ -13,14 +13,13 @@ import java.util.stream.Stream;
 import static utc.hiep.pacmanjavafx.lib.Global.*;
 
 
-
 public class World {
 
     private static Image mapImage = ImageLibrary.MAP_EMPTY;
     private static Image mapFlashingImage = ImageLibrary.FLASHING_MAZE;
 
-    byte TILES_X = 28;
-    byte TILES_Y = 36;
+    int MAP_WIDTH = TILES_X * TILE_SIZE;
+    int MAP_HEIGHT = (TILES_Y - 5) * TILE_SIZE;
 
     public static final byte T_SPACE = 0;
     public static final byte T_WALL = 1;
@@ -29,13 +28,13 @@ public class World {
     public static final byte T_ENERGIZER = 4;
 
 
-    private final byte[][] tileMap;
-    private final List<Vector2i> energizerTiles;
-    private final BitSet eaten;
-    private final List<Portal> portals;
-    private final int totalFoodCount;
-    private House house;
-    private int uneatenFoodCount;
+    private final byte[][] tileMap;                             //tile map data
+    private final List<Vector2i> energizerTiles;                //positions of energizer tiles
+    private final BitSet eaten;                                 //eaten food
+    private final List<Portal> portals;                         //positions of portals
+    private final int totalFoodCount;                           //total number of food tiles
+    private House house;                                        //house
+    private int uneatenFoodCount;                               //number of uneaten food tiles
 
 
     public World(byte[][] mapSource) {

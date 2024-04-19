@@ -6,16 +6,16 @@ import java.util.Random;
 import java.util.stream.Stream;
 
 public class Global {
-    public static final int WINDOW_WIDTH = 1024;
-    public static final int WINDOW_HEIGHT = 768;
+    public static final int WINDOW_WIDTH = 1024;                //window width
+    public static final int WINDOW_HEIGHT = 768;                //window height
 
-    public static final int TILE_SIZE = 16;
-    public static final int HALF_TILE_SIZE = TILE_SIZE / 2;
+    public static final int TILE_SIZE = 16;                     //tile size
+    public static final int HALF_TILE_SIZE = TILE_SIZE / 2;     //half tile size
 
-    public static final int ORIGINAL_TILE_SIZE = 8;
+    public static final int ORIGINAL_TILE_SIZE = 8;             //unscaled tile size
 
-    public static final int MAP_WIDTH = TILE_SIZE * 28;
-    public static final int MAP_HEIGHT = TILE_SIZE * 31;
+    public static final int TILES_X = 28;
+    public static final int TILES_Y = 36;
 
 
     public static void checkNotNull(Object value) {
@@ -56,13 +56,24 @@ public class Global {
      * @return position half tile right of tile origin
      */
     public static Vector2f halfTileRightOf(int tileX, int tileY) {
-        return new Vector2f(TILE_SIZE * tileX + HALF_TILE_SIZE, TILE_SIZE * tileY);
+        return new Vector2f((float) (TILE_SIZE * tileX + HALF_TILE_SIZE) / TILE_SIZE, tileY);
     }
 
+
+    /**
+     * @param tileX tile x coordinate
+     * @param tileY tile y coordinate
+     * @return position the center of the given tile
+     */
     public static Vector2f centerOfTile(int tileX, int tileY) {
         return new Vector2f(TILE_SIZE * tileX + HALF_TILE_SIZE, TILE_SIZE * tileY + HALF_TILE_SIZE);
     }
 
+
+    /**
+     * @param tiles index of tile
+     * @return position of the given tile
+     */
     public static double t(double tiles) {
         return tiles * TILE_SIZE;
     }
@@ -152,6 +163,11 @@ public class Global {
         return a + (b - a) * RND.nextDouble();
     }
 
+
+    /**
+     * @param percent percentage value
+     * @return {@code true} with the given probability
+     */
     public static boolean inPercentOfCases(int percent) {
         if (percent < 0 || percent > 100) {
             throw new IllegalArgumentException(String.format("Percent value must be in range [0, 100] but is %d", percent));
@@ -165,14 +181,29 @@ public class Global {
         return randomInt(0, 100) < percent;
     }
 
+
+    /**
+     * @param n some integer
+     * @return {@code true} if the given number is even
+     */
     public static boolean isEven(int n) {
         return n % 2 == 0;
     }
 
+
+    /**
+     * @param n some integer
+     * @return {@code true} if the given number is odd
+     */
     public static boolean isOdd(int n) {
         return n % 2 != 0;
     }
 
+
+    /**
+     * @param value some integer
+     * @return value divided by 100
+     */
     public static float percent(int value) {
         return value / 100f;
     }

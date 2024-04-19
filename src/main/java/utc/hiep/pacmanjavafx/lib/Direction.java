@@ -6,12 +6,15 @@ import java.util.List;
 import java.util.stream.Stream;
 
 
-//Moving direction
+/**
+ * Moving directions
+ * Use for entity movement, velocity, etc.
+ */
 public enum Direction {
 
     LEFT(-1, 0), RIGHT(1, 0), UP(0, -1), DOWN(0, 1);
 
-    private static final Direction[] OPPOSITE = {RIGHT, LEFT, DOWN, UP};
+    private static final Direction[] OPPOSITE = {RIGHT, LEFT, DOWN, UP};        //opposite direction
 
     public static Stream<Direction> stream() {
         return Stream.of(values());

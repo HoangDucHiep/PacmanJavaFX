@@ -27,6 +27,7 @@ public class Portal {
     /**
      * @param tile tile
      * @return return true if the given tile is part of this portal, false otherwise.
+     *
      */
     public boolean contains(Vector2i tile) {
         for(int i = 1; i <= depth; i++) {
