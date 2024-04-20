@@ -4,6 +4,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import utc.hiep.pacmanjavafx.lib.Direction;
 import utc.hiep.pacmanjavafx.lib.ImageLibrary;
+import utc.hiep.pacmanjavafx.lib.Vector2f;
 import utc.hiep.pacmanjavafx.lib.Vector2i;
 import utc.hiep.pacmanjavafx.model.Animator;
 import utc.hiep.pacmanjavafx.model.Timer;
@@ -15,12 +16,15 @@ import static utc.hiep.pacmanjavafx.lib.Global.*;
 public class Pacman extends MovableEntity{
 
     private static final int PAC_UI_SIZE = 15;  //size of pacman int sprite_sheet.png
-    private static final int ANIMATION_TICK = 10;
+    private static final int ANIMATION_TICK = 6;
+    private static final float PACMAN_DEFAULT_SPEED = 1.33f;
 
 
     private String name;
     private Timer ticker;
     private Animator animator;
+
+
 
 
 
@@ -36,14 +40,17 @@ public class Pacman extends MovableEntity{
         animator = new Animator(ANIMATION_TICK);
         animator.setANIMATIOR_SPRITE(
                 new int[][]{
-                        {32, 224, 240},
-                        {32, 0, 16},
-                        {32, 448, 464},
-                        {32, 672, 688}
+                        {32, 224, 240, 224},
+                        {32, 0, 16, 0},
+                        {32, 448, 464, 448},
+                        {32, 672, 688, 672}
                 });
         animator.setSpirteSize(PAC_UI_SIZE + 1); //plus 1 for gap between each sprite state in png
         reset();
+        setDefaultSpeed(PACMAN_DEFAULT_SPEED);
+        setPercentageSpeed((byte) 80);
         placeAtTile(PacmanMap.PAC_POSITION);
+        setNewTileEntered(false);
     }
 
 
@@ -76,11 +83,21 @@ public class Pacman extends MovableEntity{
     }
 
 
+    public void standing() {
+        setIsStanding(true);
+        setVelocity(0, 0);
+    }
+
 
 
     @Override
     public void render(GraphicsContext gc) {
-        animator.update(movingDir());
+        if(!isStanding()) {
+            animator.update(movingDir());
+        }
         gc.drawImage(spriteSheet, animator.animatorX(), animator.animatorY(), PAC_UI_SIZE, PAC_UI_SIZE, posX() - HALF_TILE_SIZE, posY() - HALF_TILE_SIZE, 32, 32);
     }
+
+
+
 }

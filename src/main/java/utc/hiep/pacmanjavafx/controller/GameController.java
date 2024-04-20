@@ -4,6 +4,8 @@ import javafx.animation.AnimationTimer;
 import utc.hiep.pacmanjavafx.event.KeyListener;
 import utc.hiep.pacmanjavafx.event.KeyType;
 import utc.hiep.pacmanjavafx.lib.Direction;
+import utc.hiep.pacmanjavafx.lib.Vector2f;
+import utc.hiep.pacmanjavafx.lib.Vector2i;
 import utc.hiep.pacmanjavafx.model.entity.Pacman;
 import utc.hiep.pacmanjavafx.model.world.World;
 import utc.hiep.pacmanjavafx.scene.GameView;
@@ -11,6 +13,9 @@ import utc.hiep.pacmanjavafx.model.Timer;
 
 import java.util.List;
 import java.util.Stack;
+
+import static utc.hiep.pacmanjavafx.lib.Global.centerOfTile;
+import static utc.hiep.pacmanjavafx.lib.Global.tileAt;
 
 public class GameController {
     private final GameView gameView;
@@ -25,8 +30,7 @@ public class GameController {
 
     public GameController() {
         this.gameView = new GameView();
-        timer = new Timer();
-
+        timer = new Timer(System.nanoTime());
         map = gameView.getWorld();
         pacman = gameView.getPacman();
         pacman.setTicker(timer);
@@ -43,20 +47,63 @@ public class GameController {
                 timer.updateTimer(now);
                 keyHander();
 
-
-
+                movePacman();
 
                 gameView.render();
-                //System.out.println("Current tick: " + timer.getTick());
-                //System.out.println("Current second: " + timer.getSecondTimer());
+//                System.out.println("Current tick: " + timer.getTick());
+//                System.out.println("Current second: " + timer.getSecondTimer());
             }
         }.start();
     }
 
-//    public void update(long now) {
-//        timer.updateTimer(now);
-//        kl.keyListening();
-//    }
+
+
+    public void movePacman() {
+        Vector2i currentTile = pacman.atTile();
+
+//        if(pacman.movingDir().opposite().equals(pacman.nextDir())) {
+//            pacman.turnBackInstantly();
+//        }
+        Direction lastDir;
+        if(!pacman.canAccessTile(pacman.tilesAhead(1), map) && pacman.center().almostEquals(centerOfTile(currentTile), 2, 2)) {
+            if(!pacman.isStanding())
+                pacman.placeAtTile(currentTile.toFloatVec());
+
+            lastDir = pacman.movingDir();
+            pacman.setMovingDir(pacman.nextDir());
+            if(!pacman.canAccessTile(pacman.tilesAhead(1), map)) {
+                pacman.setMovingDir(lastDir);
+                pacman.standing();
+            }
+
+        }
+
+
+        if(map.isIntersection(currentTile)) {
+            if(!pacman.isAlignedToTile()) {
+                if(pacman.isNewTileEntered() && pacman.offset().almostEquals(Vector2f.ZERO, 2, 2)) {
+                    System.out.println(pacman.center());
+                    System.out.println(centerOfTile(currentTile));
+                    System.out.println(currentTile);
+                    System.out.println("------------");
+                    pacman.placeAtTile(currentTile.x(), currentTile.y(), 0, 0);
+                    return;
+                }
+            } else {
+                lastDir = pacman.movingDir();
+                pacman.setMovingDir(pacman.nextDir());
+                if(!pacman.canAccessTile(pacman.tilesAhead(1), map)) {
+                    pacman.setMovingDir(lastDir);
+                }
+            }
+        }
+
+        if(!pacman.isStanding()) {
+            pacman.move();
+        }
+    }
+
+
 
 
     public void keyHander() {
@@ -65,10 +112,11 @@ public class GameController {
 
         for (KeyType key : pressedKey) {
             switch (key) {
-                case TURN_UP -> pacman.setMovingDir(Direction.UP);
-                case TURN_DOWN -> pacman.setMovingDir(Direction.DOWN);
-                case TURN_LEFT -> pacman.setMovingDir(Direction.LEFT);
-                case TURN_RIGHT -> pacman.setMovingDir(Direction.RIGHT);
+                case TURN_UP -> pacman.setNextDir(Direction.UP);
+                case TURN_DOWN -> pacman.setNextDir(Direction.DOWN);
+                case TURN_LEFT -> pacman.setNextDir(Direction.LEFT);
+                case TURN_RIGHT -> pacman.setNextDir(Direction.RIGHT);
+                case PAUSE -> timer.switchPause(System.nanoTime());
                 case GRID_SWITCH -> gameView.switchGridDisplay();
             }
         }

@@ -30,6 +30,7 @@ public class KeyListener {
                     case RIGHT, D -> {pressedKey.add(KeyType.TURN_RIGHT);
                         System.out.println("Pressed Right");}
                     case G -> {pressedKey.add(KeyType.GRID_SWITCH);}
+                    case P -> {pressedKey.add(KeyType.PAUSE);}
                     default -> System.out.println("Hello");
                 }
             }

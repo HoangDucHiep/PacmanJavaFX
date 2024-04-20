@@ -20,7 +20,6 @@ public class Global {
     public static final int SPRITE_SHEET_WIDTH = 224;
 
 
-
     public static void checkNotNull(Object value) {
         Objects.requireNonNull(value, "");
     }
@@ -218,6 +217,10 @@ public class Global {
      */
     public static float percent(int value) {
         return value / 100f;
+    }
+
+    public static float positive(float value) {
+        return value < 0 ? -value : value;
     }
 
     /**

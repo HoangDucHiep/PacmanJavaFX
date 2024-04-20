@@ -4,14 +4,19 @@ import javafx.animation.AnimationTimer;
 
 public class Timer {
     private static final long ONE_SECOND = 1_000_000_000; // One second in nanoseconds
+    private static final long ONE_MILISECOND = 1_000; // One second in milisecond
 
     private long tick;                          //tick time
-    private long secondClock;                   //second time
+    private double second;                   //second time
 
     private long lastUpdate;                    //used for tracking time
-    public Timer() {
+    private double delta;
+    private boolean pause;
+
+    public Timer(long lastUpdate) {
         tick = 0;
         lastUpdate = 0;
+        pause = false;
     }
 
     /**
@@ -19,10 +24,19 @@ public class Timer {
      * update tick to increase by 1 second each time
      */
     public void updateTimer(long now) {
-        if(now - lastUpdate > ONE_SECOND) {
-            secondClock++;
-            lastUpdate = now;
+
+        if(pause) {lastUpdate = 0; return;}
+
+        if (lastUpdate > 0) {
+            delta += now - lastUpdate;
         }
+
+        while (delta >= (10 * ONE_MILISECOND)) {
+            second += delta / ONE_SECOND;
+            delta = 0;
+        }
+
+        lastUpdate = now;
         tick++;
     }
 
@@ -30,7 +44,16 @@ public class Timer {
         return tick;
     }
 
-    public long getSecondTimer() {
-        return secondClock;
+    public int getSecondTimer() {
+        return (int) second;
+    }
+
+    public void switchPause(long updateTime) {
+        lastUpdate = updateTime;
+        pause = !pause;
+    }
+
+    public void setLastTick(long lastTick) {
+        this.lastUpdate = lastTick;
     }
 }

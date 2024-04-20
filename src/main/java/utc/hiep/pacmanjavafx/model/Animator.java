@@ -13,7 +13,6 @@ public class Animator {
 
     private int changeRate;
     
-    
     private Timer ticker;
 
     //For animation
@@ -41,7 +40,7 @@ public class Animator {
         long now = ticker.getTick();
         delta += (int) (now - lastTick);
         if(delta >= changeRate) {
-            animationCount = (animationCount + 1) % 3;
+            animationCount = (animationCount + 1) % ANIMATIOR_SPRITE[0].length;
             delta -= changeRate;
         }
         lastTick = now;
@@ -85,6 +84,8 @@ public class Animator {
     public void setChangeRate(int changeRate) {
         this.changeRate = changeRate;
     }
+
+
 
 
 }

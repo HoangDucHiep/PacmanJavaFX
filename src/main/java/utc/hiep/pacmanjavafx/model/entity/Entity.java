@@ -80,13 +80,14 @@ public abstract class Entity {
 
     public Vector2f offset() {
         var tile = atTile();
-        return new Vector2f(posX - TILE_SIZE + tile.x(), posY - TILE_SIZE + tile.y());
+        return new Vector2f(posX - TILE_SIZE * tile.x(), posY - TILE_SIZE * tile.y());
     }
 
 
     public boolean sameTile(Entity other) {
         return atTile().equals(other.atTile());
     }
+
 
 
     public abstract void render(GraphicsContext gc);

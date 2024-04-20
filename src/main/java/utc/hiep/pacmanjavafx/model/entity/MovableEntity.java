@@ -1,10 +1,9 @@
 package utc.hiep.pacmanjavafx.model.entity;
 
-import javafx.scene.canvas.GraphicsContext;
 import utc.hiep.pacmanjavafx.lib.Direction;
+import utc.hiep.pacmanjavafx.lib.Global;
 import utc.hiep.pacmanjavafx.lib.Vector2f;
 import utc.hiep.pacmanjavafx.lib.Vector2i;
-import utc.hiep.pacmanjavafx.model.Timer;
 import utc.hiep.pacmanjavafx.model.world.World;
 
 import java.util.Optional;
@@ -19,6 +18,8 @@ public abstract class MovableEntity extends Entity {
     private Vector2i targetTile;
 
     private float defaultSpeed;
+    private float currentSpeed;
+
 
     protected boolean newTileEntered;
     protected boolean gotReverseCommand;
@@ -31,7 +32,8 @@ public abstract class MovableEntity extends Entity {
     private float accX;                 //acceleration
     private float accY;
 
-
+    private boolean isStanding;
+    public boolean isAligned;
 
     public MovableEntity() {
         super();
@@ -41,7 +43,9 @@ public abstract class MovableEntity extends Entity {
         accY = 0;
     }
 
-    public void reset() {
+    public void
+
+    reset() {
         super.reset();
         movingDir = Direction.LEFT;
         nextDir = Direction.LEFT;
@@ -93,6 +97,7 @@ public abstract class MovableEntity extends Entity {
         setPosition(posX() + velX, posY() + velY);
         velX += accX;
         velY += accY;
+        setIsStanding(false);
     }
 
 
@@ -124,6 +129,7 @@ public abstract class MovableEntity extends Entity {
         var prevTile = atTile();
         setPosition(tx * TILE_SIZE + ox, ty * TILE_SIZE + oy);
         newTileEntered = !atTile().equals(prevTile);
+        isAligned = true;
     }
 
 
@@ -137,7 +143,8 @@ public abstract class MovableEntity extends Entity {
 
         if(movingDir != dir) {
             movingDir = dir;
-            setVelocity(movingDir.vector().toFloatVec().scaled(velocity().length()));
+            setIsStanding(false);
+            setVelocity(movingDir.vector().toFloatVec().scaled(currentSpeed));
             System.out.println("new move dir: " + movingDir + " " + this);
         }
     }
@@ -159,16 +166,24 @@ public abstract class MovableEntity extends Entity {
     }
 
 
+    public Vector2i tilesAhead(int numTiles) {
+        Vector2i ahead = atTile().plus(movingDir.vector().scaled(numTiles));
+        return ahead;
+    }
+
+
     public Vector2i tilesAheadWithOverflowBug(int numTiles) {
         Vector2i ahead = atTile().plus(movingDir.vector().scaled(numTiles));
         return movingDir == Direction.UP ? ahead.minus(numTiles, 0) : ahead;
     }
 
 
+
     public void turnBackInstantly() {
        gotReverseCommand = true;
-
+       setIsStanding(false);
        newTileEntered = false;
+       movingDir = nextDir;
        System.out.println("Turn back instantly: " + this);
     }
 
@@ -177,7 +192,8 @@ public abstract class MovableEntity extends Entity {
         if (percentage < 0) {
             throw new IllegalArgumentException("Negative speed percentage: " + percentage);
         }
-        setSpeed((float) 0.01 * percentage * defaultSpeed);
+        currentSpeed = (float) 0.01 * percentage * defaultSpeed;
+        setSpeed(currentSpeed);
     }
 
     private void setSpeed(float pixelSpeed) {
@@ -189,6 +205,22 @@ public abstract class MovableEntity extends Entity {
 
     public boolean isNewTileEntered() {
         return newTileEntered;
+    }
+
+    public void setNewTileEntered(boolean entered) {
+        newTileEntered = entered;
+    }
+
+    public boolean isStanding() {
+        return isStanding;
+    }
+
+    public void setIsStanding(boolean isStanding) {
+        this.isStanding = isStanding;
+    }
+
+    public boolean isAlignedToTile() {
+        return offset().almostEquals(Vector2f.ZERO,  1, 1);
     }
 
 
