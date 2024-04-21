@@ -23,7 +23,9 @@ public class Timer {
      * @param now current time in nanoseconds
      * update tick to increase by 1 second each time
      */
-    public void updateTimer(long now) {
+    public void updateTimer() {
+
+        long now = System.nanoTime();
 
         if(pause) {lastUpdate = 0; return;}
 

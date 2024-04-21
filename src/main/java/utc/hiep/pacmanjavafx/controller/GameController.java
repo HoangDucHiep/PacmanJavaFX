@@ -44,7 +44,7 @@ public class GameController {
         new AnimationTimer() {
             @Override
             public void handle(long now) {
-                timer.updateTimer(now);
+                timer.updateTimer();
                 keyHander();
 
                 movePacman();

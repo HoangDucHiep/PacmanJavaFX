@@ -39,7 +39,7 @@ public class Animator {
 
         long now = ticker.getTick();
         delta += (int) (now - lastTick);
-        if(delta >= changeRate) {
+        while(delta >= changeRate) {
             animationCount = (animationCount + 1) % ANIMATIOR_SPRITE[0].length;
             delta -= changeRate;
         }
