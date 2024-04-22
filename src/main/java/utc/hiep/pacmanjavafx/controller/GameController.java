@@ -30,7 +30,7 @@ public class GameController {
 
     public GameController() {
         this.gameView = new GameView();
-        timer = new Timer(System.nanoTime());
+        timer = new Timer();
         map = gameView.getWorld();
         pacman = gameView.getPacman();
         pacman.setTicker(timer);
@@ -88,10 +88,6 @@ public class GameController {
         if(map.isIntersection(currentTile)) {
             if(!pacman.isAlignedToTile()) {
                 if(pacman.isNewTileEntered() && pacman.offset().almostEquals(Vector2f.ZERO, 2, 2)) {
-                    System.out.println(pacman.center());
-                    System.out.println(centerOfTile(currentTile));
-                    System.out.println(currentTile);
-                    System.out.println("------------");
                     pacman.placeAtTile(currentTile.x(), currentTile.y(), 0, 0);
                     return;
                 }
@@ -116,15 +112,21 @@ public class GameController {
         kl.keyListening();
         pressedKey = kl.getPressedKey();
 
+
         for (KeyType key : pressedKey) {
-            switch (key) {
-                case TURN_UP -> pacman.setNextDir(Direction.UP);
-                case TURN_DOWN -> pacman.setNextDir(Direction.DOWN);
-                case TURN_LEFT -> pacman.setNextDir(Direction.LEFT);
-                case TURN_RIGHT -> pacman.setNextDir(Direction.RIGHT);
-                case PAUSE -> timer.switchPause(System.nanoTime());
-                case GRID_SWITCH -> gameView.switchGridDisplay();
+            if(key == KeyType.PAUSE) {
+                timer.switchPause(System.nanoTime());
             }
+            if(!timer.isPaused()) {
+                switch (key) {
+                    case TURN_UP -> pacman.setNextDir(Direction.UP);
+                    case TURN_DOWN -> pacman.setNextDir(Direction.DOWN);
+                    case TURN_LEFT -> pacman.setNextDir(Direction.LEFT);
+                    case TURN_RIGHT -> pacman.setNextDir(Direction.RIGHT);
+                    case GRID_SWITCH -> gameView.switchGridDisplay();
+                }
+            }
+
         }
 
         kl.clearKey();

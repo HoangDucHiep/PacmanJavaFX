@@ -13,9 +13,8 @@ public class Timer {
     private double delta;
     private boolean isPaused;
 
-    public Timer(long lastUpdate) {
+    public Timer() {
         tick = 0;
-        lastUpdate = 0;
         isPaused = false;
     }
 
@@ -28,11 +27,9 @@ public class Timer {
         long now = System.nanoTime();
 
         if(isPaused) {lastUpdate = 0; return;}
+        if(lastUpdate == 0) {lastUpdate = now; return;}
 
-        if (lastUpdate > 0) {
-            delta += now - lastUpdate;
-        }
-
+        delta += now - lastUpdate;
         while (delta >= (10 * ONE_MILISECOND)) {
             second += delta / ONE_SECOND;
             delta = 0;
@@ -46,17 +43,13 @@ public class Timer {
         return tick;
     }
 
-    public int getSecondTimer() {
-        return (int) second;
+    public double getSecondTimer() {
+        return second;
     }
 
     public void switchPause(long updateTime) {
         lastUpdate = updateTime;
         isPaused = !isPaused;
-    }
-
-    public void setLastTick(long lastTick) {
-        this.lastUpdate = lastTick;
     }
 
     public boolean isPaused() {
