@@ -4,6 +4,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import utc.hiep.pacmanjavafx.lib.ImageLibrary;
 import utc.hiep.pacmanjavafx.lib.Vector2i;
+import utc.hiep.pacmanjavafx.model.Animator;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -19,7 +20,7 @@ public class World {
     private static Image mapImage = ImageLibrary.MAP_EMPTY;
     private static Image mapFlashingImage = ImageLibrary.FLASHING_MAZE;
     private static Image pellet = ImageLibrary.PELLET;
-    private static Image energizer = ImageLibrary.ENERGIZER;
+    private static Image energizer = ImageLibrary.ENERGIZER_SHEET;
 
     int MAP_WIDTH = TILES_X * TILE_SIZE;
     int MAP_HEIGHT = (TILES_Y - 5) * TILE_SIZE;
@@ -42,6 +43,12 @@ public class World {
 
     private int energizerAnimationCount = 0;
 
+    private static final Animator.AnimatorPos[] ANIMATOR_POS = new Animator.AnimatorPos[] {
+            new Animator.AnimatorPos(0, 0),
+            new Animator.AnimatorPos(9, 0),
+    };
+
+    private Animator energizerAnimator;
 
     public World(byte[][] mapSource) {
         tileMap = validateTileMapData(mapSource);
@@ -60,8 +67,11 @@ public class World {
         eaten = new BitSet(numCols() * numRows());
         totalFoodCount = (int) tiles().filter(this::isFoodTile).count();
         uneatenFoodCount = totalFoodCount;
-
         energizerTiles = tiles().filter(this::isEnergizerTile).collect(Collectors.toList());
+
+
+        //Energizer animator
+        energizerAnimator = Animator.getNonDirAnimator(30, ANIMATOR_POS);
     }
 
 
@@ -249,16 +259,14 @@ public class World {
         tiles().filter(this::hasFoodAt).filter(Predicate.not(this::hasEatenFoodAt)).forEach(tile -> {
                 drawFoodAt(tile, gc);
         });
-        energizerAnimationCount = energizerAnimationCount > 60 ? 0 : (energizerAnimationCount + 1);
+        energizerAnimator.update();
     }
 
     private void drawFoodAt(Vector2i tile, GraphicsContext gc) {
         if (content(tile) == T_PELLET) {
             gc.drawImage(pellet, tile.x() * TILE_SIZE, tile.y() * TILE_SIZE, TILE_SIZE, TILE_SIZE);
         } else if (content(tile) == T_ENERGIZER) {
-            if(energizerAnimationCount < 30) {
-                gc.drawImage(energizer, tile.x() * TILE_SIZE, tile.y() * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-            }
+            gc.drawImage(energizer, energizerAnimator.getAnimationPos().posX(), energizerAnimator.getAnimationPos().posY(), 8, 8, tile.x() * TILE_SIZE, tile.y() * TILE_SIZE, TILE_SIZE, TILE_SIZE);
         }
     }
 

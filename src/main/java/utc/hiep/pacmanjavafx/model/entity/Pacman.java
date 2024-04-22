@@ -30,20 +30,43 @@ public class Pacman extends MovableEntity{
     //UI part
     private final Image spriteSheet;
 
+    Animator.AnimatorPos[] RIGHT = new Animator.AnimatorPos[] {
+            new Animator.AnimatorPos(32, 0),
+            new Animator.AnimatorPos(0, 0),
+            new Animator.AnimatorPos(16, 0),
+            new Animator.AnimatorPos(32, 0)
+    };
+
+    Animator.AnimatorPos[] LEFT = new Animator.AnimatorPos[] {
+            new Animator.AnimatorPos(32, 0),
+            new Animator.AnimatorPos(0, 16),
+            new Animator.AnimatorPos(16, 16),
+            new Animator.AnimatorPos(32, 0)
+    };
+
+    Animator.AnimatorPos[] UP = new Animator.AnimatorPos[] {
+            new Animator.AnimatorPos(32, 0),
+            new Animator.AnimatorPos(0, 32),
+            new Animator.AnimatorPos(16, 32),
+            new Animator.AnimatorPos(32, 0)
+    };
+
+    Animator.AnimatorPos[] DOWN = new Animator.AnimatorPos[] {
+            new Animator.AnimatorPos(0, 48),
+            new Animator.AnimatorPos(0, 48),
+            new Animator.AnimatorPos(16, 48),
+            new Animator.AnimatorPos(32, 0)
+    };
+
+
     public Pacman(String name) {
         super();
         //set animation sprite ui
         this.name = name;
         spriteSheet = ImageLibrary.SPRITE_SHEET;
-        animator = new Animator(ANIMATION_TICK);
-        animator.setANIMATIOR_SPRITE(
-                new int[][]{
-                        {32, 224, 240, 224},
-                        {32, 0, 16, 0},
-                        {32, 448, 464, 448},
-                        {32, 672, 688, 672}
-                });
-        animator.setSpirteSize(PAC_UI_SIZE + 1); //plus 1 for gap between each sprite state in png
+        animator = Animator.getDirAnimator(ANIMATION_TICK, LEFT, RIGHT, UP, DOWN);
+
+
         reset();
         setDefaultSpeed(PACMAN_DEFAULT_SPEED);
         setPercentageSpeed((byte) 80);
@@ -92,7 +115,8 @@ public class Pacman extends MovableEntity{
         if(!isStanding()) {
             animator.update(movingDir());
         }
-        gc.drawImage(spriteSheet, animator.animatorX(), animator.animatorY(), PAC_UI_SIZE, PAC_UI_SIZE, posX() - HALF_TILE_SIZE, posY() - HALF_TILE_SIZE, 32, 32);
+
+        gc.drawImage(spriteSheet, animator.getAnimationPos().posX(), animator.getAnimationPos().posY(), PAC_UI_SIZE, PAC_UI_SIZE, posX() - HALF_TILE_SIZE, posY() - HALF_TILE_SIZE, 32, 32);
     }
 
 
