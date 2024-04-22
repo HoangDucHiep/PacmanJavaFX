@@ -48,7 +48,6 @@ public class Pacman extends MovableEntity{
         setDefaultSpeed(PACMAN_DEFAULT_SPEED);
         setPercentageSpeed((byte) 80);
         placeAtTile(PacmanMap.PAC_POSITION);
-        setNewTileEntered(false);
     }
 
 

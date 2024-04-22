@@ -62,44 +62,39 @@ public class GameController {
     public void movePacman() {
         Vector2i currentTile = pacman.atTile();
 
-//        if(pacman.movingDir().opposite().equals(pacman.nextDir())) {
-//            pacman.turnBackInstantly();
-//        }
-
-
+        /* Handle turn back instantly */
         if(pacman.movingDir().opposite().equals(pacman.nextDir())) {
             pacman.turnBackInstantly();
         }
 
-
+        /*  handle pacman be blocked by wall or smth */
         Direction lastDir;
-        if(!pacman.canAccessTile(pacman.tilesAhead(1), map) && pacman.center().almostEquals(centerOfTile(currentTile), 2, 2)) {
-            if(!pacman.isStanding())
+        if(!pacman.canAccessTile(pacman.tilesAhead(1), map) && pacman.center().almostEquals(centerOfTile(currentTile), pacman.currentSpeed(),  pacman.currentSpeed())) {
+            if(!pacman.isStanding()) {
                 pacman.placeAtTile(currentTile.toFloatVec());
-
-            lastDir = pacman.movingDir();
-            pacman.setMovingDir(pacman.nextDir());
-            if(!pacman.canAccessTile(pacman.tilesAhead(1), map)) {
-                pacman.setMovingDir(lastDir);
                 pacman.standing();
             }
         }
 
+
+        /*  handle pacman at intersection */
         if(map.isIntersection(currentTile)) {
-            if(!pacman.isAlignedToTile()) {
-                if(pacman.isNewTileEntered() && pacman.offset().almostEquals(Vector2f.ZERO, 2, 2)) {
-                    pacman.placeAtTile(currentTile.x(), currentTile.y(), 0, 0);
-                    return;
-                }
-            } else {
-                lastDir = pacman.movingDir();
-                pacman.setMovingDir(pacman.nextDir());
-                if(!pacman.canAccessTile(pacman.tilesAhead(1), map)) {
-                    pacman.setMovingDir(lastDir);
-                }
+            //if pacman haven't aligned to tile, but almost aligned, then aligned it
+            if(pacman.isNewTileEntered() && pacman.offset().almostEquals(Vector2f.ZERO, pacman.currentSpeed(), pacman.currentSpeed())) {
+                pacman.placeAtTile(currentTile.toFloatVec());
             }
         }
 
+        /* Handle if pacman would be blocked in next turn*/
+        if(pacman.isAlignedToTile()) {
+            lastDir = pacman.movingDir();
+            pacman.setMovingDir(pacman.nextDir());
+            if(!pacman.canAccessTile(pacman.tilesAhead(1), map)) {
+                pacman.setMovingDir(lastDir);
+            }
+        }
+
+        // If pacman is not standing, it can move :)))
         if(!pacman.isStanding()) {
             pacman.move();
         }
@@ -126,7 +121,6 @@ public class GameController {
                     case GRID_SWITCH -> gameView.switchGridDisplay();
                 }
             }
-
         }
 
         kl.clearKey();

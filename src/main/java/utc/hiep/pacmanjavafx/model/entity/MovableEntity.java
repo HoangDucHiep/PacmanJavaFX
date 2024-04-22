@@ -8,8 +8,7 @@ import utc.hiep.pacmanjavafx.model.world.World;
 
 import java.util.Optional;
 
-import static utc.hiep.pacmanjavafx.lib.Global.TILE_SIZE;
-import static utc.hiep.pacmanjavafx.lib.Global.checkNotNull;
+import static utc.hiep.pacmanjavafx.lib.Global.*;
 
 public abstract class MovableEntity extends Entity {
 
@@ -53,6 +52,7 @@ public abstract class MovableEntity extends Entity {
         newTileEntered = true;
         gotReverseCommand = false;
         canTeleport = true;
+        isStanding = false;
     }
 
 
@@ -94,10 +94,14 @@ public abstract class MovableEntity extends Entity {
 
 
     public void move() {
+        Vector2i prevTile = atTile();
         setPosition(posX() + velX, posY() + velY);
         velX += accX;
         velY += accY;
         setIsStanding(false);
+        if(!atTile().equals(prevTile)) {
+            newTileEntered = true;
+        }
     }
 
 
@@ -220,7 +224,11 @@ public abstract class MovableEntity extends Entity {
     }
 
     public boolean isAlignedToTile() {
-        return offset().almostEquals(Vector2f.ZERO,  1, 1);
+        return center().almostEquals(centerOfTile(atTile()), 0, 0);
+    }
+
+    public float currentSpeed() {
+        return currentSpeed;
     }
 
 
