@@ -31,7 +31,7 @@ public class World {
     private final byte[][] tileMap;                             //tile map data
     private final List<Vector2i> energizerTiles;                //positions of energizer tiles
     private final BitSet eaten;                                 //eaten food
-    private final List<Portal> portals;                         //positions of portals
+    private Portal portals;                         //positions of portals
     private final int totalFoodCount;                           //total number of food tiles
     private House house;                                        //house
     private int uneatenFoodCount;                               //number of uneaten food tiles
@@ -41,17 +41,15 @@ public class World {
         tileMap = validateTileMapData(mapSource);
 
         // build portals
-        var portalList = new ArrayList<Portal>();
+        //var portalList = new ArrayList<Portal>();
         int lastColumn = numCols() - 1;
         for (int row = 0; row < numRows(); ++row) {
             var leftBorderTile = new Vector2i(0, row);
             var rightBorderTile = new Vector2i(lastColumn, row);
             if (tileMap[row][0] == T_TUNNEL && tileMap[row][lastColumn] == T_TUNNEL) {
-                portalList.add(new Portal(leftBorderTile, rightBorderTile, 2));
+                portals = new Portal(leftBorderTile, rightBorderTile, 2);
             }
         }
-        portalList.trimToSize();
-        portals = Collections.unmodifiableList(portalList);
 
         ///Init food-stuff
         eaten = new BitSet(numCols() * numRows());
@@ -101,14 +99,14 @@ public class World {
     }
 
 
-    public List<Portal> portals() {
+    public Portal portals() {
         return portals;
     }
 
 
     public boolean belongsToPortal(Vector2i tile) {
         Objects.requireNonNull(tile);
-        return portals.stream().anyMatch(portal -> portal.contains(tile));
+        return portals.contains(tile);
     }
 
 

@@ -14,8 +14,7 @@ import utc.hiep.pacmanjavafx.model.Timer;
 import java.util.List;
 import java.util.Stack;
 
-import static utc.hiep.pacmanjavafx.lib.Global.centerOfTile;
-import static utc.hiep.pacmanjavafx.lib.Global.tileAt;
+import static utc.hiep.pacmanjavafx.lib.Global.*;
 
 public class GameController {
     private final GameView gameView;
@@ -68,8 +67,7 @@ public class GameController {
         }
 
         /*  handle pacman be blocked by wall or smth */
-        Direction lastDir;
-        if(!pacman.canAccessTile(pacman.tilesAhead(1), map) && pacman.center().almostEquals(centerOfTile(currentTile), pacman.currentSpeed(),  pacman.currentSpeed())) {
+        if(!pacman.canAccessTile(pacman.tilesAhead(1), map) && pacman.offset().almostEquals(Vector2f.ZERO, pacman.currentSpeed(),  pacman.currentSpeed())) {
             if(!pacman.isStanding()) {
                 pacman.placeAtTile(currentTile.toFloatVec());
                 pacman.standing();
@@ -85,12 +83,22 @@ public class GameController {
             }
         }
 
-        /* Handle if pacman would be blocked in next turn*/
+        /* Handle if pacman be blocked in next turn, it'll keep moving in current direction*/
         if(pacman.isAlignedToTile()) {
+            Direction lastDir;
             lastDir = pacman.movingDir();
             pacman.setMovingDir(pacman.nextDir());
             if(!pacman.canAccessTile(pacman.tilesAhead(1), map)) {
                 pacman.setMovingDir(lastDir);
+            }
+        }
+
+
+        //Handle if pacman gothrough portal
+        if(map.belongsToPortal(currentTile)) {
+            if(!map.belongsToPortal(pacman.tilesAhead(1))) {
+                Vector2i teleportTo = map.portals().otherTunnel(currentTile);
+                pacman.placeAtTile(teleportTo.toFloatVec());
             }
         }
 
@@ -122,7 +130,6 @@ public class GameController {
                 }
             }
         }
-
         kl.clearKey();
     }
 

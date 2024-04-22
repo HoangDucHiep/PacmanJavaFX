@@ -27,7 +27,6 @@ public class Portal {
     /**
      * @param tile tile
      * @return return true if the given tile is part of this portal, false otherwise.
-     *
      */
     public boolean contains(Vector2i tile) {
         for(int i = 1; i <= depth; i++) {
@@ -39,6 +38,10 @@ public class Portal {
             }
         }
         return false;
+    }
+
+    public Vector2i otherTunnel(Vector2i tunnel) {
+        return tunnel.equals(leftTunnelEnd.minus(depth, 0)) ? rightTunnelEnd : leftTunnelEnd;
     }
 
     @Override

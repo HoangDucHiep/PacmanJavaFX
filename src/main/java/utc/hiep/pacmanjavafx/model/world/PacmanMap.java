@@ -77,9 +77,4 @@ public interface PacmanMap {
     Vector2f HOUSE_MIDDLE_SEAT = halfTileRightOf(13, 17);
     Vector2f HOUSE_RIGHT_SEAT  = halfTileRightOf(15, 17);
 
-
-
-
-
-
 }

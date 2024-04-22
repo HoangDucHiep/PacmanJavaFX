@@ -211,10 +211,6 @@ public abstract class MovableEntity extends Entity {
         return newTileEntered;
     }
 
-    public void setNewTileEntered(boolean entered) {
-        newTileEntered = entered;
-    }
-
     public boolean isStanding() {
         return isStanding;
     }
