@@ -33,7 +33,7 @@ public abstract class MovableEntity extends Entity {
     private float accY;
 
     private boolean isStanding;
-    public boolean isAligned;
+    private boolean isAligned;
 
     public MovableEntity() {
         super();
@@ -183,7 +183,7 @@ public abstract class MovableEntity extends Entity {
        gotReverseCommand = true;
        setIsStanding(false);
        newTileEntered = false;
-       movingDir = nextDir;
+       setMovingDir(nextDir);
        System.out.println("Turn back instantly: " + this);
     }
 

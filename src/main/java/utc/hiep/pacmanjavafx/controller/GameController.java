@@ -65,6 +65,13 @@ public class GameController {
 //        if(pacman.movingDir().opposite().equals(pacman.nextDir())) {
 //            pacman.turnBackInstantly();
 //        }
+
+
+        if(pacman.movingDir().opposite().equals(pacman.nextDir())) {
+            pacman.turnBackInstantly();
+        }
+
+
         Direction lastDir;
         if(!pacman.canAccessTile(pacman.tilesAhead(1), map) && pacman.center().almostEquals(centerOfTile(currentTile), 2, 2)) {
             if(!pacman.isStanding())
@@ -76,9 +83,7 @@ public class GameController {
                 pacman.setMovingDir(lastDir);
                 pacman.standing();
             }
-
         }
-
 
         if(map.isIntersection(currentTile)) {
             if(!pacman.isAlignedToTile()) {
