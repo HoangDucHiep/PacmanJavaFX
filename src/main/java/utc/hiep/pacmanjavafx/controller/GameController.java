@@ -64,6 +64,7 @@ public class GameController {
         /* Handle turn back instantly */
         if(pacman.movingDir().opposite().equals(pacman.nextDir())) {
             pacman.turnBackInstantly();
+            return;
         }
 
         /*  handle pacman be blocked by wall or smth */
@@ -73,34 +74,28 @@ public class GameController {
                 pacman.standing();
             }
         }
-
-
         /*  handle pacman at intersection */
-        if(map.isIntersection(currentTile)) {
+        else if(map.isIntersection(currentTile)) {
             //if pacman haven't aligned to tile, but almost aligned, then aligned it
             if(pacman.isNewTileEntered() && pacman.offset().almostEquals(Vector2f.ZERO, pacman.currentSpeed(), pacman.currentSpeed())) {
                 pacman.placeAtTile(currentTile.toFloatVec());
             }
         }
-
-        /* Handle if pacman be blocked in next turn, it'll keep moving in current direction*/
-        if(pacman.isAlignedToTile()) {
-            Direction lastDir;
-            lastDir = pacman.movingDir();
-            pacman.setMovingDir(pacman.nextDir());
-            if(!pacman.canAccessTile(pacman.tilesAhead(1), map)) {
-                pacman.setMovingDir(lastDir);
-            }
-        }
-
-
         //Handle if pacman gothrough portal
-        if(map.belongsToPortal(currentTile)) {
+        else if(map.belongsToPortal(currentTile)) {
             if(!map.belongsToPortal(pacman.tilesAhead(1))) {
                 Vector2i teleportTo = map.portals().otherTunnel(currentTile);
                 pacman.placeAtTile(teleportTo.toFloatVec());
             }
         }
+
+        /* Handle if pacman be blocked in next turn, it'll keep moving in current direction*/
+        if(pacman.isAlignedToTile()) {
+            if(pacman.canAccessTile(currentTile.plus(pacman.nextDir().vector()), map)) {
+                pacman.setMovingDir(pacman.nextDir());
+            }
+        }
+
 
         // If pacman is not standing, it can move :)))
         if(!pacman.isStanding()) {

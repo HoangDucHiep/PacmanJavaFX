@@ -41,7 +41,6 @@ public class World {
         tileMap = validateTileMapData(mapSource);
 
         // build portals
-        //var portalList = new ArrayList<Portal>();
         int lastColumn = numCols() - 1;
         for (int row = 0; row < numRows(); ++row) {
             var leftBorderTile = new Vector2i(0, row);

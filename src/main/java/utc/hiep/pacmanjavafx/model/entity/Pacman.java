@@ -14,7 +14,7 @@ import static utc.hiep.pacmanjavafx.lib.Global.*;
 public class Pacman extends MovableEntity{
 
     private static final int PAC_UI_SIZE = 15;  //size of pacman int sprite_sheet.png
-    private static final int ANIMATION_TICK = 5;
+    private static final int ANIMATION_TICK = 8;
     private static final float PACMAN_DEFAULT_SPEED = 1.33f;
 
 
