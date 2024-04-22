@@ -13,37 +13,34 @@ public class Animator {
 
     private int changeRate;
     
-    private Timer ticker;
+    //private Timer ticker;
 
     //For animation
     private int animationCount;
     private int animationDir;
-    private int delta;
-    private long lastTick;
+    private long ticksCount;
 
     //to turn it to x and y: x = value / sprite_sheet_width, y = value % sprite_sheet_width
     //location of the current frame in sprite sheet
-
-
     private int[][] ANIMATIOR_SPRITE;
-    private int spirteSize;
+    private int spriteSize;
 
 
 
     public Animator(int changeRate) {
         this.changeRate = changeRate;
-        this.ticker = ticker;
+        ticksCount = 0;
     }
 
     public void update(Direction movingDir) {
-
-        long now = ticker.getTick();
-        delta += (int) (now - lastTick);
-        while(delta >= changeRate) {
+        ticksCount++;
+        //long now = ticker.getTick();
+        //delta += (int) (now - lastTick);
+        while(ticksCount >= changeRate) {
             animationCount = (animationCount + 1) % ANIMATIOR_SPRITE[0].length;
-            delta -= changeRate;
+            ticksCount -= changeRate;
         }
-        lastTick = now;
+        //lastTick = now;
 
         switch (movingDir) {
             case LEFT -> animationDir = LEFT;
@@ -53,24 +50,24 @@ public class Animator {
         }
     }
 
-    public void setTicker(Timer ticker) {
-        this.ticker = ticker;
-    }
+//    public void setTicker(Timer ticker) {
+//        this.ticker = ticker;
+//    }
 
-    public int animationCount() {
-        return animationCount;
-    }
+//    public int animationCount() {
+//        return animationCount;
+//    }
 
-    public int animationDir() {
-        return animationDir;
-    }
+//    public int animationDir() {
+//        return animationDir;
+//    }
 
     public int animatorX() {
         return (int) ANIMATIOR_SPRITE[animationDir][animationCount] % SPRITE_SHEET_WIDTH;
     }
 
     public int animatorY() {
-        return (int) ANIMATIOR_SPRITE[animationDir][animationCount] / SPRITE_SHEET_WIDTH * spirteSize;
+        return (int) ANIMATIOR_SPRITE[animationDir][animationCount] / SPRITE_SHEET_WIDTH * spriteSize;
     }
 
     public void setANIMATIOR_SPRITE(int[][] ANIMATIOR_SPRITE) {
@@ -78,7 +75,7 @@ public class Animator {
     }
 
     public void setSpirteSize(int spirteSize) {
-        this.spirteSize = spirteSize;
+        this.spriteSize = spirteSize;
     }
     
     public void setChangeRate(int changeRate) {

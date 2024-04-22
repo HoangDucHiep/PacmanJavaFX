@@ -11,12 +11,12 @@ public class Timer {
 
     private long lastUpdate;                    //used for tracking time
     private double delta;
-    private boolean pause;
+    private boolean isPaused;
 
     public Timer(long lastUpdate) {
         tick = 0;
         lastUpdate = 0;
-        pause = false;
+        isPaused = false;
     }
 
     /**
@@ -27,7 +27,7 @@ public class Timer {
 
         long now = System.nanoTime();
 
-        if(pause) {lastUpdate = 0; return;}
+        if(isPaused) {lastUpdate = 0; return;}
 
         if (lastUpdate > 0) {
             delta += now - lastUpdate;
@@ -52,10 +52,14 @@ public class Timer {
 
     public void switchPause(long updateTime) {
         lastUpdate = updateTime;
-        pause = !pause;
+        isPaused = !isPaused;
     }
 
     public void setLastTick(long lastTick) {
         this.lastUpdate = lastTick;
+    }
+
+    public boolean isPaused() {
+        return isPaused;
     }
 }

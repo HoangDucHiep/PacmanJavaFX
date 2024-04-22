@@ -44,14 +44,15 @@ public class GameController {
         new AnimationTimer() {
             @Override
             public void handle(long now) {
-                timer.updateTimer();
                 keyHander();
-
-                movePacman();
-
-                gameView.render();
+                if(!timer.isPaused()) {
+                    timer.updateTimer();
+                    movePacman();
+                    gameView.render();
 //                System.out.println("Current tick: " + timer.getTick());
 //                System.out.println("Current second: " + timer.getSecondTimer());
+                }
+
             }
         }.start();
     }

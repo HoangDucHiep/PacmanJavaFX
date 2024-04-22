@@ -2,9 +2,7 @@ package utc.hiep.pacmanjavafx.model.entity;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import utc.hiep.pacmanjavafx.lib.Direction;
 import utc.hiep.pacmanjavafx.lib.ImageLibrary;
-import utc.hiep.pacmanjavafx.lib.Vector2f;
 import utc.hiep.pacmanjavafx.lib.Vector2i;
 import utc.hiep.pacmanjavafx.model.Animator;
 import utc.hiep.pacmanjavafx.model.Timer;
@@ -16,7 +14,7 @@ import static utc.hiep.pacmanjavafx.lib.Global.*;
 public class Pacman extends MovableEntity{
 
     private static final int PAC_UI_SIZE = 15;  //size of pacman int sprite_sheet.png
-    private static final int ANIMATION_TICK = 6;
+    private static final int ANIMATION_TICK = 5;
     private static final float PACMAN_DEFAULT_SPEED = 1.33f;
 
 
@@ -79,7 +77,7 @@ public class Pacman extends MovableEntity{
 
     public void setTicker(Timer ticker) {
         this.ticker = ticker;
-        animator.setTicker(ticker);
+        //animator.setTicker(ticker);
     }
 
 
