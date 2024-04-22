@@ -6,6 +6,7 @@ import utc.hiep.pacmanjavafx.lib.ImageLibrary;
 import utc.hiep.pacmanjavafx.lib.Vector2i;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -17,6 +18,8 @@ public class World {
 
     private static Image mapImage = ImageLibrary.MAP_EMPTY;
     private static Image mapFlashingImage = ImageLibrary.FLASHING_MAZE;
+    private static Image pellet = ImageLibrary.PELLET;
+    private static Image energizer = ImageLibrary.ENERGIZER;
 
     int MAP_WIDTH = TILES_X * TILE_SIZE;
     int MAP_HEIGHT = (TILES_Y - 5) * TILE_SIZE;
@@ -35,6 +38,9 @@ public class World {
     private final int totalFoodCount;                           //total number of food tiles
     private House house;                                        //house
     private int uneatenFoodCount;                               //number of uneaten food tiles
+
+
+    private int energizerAnimationCount = 0;
 
 
     public World(byte[][] mapSource) {
@@ -240,6 +246,20 @@ public class World {
 
     public void drawMap(GraphicsContext gc) {
         gc.drawImage(mapImage, 0, TILE_SIZE * 3, MAP_WIDTH, MAP_HEIGHT);
+        tiles().filter(this::hasFoodAt).filter(Predicate.not(this::hasEatenFoodAt)).forEach(tile -> {
+                drawFoodAt(tile, gc);
+        });
+        energizerAnimationCount = energizerAnimationCount > 60 ? 0 : (energizerAnimationCount + 1);
+    }
+
+    private void drawFoodAt(Vector2i tile, GraphicsContext gc) {
+        if (content(tile) == T_PELLET) {
+            gc.drawImage(pellet, tile.x() * TILE_SIZE, tile.y() * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+        } else if (content(tile) == T_ENERGIZER) {
+            if(energizerAnimationCount < 30) {
+                gc.drawImage(energizer, tile.x() * TILE_SIZE, tile.y() * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+            }
+        }
     }
 
 

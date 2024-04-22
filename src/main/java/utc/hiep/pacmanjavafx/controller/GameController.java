@@ -47,6 +47,7 @@ public class GameController {
                 if(!timer.isPaused()) {
                     timer.updateTimer();
                     movePacman();
+                    handlePacmanEatFoot();
                     gameView.render();
 //                System.out.println("Current tick: " + timer.getTick());
 //                System.out.println("Current second: " + timer.getSecondTimer());
@@ -103,13 +104,19 @@ public class GameController {
         }
     }
 
+    private void handlePacmanEatFoot() {
+        Vector2i currentTile = pacman.atTile();
+        if(map.hasFoodAt(currentTile) && !map.hasEatenFoodAt(currentTile)) {
+            map.removeFood(currentTile);
+        }
+    }
+
 
 
 
     public void keyHander() {
         kl.keyListening();
         pressedKey = kl.getPressedKey();
-
 
         for (KeyType key : pressedKey) {
             if(key == KeyType.PAUSE) {
