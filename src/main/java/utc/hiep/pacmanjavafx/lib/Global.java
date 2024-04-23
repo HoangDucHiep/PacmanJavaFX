@@ -17,6 +17,8 @@ public class Global {
     public static final int TILES_X = 28;
     public static final int TILES_Y = 36;
 
+    public static final int GAME_SCALE = TILE_SIZE / ORIGINAL_TILE_SIZE;
+
     public static final int SPRITE_SHEET_WIDTH = 224;
 
 

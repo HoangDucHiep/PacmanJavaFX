@@ -2,6 +2,7 @@ package utc.hiep.pacmanjavafx.model.world;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import utc.hiep.pacmanjavafx.lib.AnimatorLib;
 import utc.hiep.pacmanjavafx.lib.ImageLibrary;
 import utc.hiep.pacmanjavafx.lib.Vector2i;
 import utc.hiep.pacmanjavafx.model.Animator;
@@ -41,12 +42,6 @@ public class World {
     private int uneatenFoodCount;                               //number of uneaten food tiles
 
 
-    private int energizerAnimationCount = 0;
-
-    private static final Animator.AnimatorPos[] ANIMATOR_POS = new Animator.AnimatorPos[] {
-            new Animator.AnimatorPos(0, 0),
-            new Animator.AnimatorPos(9, 0),
-    };
 
     private Animator energizerAnimator;
 
@@ -71,7 +66,7 @@ public class World {
 
 
         //Energizer animator
-        energizerAnimator = Animator.getNonDirAnimator(30, ANIMATOR_POS);
+        energizerAnimator = AnimatorLib.ENERGIZER_ANIMATOR;
     }
 
 
@@ -259,7 +254,6 @@ public class World {
         tiles().filter(this::hasFoodAt).filter(Predicate.not(this::hasEatenFoodAt)).forEach(tile -> {
                 drawFoodAt(tile, gc);
         });
-        energizerAnimator.update();
     }
 
     private void drawFoodAt(Vector2i tile, GraphicsContext gc) {
@@ -268,6 +262,10 @@ public class World {
         } else if (content(tile) == T_ENERGIZER) {
             gc.drawImage(energizer, energizerAnimator.getAnimationPos().posX(), energizerAnimator.getAnimationPos().posY(), 8, 8, tile.x() * TILE_SIZE, tile.y() * TILE_SIZE, TILE_SIZE, TILE_SIZE);
         }
+    }
+
+    public void animatorUpdate() {
+        energizerAnimator.update();
     }
 
 

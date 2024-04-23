@@ -2,14 +2,21 @@ package utc.hiep.pacmanjavafx.scene;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import utc.hiep.pacmanjavafx.lib.AnimatorLib;
 import utc.hiep.pacmanjavafx.lib.ImageLibrary;
+import utc.hiep.pacmanjavafx.model.Animator;
 import utc.hiep.pacmanjavafx.model.entity.Pacman;
 import utc.hiep.pacmanjavafx.model.world.PacmanMap;
 import utc.hiep.pacmanjavafx.model.world.World;
 
+import java.util.function.Consumer;
+
 import static utc.hiep.pacmanjavafx.lib.Global.*;
+import static utc.hiep.pacmanjavafx.model.level.GameModel.FPS;
+import static utc.hiep.pacmanjavafx.model.level.GameModel.PPS_AT_100_PERCENT;
 
 public class GameView extends GeneralScene{
     public static final int GAME_WIDTH = TILE_SIZE * TILES_X;   //all size is pixel
@@ -23,7 +30,6 @@ public class GameView extends GeneralScene{
 
     private World world;
     private Pacman pacman;
-
 
 
     /**
@@ -50,6 +56,7 @@ public class GameView extends GeneralScene{
 
         //Pacman
         pacman = new Pacman("PACMAN");
+
     }
 
 
@@ -77,12 +84,15 @@ public class GameView extends GeneralScene{
     public void render() {
         gc.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT); //clear last frame rendering
 
-        if(isGridDisplayed)
+        if (isGridDisplayed)
             drawTileSystem();
 
         world.drawMap(gc);
         pacman.render(gc);
     }
+
+
+
 
 
 
@@ -100,4 +110,5 @@ public class GameView extends GeneralScene{
             }
         }
     }
+
 }

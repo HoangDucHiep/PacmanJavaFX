@@ -9,8 +9,8 @@ public class WelcomeScene extends GeneralScene {
 
     @Override
     public void render() {
-
     }
+
 
     private void showWelcomeMessage() {
     }

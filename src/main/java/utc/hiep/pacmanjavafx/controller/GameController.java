@@ -13,8 +13,9 @@ import utc.hiep.pacmanjavafx.model.Timer;
 
 import java.util.List;
 import java.util.Stack;
+import java.util.function.Consumer;
 
-import static utc.hiep.pacmanjavafx.lib.Global.*;
+import static utc.hiep.pacmanjavafx.model.level.GameModel.*;
 
 public class GameController {
     private final GameView gameView;
@@ -27,34 +28,67 @@ public class GameController {
 
     private KeyListener kl;
 
+    private int score;
+
     public GameController() {
         this.gameView = new GameView();
         timer = new Timer();
+        score = 0;
         map = gameView.getWorld();
         pacman = gameView.getPacman();
-        pacman.setTicker(timer);
         kl = new KeyListener(gameView);
         running();
     }
 
-
-
-    public void running() {
+    private void running() {
         new AnimationTimer() {
+            private static final float timeStep = 1.0f / 60;   //FPS = 60, 1.0f is one second, 0.01667f
+            private float accumulatedTime = 0;
+
+            private long previousTime = 0;
+            final float maxDelta = 0.05f;
+
             @Override
-            public void handle(long now) {
-                keyHander();
-                if(!timer.isPaused()) {
-                    timer.updateTimer();
-                    movePacman();
-                    handlePacmanEatFoot();
-                    gameView.render();
-//                System.out.println("Current tick: " + timer.getTick());
-//                System.out.println("Current second: " + timer.getSecondTimer());
+            public void handle(long currentTime)
+            {
+                if (previousTime == 0) {
+                    previousTime = currentTime;
+                    return;
                 }
 
+                float secondsElapsed = (currentTime - previousTime) / 1e9f;
+                float secondsElapsedCapped = Math.min(secondsElapsed, maxDelta);
+                accumulatedTime += secondsElapsedCapped;
+                previousTime = currentTime;
+
+                while (accumulatedTime >= timeStep) {
+                    update();
+                    accumulatedTime -= timeStep;
+                }
+
+                gameView.render();
+            }
+
+            @Override
+            public void stop()
+            {
+                previousTime = 0;
+                accumulatedTime = 0;
+                super.stop();
             }
         }.start();
+    }
+
+
+    private void update() {
+        timer.updateTimer();
+        keyHandler();
+        updateAnimator();
+        if (timer.isPaused()) {
+            return;
+        }
+        movePacman();
+        handlePacmanEatFoot();
     }
 
 
@@ -104,17 +138,29 @@ public class GameController {
         }
     }
 
+    public void updateAnimator() {
+        pacman.animatorUpdate();
+        map.animatorUpdate();
+    }
+
     private void handlePacmanEatFoot() {
         Vector2i currentTile = pacman.atTile();
         if(map.hasFoodAt(currentTile) && !map.hasEatenFoodAt(currentTile)) {
             map.removeFood(currentTile);
+            if(map.isEnergizerTile(currentTile)) {
+                score += ENERGIZER_POINT;
+            } else {
+                score += PELLET_POINT;
+            }
+
+            System.out.println("Current score: " + score);
         }
     }
 
 
 
 
-    public void keyHander() {
+    public void keyHandler() {
         kl.keyListening();
         pressedKey = kl.getPressedKey();
 

@@ -21,16 +21,28 @@ public class KeyListener {
             public void	handle(KeyEvent e){
 
                 switch(e.getCode()) {
-                    case UP, W -> {pressedKey.add(KeyType.TURN_UP);
-                        System.out.println("Pressed Up");}
-                    case DOWN, S -> {pressedKey.add(KeyType.TURN_DOWN);
-                        System.out.println("Pressed Down");}
-                    case LEFT, A -> {pressedKey.add(KeyType.TURN_LEFT);
-                        System.out.println("Pressed Left");}
-                    case RIGHT, D -> {pressedKey.add(KeyType.TURN_RIGHT);
-                        System.out.println("Pressed Right");}
-                    case G -> {pressedKey.add(KeyType.GRID_SWITCH);}
-                    case P -> {pressedKey.add(KeyType.PAUSE);}
+                    case UP, W -> {
+                        pressedKey.add(KeyType.TURN_UP);
+                        System.out.println("Pressed Up");
+                    }
+                    case DOWN, S -> {
+                        pressedKey.add(KeyType.TURN_DOWN);
+                        System.out.println("Pressed Down");
+                    }
+                    case LEFT, A -> {
+                        pressedKey.add(KeyType.TURN_LEFT);
+                        System.out.println("Pressed Left");
+                    }
+                    case RIGHT, D -> {
+                        pressedKey.add(KeyType.TURN_RIGHT);
+                        System.out.println("Pressed Right");
+                    }
+                    case G -> {
+                        pressedKey.add(KeyType.GRID_SWITCH);
+                    }
+                    case P -> {
+                        pressedKey.add(KeyType.PAUSE);
+                    }
                     default -> System.out.println("Hello");
                 }
             }

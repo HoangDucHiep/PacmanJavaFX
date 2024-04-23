@@ -3,7 +3,7 @@ package utc.hiep.pacmanjavafx.model;
 import javafx.animation.AnimationTimer;
 
 public class Timer {
-    private static final long ONE_SECOND = 1_000_000_000; // One second in nanoseconds
+    public static final long ONE_SECOND = 1_000_000_000; // One second in nanoseconds
     private static final long ONE_MILISECOND = 1_000; // One second in milisecond
 
     private long tick;                          //tick time

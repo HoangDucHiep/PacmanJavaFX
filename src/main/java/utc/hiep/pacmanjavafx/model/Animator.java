@@ -2,26 +2,21 @@ package utc.hiep.pacmanjavafx.model;
 
 import utc.hiep.pacmanjavafx.lib.Direction;
 
+
+/**
+ * Class for animation, update and return the current frame position in each rendering
+ * @author HoangHiep
+ * @version 1.0
+ * @implNote This class is used for both non-direction and direction animation
+ * @see #getNonDirAnimator(int, AnimatorPos[])
+ * @see #update()
+ * @see #getDirAnimator(int, AnimatorPos[], AnimatorPos[], AnimatorPos[], AnimatorPos[])
+ * @see #update(Direction)
+ * @see #getAnimationPos()
+ * @see AnimatorPos
+ */
+
 public class Animator {
-
-    public static class AnimatorPos {
-        private int posX;
-        private int posY;
-
-        public AnimatorPos(int posX, int posY) {
-            this.posX = posX;
-            this.posY = posY;
-        }
-
-        public int posX() {
-            return posX;
-        }
-
-        public int posY() {
-            return posY;
-        }
-    }
-
     //For animation
     private int animationCount;
     private int animationDir;
@@ -73,7 +68,6 @@ public class Animator {
 
 
     /* Direction animator */
-
     private static final int LEFT = 0;
     private static final int RIGHT = 1;
     private static final int UP = 2;
@@ -133,6 +127,43 @@ public class Animator {
         while(ticksCount >= changeRate) {
             animationCount = (animationCount + 1) % ANIMATOR_SPRITE[0].length;
             ticksCount -= changeRate;
+        }
+    }
+
+
+    /**
+     * Position of a frame in sprite sheet, have x and y position
+    * */
+    public static class AnimatorPos {
+        private int posX;
+        private int posY;
+
+
+        /**
+         * Create a frame position in sprite sheet
+         * @param posX
+         * @param posY
+         */
+        public AnimatorPos(int posX, int posY) {
+            this.posX = posX;
+            this.posY = posY;
+        }
+
+        /**
+         * Get the x position
+         * @return the x
+         */
+        public int posX() {
+            return posX;
+        }
+
+
+        /**
+         * Get the y position
+         * @return the y
+         */
+        public int posY() {
+            return posY;
         }
     }
 }
