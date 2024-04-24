@@ -65,61 +65,9 @@ public class GameLevel {
 
 
     public void update() {
-        movePacman();
-        handlePacmanEatFoot();
+
     }
 
 
-    public void movePacman() {
-        iVector2D currentTile = pacman.atTile();
 
-        /* Handle turn back instantly */
-        if(pacman.movingDir().opposite().equals(pacman.nextDir())) {
-            pacman.turnBackInstantly();
-            return;
-        }
-
-        /*  handle pacman be blocked by wall or smth */
-        if(!pacman.canAccessTile(pacman.tilesAhead(1), world) && pacman.offset().almostEquals(fVector2D.ZERO, pacman.currentSpeed(),  pacman.currentSpeed())) {
-            if(!pacman.isStanding()) {
-                pacman.placeAtTile(currentTile.toFloatVec());
-                pacman.standing();
-            }
-        }
-        /*  handle pacman at intersection */
-        else if(world.isIntersection(currentTile)) {
-            //if pacman haven't aligned to tile, but almost aligned, then aligned it
-            if(pacman.isNewTileEntered() && pacman.offset().almostEquals(fVector2D.ZERO, pacman.currentSpeed(), pacman.currentSpeed())) {
-                pacman.placeAtTile(currentTile.toFloatVec());
-            }
-        }
-        //Handle if pacman gothrough portal
-        else if(world.belongsToPortal(currentTile)) {
-            if(!world.belongsToPortal(pacman.tilesAhead(1))) {
-                iVector2D teleportTo = world.portals().otherTunnel(currentTile);
-                pacman.placeAtTile(teleportTo.toFloatVec());
-            }
-        }
-
-        /* Handle if pacman be blocked in next turn, it'll keep moving in current direction*/
-        if(pacman.isAlignedToTile()) {
-            if(pacman.canAccessTile(currentTile.plus(pacman.nextDir().vector()), world)) {
-                pacman.setMovingDir(pacman.nextDir());
-            }
-        }
-
-
-        // If pacman is not standing, it can move :)))
-        if(!pacman.isStanding()) {
-            pacman.move();
-        }
-    }
-
-
-    private void handlePacmanEatFoot() {
-        iVector2D currentTile = pacman.atTile();
-        if(world.hasFoodAt(currentTile) && !world.hasEatenFoodAt(currentTile)) {
-            world.removeFood(currentTile);
-        }
-    }
 }

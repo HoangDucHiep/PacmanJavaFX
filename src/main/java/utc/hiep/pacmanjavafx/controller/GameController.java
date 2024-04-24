@@ -4,6 +4,8 @@ import javafx.animation.AnimationTimer;
 import utc.hiep.pacmanjavafx.event.KeyListener;
 import utc.hiep.pacmanjavafx.event.KeyType;
 import utc.hiep.pacmanjavafx.lib.Direction;
+import utc.hiep.pacmanjavafx.lib.fVector2D;
+import utc.hiep.pacmanjavafx.lib.iVector2D;
 import utc.hiep.pacmanjavafx.model.entity.Pacman;
 import utc.hiep.pacmanjavafx.model.level.GameLevel;
 import utc.hiep.pacmanjavafx.model.world.World;
@@ -17,7 +19,7 @@ public class GameController {
     private final GameView gameView;
     private List<KeyType> pressedKey = new Stack<>();
 
-    private final World map;
+    private final World world;
     private Timer timer;
     private Pacman pacman;
 
@@ -35,10 +37,10 @@ public class GameController {
 
         gameLevel = new GameLevel();
 
-        map = gameLevel.getWorld();
+        world = gameLevel.getWorld();
         pacman = gameLevel.getPacman();
 
-        gameView.setGameEntity(pacman, map);
+        gameView.setGameEntity(pacman, world);
 
         kl = new KeyListener(gameView);
         running();
@@ -91,7 +93,62 @@ public class GameController {
         if (timer.isPaused()) {
             return;
         }
+        movePacman();
+        handlePacmanEatFoot();
         gameLevel.update();
+    }
+
+    public void movePacman() {
+        iVector2D currentTile = pacman.atTile();
+
+        /* Handle turn back instantly */
+        if(pacman.movingDir().opposite().equals(pacman.nextDir())) {
+            pacman.turnBackInstantly();
+            return;
+        }
+
+        /*  handle pacman be blocked by wall or smth */
+        if(!pacman.canAccessTile(pacman.tilesAhead(1), world) && pacman.offset().almostEquals(fVector2D.ZERO, pacman.currentSpeed(),  pacman.currentSpeed())) {
+            if(!pacman.isStanding()) {
+                pacman.placeAtTile(currentTile.toFloatVec());
+                pacman.standing();
+            }
+        }
+        /*  handle pacman at intersection */
+        else if(world.isIntersection(currentTile)) {
+            //if pacman haven't aligned to tile, but almost aligned, then aligned it
+            if(pacman.isNewTileEntered() && pacman.offset().almostEquals(fVector2D.ZERO, pacman.currentSpeed(), pacman.currentSpeed())) {
+                pacman.placeAtTile(currentTile.toFloatVec());
+            }
+        }
+        //Handle if pacman gothrough portal
+        else if(world.belongsToPortal(currentTile)) {
+            if(!world.belongsToPortal(pacman.tilesAhead(1))) {
+                iVector2D teleportTo = world.portals().otherTunnel(currentTile);
+                pacman.placeAtTile(teleportTo.toFloatVec());
+            }
+        }
+
+        /* Handle if pacman be blocked in next turn, it'll keep moving in current direction*/
+        if(pacman.isAlignedToTile()) {
+            if(pacman.canAccessTile(currentTile.plus(pacman.nextDir().vector()), world)) {
+                pacman.setMovingDir(pacman.nextDir());
+            }
+        }
+
+
+        // If pacman is not standing, it can move :)))
+        if(!pacman.isStanding()) {
+            pacman.move();
+        }
+    }
+
+
+    private void handlePacmanEatFoot() {
+        iVector2D currentTile = pacman.atTile();
+        if(world.hasFoodAt(currentTile) && !world.hasEatenFoodAt(currentTile)) {
+            world.removeFood(currentTile);
+        }
     }
 
 
@@ -100,12 +157,8 @@ public class GameController {
 
     private void updateAnimator() {
         pacman.animatorUpdate();
-        map.animatorUpdate();
+        world.animatorUpdate();
     }
-
-
-
-
 
 
     public void keyHandler() {

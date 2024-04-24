@@ -82,6 +82,7 @@ public class Ghost extends MovableEntity{
 
 
 
+
     @Override
     public String name() {
         return name;
