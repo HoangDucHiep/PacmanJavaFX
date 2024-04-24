@@ -47,8 +47,8 @@ public class Timer {
         return second;
     }
 
-    public void switchPause(long updateTime) {
-        lastUpdate = updateTime;
+    public void switchPause() {
+        lastUpdate = System.nanoTime();
         isPaused = !isPaused;
     }
 

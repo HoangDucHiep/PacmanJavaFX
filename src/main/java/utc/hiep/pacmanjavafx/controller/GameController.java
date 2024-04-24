@@ -7,6 +7,8 @@ import utc.hiep.pacmanjavafx.lib.Direction;
 import utc.hiep.pacmanjavafx.lib.Vector2f;
 import utc.hiep.pacmanjavafx.lib.Vector2i;
 import utc.hiep.pacmanjavafx.model.entity.Pacman;
+import utc.hiep.pacmanjavafx.model.level.GameLevel;
+import utc.hiep.pacmanjavafx.model.level.GameModel;
 import utc.hiep.pacmanjavafx.model.world.World;
 import utc.hiep.pacmanjavafx.scene.GameView;
 import utc.hiep.pacmanjavafx.model.Timer;
@@ -15,15 +17,17 @@ import java.util.List;
 import java.util.Stack;
 import java.util.function.Consumer;
 
+import static utc.hiep.pacmanjavafx.event.KeyType.GRID_SWITCH;
 import static utc.hiep.pacmanjavafx.model.level.GameModel.*;
 
 public class GameController {
     private final GameView gameView;
-    private List<KeyType> pressedKey = new Stack<>();
 
     private final World map;
     private Timer timer;
     private Pacman pacman;
+
+    private GameLevel gameLevel;
 
 
     private KeyListener kl;
@@ -37,6 +41,7 @@ public class GameController {
         map = gameView.getWorld();
         pacman = gameView.getPacman();
         kl = new KeyListener(gameView);
+        gameLevel = new GameLevel(new GameLevel.Data(1, false, RAW_LEVEL_DATA[1]),  map, pacman, kl);
         running();
     }
 
@@ -44,7 +49,6 @@ public class GameController {
         new AnimationTimer() {
             private static final float timeStep = 1.0f / 60;   //FPS = 60, 1.0f is one second, 0.01667f
             private float accumulatedTime = 0;
-
             private long previousTime = 0;
             final float maxDelta = 0.05f;
 
@@ -83,12 +87,10 @@ public class GameController {
     private void update() {
         timer.updateTimer();
         keyHandler();
-        updateAnimator();
         if (timer.isPaused()) {
             return;
         }
-        movePacman();
-        handlePacmanEatFoot();
+        gameLevel.update();
     }
 
 
@@ -148,9 +150,9 @@ public class GameController {
         if(map.hasFoodAt(currentTile) && !map.hasEatenFoodAt(currentTile)) {
             map.removeFood(currentTile);
             if(map.isEnergizerTile(currentTile)) {
-                score += ENERGIZER_POINT;
+                score += POINTS_NORMAL_PELLET;
             } else {
-                score += PELLET_POINT;
+                score += POINTS_ENERGIZER;
             }
 
             System.out.println("Current score: " + score);
@@ -162,23 +164,12 @@ public class GameController {
 
     public void keyHandler() {
         kl.keyListening();
-        pressedKey = kl.getPressedKey();
-
-        for (KeyType key : pressedKey) {
+        for (KeyType key : kl.getPressedKey()) {
             if(key == KeyType.PAUSE) {
-                timer.switchPause(System.nanoTime());
+                timer.switchPause();
             }
-            if(!timer.isPaused()) {
-                switch (key) {
-                    case TURN_UP -> pacman.setNextDir(Direction.UP);
-                    case TURN_DOWN -> pacman.setNextDir(Direction.DOWN);
-                    case TURN_LEFT -> pacman.setNextDir(Direction.LEFT);
-                    case TURN_RIGHT -> pacman.setNextDir(Direction.RIGHT);
-                    case GRID_SWITCH -> gameView.switchGridDisplay();
-                }
-            }
+            if( key == GRID_SWITCH) { gameView.switchGridDisplay();}
         }
-        kl.clearKey();
     }
 
     public GameView getGameView() {
