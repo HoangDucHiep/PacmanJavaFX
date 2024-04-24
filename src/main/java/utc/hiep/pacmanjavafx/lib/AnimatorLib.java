@@ -3,6 +3,11 @@ package utc.hiep.pacmanjavafx.lib;
 import utc.hiep.pacmanjavafx.model.Animator;
 import utc.hiep.pacmanjavafx.model.level.GameModel;
 
+
+/**
+ * Library for all animators
+ * @implNote Position of each sprite calculated based on the sprite sheet in {@link ImageLibrary#SPRITE_SHEET},
+ */
 public class AnimatorLib {
 
     /*For pacman*/
@@ -41,11 +46,147 @@ public class AnimatorLib {
             new Animator.AnimatorPos(9, 0),
     };
 
+
+    /* For GHOST */
+        /* for RED one */
+    private static final Animator.AnimatorPos[] RED_LEFT = new Animator.AnimatorPos[] {
+            new Animator.AnimatorPos(0, 64),
+            new Animator.AnimatorPos(32, 64),
+    };
+
+    private static final Animator.AnimatorPos[] RED_RIGHT = new Animator.AnimatorPos[] {
+            new Animator.AnimatorPos(48, 64),
+            new Animator.AnimatorPos(64, 64),
+    };
+
+    private static final Animator.AnimatorPos[] RED_UP = new Animator.AnimatorPos[] {
+            new Animator.AnimatorPos(80, 64),
+            new Animator.AnimatorPos(96, 64),
+    };
+
+    private static final Animator.AnimatorPos[] RED_DOWN = new Animator.AnimatorPos[] {
+            new Animator.AnimatorPos(112, 64),
+            new Animator.AnimatorPos(128, 64),
+    };
+        /* for PINK one */
+    private static final Animator.AnimatorPos[] PINK_LEFT = new Animator.AnimatorPos[] {
+            new Animator.AnimatorPos(0, 80),
+            new Animator.AnimatorPos(32, 80),
+    };
+
+    private static final Animator.AnimatorPos[] PINK_RIGHT = new Animator.AnimatorPos[] {
+            new Animator.AnimatorPos(48, 80),
+            new Animator.AnimatorPos(64, 80),
+    };
+
+    private static final Animator.AnimatorPos[] PINK_UP = new Animator.AnimatorPos[] {
+            new Animator.AnimatorPos(80, 80),
+            new Animator.AnimatorPos(96, 80),
+    };
+
+    private static final Animator.AnimatorPos[] PINK_DOWN = new Animator.AnimatorPos[] {
+            new Animator.AnimatorPos(112, 80),
+            new Animator.AnimatorPos(128, 80),
+    };
+        /* for CYAN one */
+
+    private static final Animator.AnimatorPos[] CYAN_LEFT = new Animator.AnimatorPos[] {
+            new Animator.AnimatorPos(0, 96),
+            new Animator.AnimatorPos(32, 96),
+    };
+
+    private static final Animator.AnimatorPos[] CYAN_RIGHT = new Animator.AnimatorPos[] {
+            new Animator.AnimatorPos(48, 96),
+            new Animator.AnimatorPos(64, 96),
+    };
+
+    private static final Animator.AnimatorPos[] CYAN_UP = new Animator.AnimatorPos[] {
+            new Animator.AnimatorPos(80, 96),
+            new Animator.AnimatorPos(96, 96),
+    };
+
+    private static final Animator.AnimatorPos[] CYAN_DOWN = new Animator.AnimatorPos[] {
+            new Animator.AnimatorPos(112, 96),
+            new Animator.AnimatorPos(128, 96),
+    };
+
+        /* for ORANGE one */
+    private static final Animator.AnimatorPos[] ORANGE_LEFT = new Animator.AnimatorPos[] {
+            new Animator.AnimatorPos(0, 112),
+            new Animator.AnimatorPos(32, 112),
+    };
+
+    private static final Animator.AnimatorPos[] ORANGE_RIGHT = new Animator.AnimatorPos[] {
+            new Animator.AnimatorPos(48, 112),
+            new Animator.AnimatorPos(64, 112),
+    };
+
+    private static final Animator.AnimatorPos[] ORANGE_UP = new Animator.AnimatorPos[] {
+            new Animator.AnimatorPos(80, 112),
+            new Animator.AnimatorPos(96, 112),
+    };
+
+    private static final Animator.AnimatorPos[] ORANGE_DOWN = new Animator.AnimatorPos[] {
+            new Animator.AnimatorPos(112, 112),
+            new Animator.AnimatorPos(128, 112),
+    };
+
+        /* for FRIGHTENED one */
+    private static final Animator.AnimatorPos[] FRIGHTENED = new Animator.AnimatorPos[] {
+            new Animator.AnimatorPos(144, 64),
+            new Animator.AnimatorPos(160, 64),
+            new Animator.AnimatorPos(176, 64),
+            new Animator.AnimatorPos(192, 64),
+    };
+
+
+
     /**
-     * Animator for pacman
+     * Animator for Pacman
      */
     public static final Animator PACMAN_ANIMATOR = Animator.getDirAnimator(GameModel.PACMAN_ANIMATION_RATE, PACMAN_LEFT, PACMAN_RIGHT, PACMAN_UP, PACMAN_DOWN);
 
+    /**
+     * Animator for Energizer
+     */
     public static final Animator ENERGIZER_ANIMATOR = Animator.getNonDirAnimator(GameModel.ENERGIZER_BLINKING_RATE, ENERGIZER_ANIM_POS);
+
+
+    /**
+     * Animator for Red-Ghosts
+     */
+    private static final Animator RED_ANIMATOR = Animator.getDirAnimator(GameModel.GHOST_ANIMATION_RATE, RED_LEFT, RED_RIGHT, RED_UP, RED_DOWN);
+
+    /**
+     * Animator for Pink-Ghosts
+     */
+    private static final Animator PINK_ANIMATOR = Animator.getDirAnimator(GameModel.GHOST_ANIMATION_RATE, PINK_LEFT, PINK_RIGHT, PINK_UP, PINK_DOWN);
+
+    /**
+     * Animator for Cyan-Ghosts
+     */
+    private static final Animator CYAN_ANIMATOR = Animator.getDirAnimator(GameModel.GHOST_ANIMATION_RATE, CYAN_LEFT, CYAN_RIGHT, CYAN_UP, CYAN_DOWN);
+
+    /**
+     * Animator for Orange-Ghosts
+     */
+    private static final Animator ORANGE_ANIMATOR = Animator.getDirAnimator(GameModel.GHOST_ANIMATION_RATE, ORANGE_LEFT, ORANGE_RIGHT, ORANGE_UP, ORANGE_DOWN);
+
+    /**
+     * Animator for Frightened-Ghosts
+     */
+    private static final Animator FRIGHTENED_ANIMATOR = Animator.getDirAnimator(GameModel.GHOST_ANIMATION_RATE, FRIGHTENED, FRIGHTENED, FRIGHTENED, FRIGHTENED);
+
+
+    /**
+     * Get animator for ghost, index is one of
+     * {@link GameModel#RED_GHOST},
+     * {@link GameModel#PINK_GHOST},
+     * {@link GameModel#CYAN_GHOST},
+     * {@link GameModel#ORANGE_GHOST},
+     * {@link GameModel#FRIGHTENED_GHOST}
+     */
+    public static final Animator[] GHOST_ANIMATOR = {RED_ANIMATOR, PINK_ANIMATOR, CYAN_ANIMATOR, ORANGE_ANIMATOR, FRIGHTENED_ANIMATOR};
+
 
 }

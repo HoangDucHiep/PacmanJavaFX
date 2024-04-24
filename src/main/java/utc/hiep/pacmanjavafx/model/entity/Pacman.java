@@ -2,11 +2,11 @@ package utc.hiep.pacmanjavafx.model.entity;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import utc.hiep.pacmanjavafx.lib.AnimatorLib;
 import utc.hiep.pacmanjavafx.lib.ImageLibrary;
-import utc.hiep.pacmanjavafx.lib.Vector2i;
+import utc.hiep.pacmanjavafx.lib.iVector2D;
 import utc.hiep.pacmanjavafx.model.Animator;
-import utc.hiep.pacmanjavafx.model.world.PacmanMap;
 import utc.hiep.pacmanjavafx.model.world.World;
 
 import static utc.hiep.pacmanjavafx.lib.Global.*;
@@ -21,19 +21,15 @@ public class Pacman extends MovableEntity{
     private static final int PAC_UI_SIZE = 15;  //size of pacman int sprite_sheet.png
 
     //UI part
-    private final Image spriteSheet;
-    private final Animator animator;
+    private final Image spriteSheet = ImageLibrary.SPRITE_SHEET;
+    private final Animator animator = AnimatorLib.PACMAN_ANIMATOR;
 
     public Pacman(String name) {
         super();
         //set animation sprite ui
+        checkNotNull(name);
         this.name = name;
-        spriteSheet = ImageLibrary.SPRITE_SHEET;
-        animator = AnimatorLib.PACMAN_ANIMATOR;
         reset();
-        setDefaultSpeed(PACMAN_DEFAULT_SPEED);
-        setPercentageSpeed((byte) 80);
-        placeAtTile(PacmanMap.PAC_POSITION);
     }
 
 
@@ -49,7 +45,7 @@ public class Pacman extends MovableEntity{
     }
 
     @Override
-    public boolean canAccessTile(Vector2i tile, World world) {
+    public boolean canAccessTile(iVector2D tile, World world) {
         if (world.house().contains(tile)) {
             return false;
         }
@@ -76,5 +72,7 @@ public class Pacman extends MovableEntity{
     public void render(GraphicsContext gc) {
         gc.drawImage(spriteSheet, animator.getAnimationPos().posX(), animator.getAnimationPos().posY(), PAC_UI_SIZE, PAC_UI_SIZE, posX() - HALF_TILE_SIZE, posY() - HALF_TILE_SIZE, 32, 32);
     }
+
+
 
 }

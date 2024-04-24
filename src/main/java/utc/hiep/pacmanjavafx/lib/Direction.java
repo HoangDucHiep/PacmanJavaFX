@@ -26,13 +26,13 @@ public enum Direction {
         return dirs;
     }
 
-    private final Vector2i vector;
+    private final iVector2D vector;
 
     Direction(int x, int y) {
-        vector = new Vector2i(x, y);
+        vector = new iVector2D(x, y);
     }
 
-    public Vector2i vector() {
+    public iVector2D vector() {
         return vector;
     }
 

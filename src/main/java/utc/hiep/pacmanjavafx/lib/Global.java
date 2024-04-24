@@ -38,7 +38,7 @@ public class Global {
      * @param position a position
      * @return tile containing given position
      */
-    public static Vector2i tileAt(Vector2f position) {
+    public static iVector2D tileAt(fVector2D position) {
         checkNotNull(position);
         return tileAt(position.x(), position.y());
     }
@@ -49,8 +49,8 @@ public class Global {
      * @param y y position
      * @return tile containing given position
      */
-    public static Vector2i tileAt(float x, float y) {
-        return new Vector2i((int) (x / TILE_SIZE), (int) (y / TILE_SIZE));
+    public static iVector2D tileAt(float x, float y) {
+        return new iVector2D((int) (x / TILE_SIZE), (int) (y / TILE_SIZE));
     }
 
 
@@ -59,8 +59,8 @@ public class Global {
      * @param tileY tile y Index
      * @return position half tile right of tile origin
      */
-    public static Vector2f halfTileRightOf(int tileX, int tileY) {
-        return new Vector2f((float) (TILE_SIZE * tileX + HALF_TILE_SIZE) / TILE_SIZE, tileY);
+    public static fVector2D halfTileRightOf(int tileX, int tileY) {
+        return new fVector2D((float) (TILE_SIZE * tileX + HALF_TILE_SIZE) / TILE_SIZE, tileY);
     }
 
 
@@ -69,8 +69,8 @@ public class Global {
      * @param tileY tile y index
      * @return position the center of the given tile in coordinate base
      */
-    public static Vector2f centerOfTile(int tileX, int tileY) {
-        return new Vector2f(TILE_SIZE * tileX + HALF_TILE_SIZE, TILE_SIZE * tileY + HALF_TILE_SIZE);
+    public static fVector2D centerOfTile(int tileX, int tileY) {
+        return new fVector2D(TILE_SIZE * tileX + HALF_TILE_SIZE, TILE_SIZE * tileY + HALF_TILE_SIZE);
     }
 
 
@@ -78,8 +78,8 @@ public class Global {
      * @param tile tile in grid
      * @return position of the given tile in coordinate base
      */
-    public static Vector2f centerOfTile(Vector2i tile) {
-        return new Vector2f(TILE_SIZE * tile.x() + HALF_TILE_SIZE, TILE_SIZE * tile.y() + HALF_TILE_SIZE);
+    public static fVector2D centerOfTile(iVector2D tile) {
+        return new fVector2D(TILE_SIZE * tile.x() + HALF_TILE_SIZE, TILE_SIZE * tile.y() + HALF_TILE_SIZE);
     }
 
 

@@ -28,6 +28,7 @@ public class GameView extends GeneralScene{
     private GraphicsContext gc;
 
 
+    //Game entity
     private World world;
     private Pacman pacman;
 
@@ -52,18 +53,22 @@ public class GameView extends GeneralScene{
 
 
         //World
-        world = PacmanMap.createPacManWorld();
+        //world = PacmanMap.createPacManWorld();
 
         //Pacman
-        pacman = new Pacman("PACMAN");
+        //pacman = new Pacman("PACMAN");
+    }
 
+    public void setGameEntity(Pacman pacman, World world) {
+        this.pacman = pacman;
+        this.world = world;
     }
 
 
     /**
      * Set background for main pane
      */
-    public void setBackGround() {
+    private void setBackGround() {
         BackgroundImage background = new BackgroundImage(ImageLibrary.BACKGROUND_IMAGE, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT);
         getRootPane().setBackground(new Background(background));
     }

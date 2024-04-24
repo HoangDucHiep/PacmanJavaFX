@@ -1,9 +1,8 @@
 package utc.hiep.pacmanjavafx.model.entity;
 
 import utc.hiep.pacmanjavafx.lib.Direction;
-import utc.hiep.pacmanjavafx.lib.Global;
-import utc.hiep.pacmanjavafx.lib.Vector2f;
-import utc.hiep.pacmanjavafx.lib.Vector2i;
+import utc.hiep.pacmanjavafx.lib.fVector2D;
+import utc.hiep.pacmanjavafx.lib.iVector2D;
 import utc.hiep.pacmanjavafx.model.world.World;
 
 import java.util.Optional;
@@ -12,12 +11,12 @@ import static utc.hiep.pacmanjavafx.lib.Global.*;
 
 public abstract class MovableEntity extends Entity {
 
-    private Direction movingDir;
-    private Direction nextDir;
-    private Vector2i targetTile;
+    private Direction movingDir;                //current moving direction
+    private Direction nextDir;                  //next (wish) moving direction
+    private iVector2D targetTile;               //target tile to move to
 
-    private float defaultSpeed;
-    private float currentSpeed;
+    private float defaultSpeed;                 //Base speed (per tick)
+    private float currentSpeed;                 //Speed after percentage adjustment (per tick)
 
 
     protected boolean newTileEntered;
@@ -32,7 +31,6 @@ public abstract class MovableEntity extends Entity {
     private float accY;
 
     private boolean isStanding;
-    private boolean isAligned;
 
     public MovableEntity() {
         super();
@@ -42,9 +40,7 @@ public abstract class MovableEntity extends Entity {
         accY = 0;
     }
 
-    public void
-
-    reset() {
+    public void reset() {
         super.reset();
         movingDir = Direction.LEFT;
         nextDir = Direction.LEFT;
@@ -55,16 +51,29 @@ public abstract class MovableEntity extends Entity {
         isStanding = false;
     }
 
-
+    /**
+     * Set base speed for entity
+     * @param pixelsPerTick
+     */
     public void setDefaultSpeed(float pixelsPerTick) {
         defaultSpeed = pixelsPerTick;
     }
 
-    public Vector2f velocity() {
-        return new Vector2f(velX, velY);
+
+    /**
+     * Get current velocity
+     * @return a Velocity in Vector
+     */
+    public fVector2D velocity() {
+        return new fVector2D(velX, velY);
     }
 
-    public void setVelocity(Vector2f velocity) {
+
+    /**
+     * Set velocity
+     * @param velocity
+     */
+    public void setVelocity(fVector2D velocity) {
         checkNotNull(velocity);
         velX = velocity.x();
         velY = velocity.y();
@@ -77,11 +86,11 @@ public abstract class MovableEntity extends Entity {
     }
 
 
-    public Vector2f acceleration() {
-        return new Vector2f(accX, accY);
+    public fVector2D acceleration() {
+        return new fVector2D(accX, accY);
     }
 
-    public void setAcceleration(Vector2f acceleration) {
+    public void setAcceleration(fVector2D acceleration) {
         checkNotNull(acceleration, "Acceleration of entity must not be null");
         accX = acceleration.x();
         accY = acceleration.y();
@@ -93,8 +102,11 @@ public abstract class MovableEntity extends Entity {
     }
 
 
+    /**
+     * Move entity to next pos in current direction with velocity in one frame
+     */
     public void move() {
-        Vector2i prevTile = atTile();
+        iVector2D prevTile = atTile();
         setPosition(posX() + velX, posY() + velY);
         velX += accX;
         velY += accY;
@@ -105,10 +117,16 @@ public abstract class MovableEntity extends Entity {
     }
 
 
-
+    /**
+     * Get entity name
+     * @return
+     */
     public abstract String name();
 
-
+    /**
+     * Check if entity can reverse direction
+     * @return true if it can turn back, false otherwise
+     */
     public abstract boolean canTurnBack();
 
 
@@ -116,32 +134,50 @@ public abstract class MovableEntity extends Entity {
      * @param tile some tile inside or outside the world
      * @return if this creature can access the given tile
      */
-    public abstract boolean canAccessTile(Vector2i tile, World world);
+    public abstract boolean canAccessTile(iVector2D tile, World world);
 
 
-    public void setTargetTile(Vector2i tile) {
+    /**
+     * Set tile to move to
+     * @param tile
+     */
+    public void setTargetTile(iVector2D tile) {
         targetTile = tile;
     }
 
 
-    public Optional<Vector2i> targetTile() {
+    public Optional<iVector2D> targetTile() {
         return Optional.ofNullable(targetTile);
     }
 
 
+    /**
+     * Place entity at given position
+     * @param tx position X in tile map system
+     * @param ty position Y in tile map system
+     * @param ox offset of entity and tile in X
+     * @param oy offset of entity and tile in Y
+     */
     public void placeAtTile(float tx, float ty, float ox, float oy) {
         var prevTile = atTile();
         setPosition(tx * TILE_SIZE + ox, ty * TILE_SIZE + oy);
         newTileEntered = !atTile().equals(prevTile);
-        isAligned = true;
     }
 
 
-    public void placeAtTile(Vector2f tile) {
+    /**
+     * Place entity at given tile
+     * @param tile tile to place entity at
+     */
+    public void placeAtTile(fVector2D tile) {
         placeAtTile(tile.x(), tile.y(), 0, 0);
     }
 
 
+    /**
+     * Set moving direction - turn entity to move in this direction
+     * @param dir direction to move
+     */
     public void setMovingDir(Direction dir) {
         checkNotNull(dir);
 
@@ -154,35 +190,53 @@ public abstract class MovableEntity extends Entity {
     }
 
 
+    /**
+     * Get current moving direction
+     * @return current moving direction
+     */
     public Direction movingDir() {
         return movingDir;
     }
 
 
+    /**
+     * Set next direction to move to
+     * @param dir direction to move to
+     */
     public void setNextDir(Direction dir) {
         checkNotNull(dir);
         nextDir = nextDir != dir ? dir : nextDir;
         System.out.println("next move dir: " + nextDir + " " + this);
     }
 
+    /**
+     * Get next direction to move to
+     * @return next direction to move to
+     */
     public Direction nextDir() {
         return nextDir;
     }
 
 
-    public Vector2i tilesAhead(int numTiles) {
-        Vector2i ahead = atTile().plus(movingDir.vector().scaled(numTiles));
-        return ahead;
+    /**
+     * Get tile ahead of entity - use for moving
+     * @param numTiles number of tiles ahead
+     * @return tile ahead of entity
+     */
+    public iVector2D tilesAhead(int numTiles) {
+        return atTile().plus(movingDir.vector().scaled(numTiles));
     }
 
 
-    public Vector2i tilesAheadWithOverflowBug(int numTiles) {
-        Vector2i ahead = atTile().plus(movingDir.vector().scaled(numTiles));
-        return movingDir == Direction.UP ? ahead.minus(numTiles, 0) : ahead;
-    }
+//    public iVector2D tilesAheadWithOverflowBug(int numTiles) {
+//        iVector2D ahead = atTile().plus(movingDir.vector().scaled(numTiles));
+//        return movingDir == Direction.UP ? ahead.minus(numTiles, 0) : ahead;
+//    }
 
 
-
+    /**
+     * Turn back instantly -  no need to be at intersection  or to be blocked to turn back
+     */
     public void turnBackInstantly() {
        gotReverseCommand = true;
        setIsStanding(false);
@@ -191,7 +245,10 @@ public abstract class MovableEntity extends Entity {
        System.out.println("Turn back instantly: " + this);
     }
 
-
+    /**
+     * Set speed percentage
+     * @param percentage
+     */
     public void setPercentageSpeed(byte percentage) {
         if (percentage < 0) {
             throw new IllegalArgumentException("Negative speed percentage: " + percentage);
@@ -200,11 +257,15 @@ public abstract class MovableEntity extends Entity {
         setSpeed(currentSpeed);
     }
 
+    /**
+     * Calculate speed with base speed and percentage speed
+     * @param pixelSpeed
+     */
     private void setSpeed(float pixelSpeed) {
         if (pixelSpeed < 0) {
             throw new IllegalArgumentException("Negative pixel speed: " + pixelSpeed);
         }
-        setVelocity(pixelSpeed == 0 ? Vector2f.ZERO : movingDir.vector().toFloatVec().scaled(pixelSpeed));
+        setVelocity(pixelSpeed == 0 ? fVector2D.ZERO : movingDir.vector().toFloatVec().scaled(pixelSpeed));
     }
 
     public boolean isNewTileEntered() {
@@ -226,6 +287,4 @@ public abstract class MovableEntity extends Entity {
     public float currentSpeed() {
         return currentSpeed;
     }
-
-
 }

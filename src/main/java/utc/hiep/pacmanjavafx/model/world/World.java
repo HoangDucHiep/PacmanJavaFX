@@ -4,7 +4,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import utc.hiep.pacmanjavafx.lib.AnimatorLib;
 import utc.hiep.pacmanjavafx.lib.ImageLibrary;
-import utc.hiep.pacmanjavafx.lib.Vector2i;
+import utc.hiep.pacmanjavafx.lib.iVector2D;
 import utc.hiep.pacmanjavafx.model.Animator;
 
 import java.util.*;
@@ -34,9 +34,9 @@ public class World {
 
 
     private final byte[][] tileMap;                             //tile map data
-    private final List<Vector2i> energizerTiles;                //positions of energizer tiles
+    private final List<iVector2D> energizerTiles;                //positions of energizer tiles
     private final BitSet eaten;                                 //eaten food
-    private Portal portals;                         //positions of portals
+    private Portal portals;                                     //positions of portals
     private final int totalFoodCount;                           //total number of food tiles
     private House house;                                        //house
     private int uneatenFoodCount;                               //number of uneaten food tiles
@@ -51,8 +51,8 @@ public class World {
         // build portals
         int lastColumn = numCols() - 1;
         for (int row = 0; row < numRows(); ++row) {
-            var leftBorderTile = new Vector2i(0, row);
-            var rightBorderTile = new Vector2i(lastColumn, row);
+            var leftBorderTile = new iVector2D(0, row);
+            var rightBorderTile = new iVector2D(lastColumn, row);
             if (tileMap[row][0] == T_TUNNEL && tileMap[row][lastColumn] == T_TUNNEL) {
                 portals = new Portal(leftBorderTile, rightBorderTile, 2);
             }
@@ -80,7 +80,7 @@ public class World {
         this.house = house;
     }
 
-    public Stream<Vector2i> energizerTiles() {
+    public Stream<iVector2D> energizerTiles() {
         return energizerTiles.stream();
     }
 
@@ -89,12 +89,12 @@ public class World {
      * @param tile some tile
      * @return type of the given tile
      */
-    private byte content(Vector2i tile) {
+    private byte content(iVector2D tile) {
         return insideBounds(tile) ? tileMap[tile.y()][tile.x()] : T_SPACE;
     }
 
 
-    public boolean insideBounds(Vector2i tile) {
+    public boolean insideBounds(iVector2D tile) {
         return 0 <= tile.x() && tile.x() < numCols() && 0 <= tile.y() && tile.y() < numRows();
     }
 
@@ -104,7 +104,7 @@ public class World {
     }
 
 
-    private int index(Vector2i tile) {
+    private int index(iVector2D tile) {
         return numCols() * tile.y() + tile.x();
     }
 
@@ -114,13 +114,13 @@ public class World {
     }
 
 
-    public boolean belongsToPortal(Vector2i tile) {
+    public boolean belongsToPortal(iVector2D tile) {
         Objects.requireNonNull(tile);
         return portals.contains(tile);
     }
 
 
-    public boolean isWall(Vector2i tile) {
+    public boolean isWall(iVector2D tile) {
         Objects.requireNonNull(tile);
         return content(tile) == T_WALL;
     }
@@ -130,19 +130,19 @@ public class World {
      * @param tile some tile
      * @return true if the given tile is a tunnel, which is a portal, false otherwise.
      */
-    public boolean isTunnel(Vector2i tile) {
+    public boolean isTunnel(iVector2D tile) {
         Objects.requireNonNull(tile);
         return content(tile) == T_TUNNEL;
     }
 
 
-    public boolean isEnergizerTile(Vector2i tile) {
+    public boolean isEnergizerTile(iVector2D tile) {
         Objects.requireNonNull(tile);
         return content(tile) == T_ENERGIZER;
     }
 
 
-    public boolean isFoodTile(Vector2i tile) {
+    public boolean isFoodTile(iVector2D tile) {
         Objects.requireNonNull(tile);
         return content(tile) == T_PELLET || content(tile) == T_ENERGIZER;
     }
@@ -152,7 +152,7 @@ public class World {
      * @param tile some tile
      * @return true if the given tile is an intersection, false otherwise.
      */
-    public boolean isIntersection(Vector2i tile) {
+    public boolean isIntersection(iVector2D tile) {
         Objects.requireNonNull(tile);
 
         if(tile.x() <= 0 || tile.x() >= numCols() - 1) {
@@ -209,7 +209,7 @@ public class World {
         return totalFoodCount - uneatenFoodCount;
     }
 
-    public void removeFood(Vector2i tile) {
+    public void removeFood(iVector2D tile) {
         if (hasFoodAt(tile)) {
             eaten.set(index(tile));
             --uneatenFoodCount;
@@ -217,7 +217,7 @@ public class World {
     }
 
 
-    public boolean hasFoodAt(Vector2i tile) {
+    public boolean hasFoodAt(iVector2D tile) {
         checkNotNull(tile);
         if (insideBounds(tile)) {
             byte data = tileMap[tile.y()][tile.x()];
@@ -226,7 +226,7 @@ public class World {
         return false;
     }
 
-    public boolean hasEatenFoodAt(Vector2i tile) {
+    public boolean hasEatenFoodAt(iVector2D tile) {
         checkNotNull(tile);
         return insideBounds(tile) && eaten.get(index(tile));
     }
@@ -240,12 +240,12 @@ public class World {
         return tileMap.length;
     }
 
-    public Stream<Vector2i> tiles() {
+    public Stream<iVector2D> tiles() {
         return IntStream.range(0, numCols() * numRows()).mapToObj(this::tile);
     }
 
-    public Vector2i tile(int index) {
-        return new Vector2i(index % numCols(), index / numCols());
+    public iVector2D tile(int index) {
+        return new iVector2D(index % numCols(), index / numCols());
     }
 
 
@@ -256,7 +256,7 @@ public class World {
         });
     }
 
-    private void drawFoodAt(Vector2i tile, GraphicsContext gc) {
+    private void drawFoodAt(iVector2D tile, GraphicsContext gc) {
         if (content(tile) == T_PELLET) {
             gc.drawImage(pellet, tile.x() * TILE_SIZE, tile.y() * TILE_SIZE, TILE_SIZE, TILE_SIZE);
         } else if (content(tile) == T_ENERGIZER) {
@@ -267,7 +267,5 @@ public class World {
     public void animatorUpdate() {
         energizerAnimator.update();
     }
-
-
 
 }

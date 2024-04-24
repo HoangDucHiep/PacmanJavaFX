@@ -1,11 +1,18 @@
 package utc.hiep.pacmanjavafx.model.world;
 
-import utc.hiep.pacmanjavafx.lib.Vector2f;
-import utc.hiep.pacmanjavafx.lib.Vector2i;
+import utc.hiep.pacmanjavafx.lib.fVector2D;
+import utc.hiep.pacmanjavafx.lib.iVector2D;
 
 import static utc.hiep.pacmanjavafx.lib.Global.*;
 public interface PacmanMap {
 
+    /**
+     * 0 for space
+     * 1 for wall
+     * 2 for tunnel
+     * 3 for pellet
+     * 4 for energizer
+     */
     byte[][] PACMAN_MAP_SOURCE = {
             {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
             {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
@@ -46,14 +53,14 @@ public interface PacmanMap {
     };
 
 
-    Vector2i SCATTER_TARGET_LEFT_UPPER_CORNER  = new Vector2i(2, 0);
-    Vector2i SCATTER_TARGET_RIGHT_UPPER_CORNER = new Vector2i(25, 0);
-    Vector2i SCATTER_TARGET_LEFT_LOWER_CORNER  = new Vector2i(0, 34);
-    Vector2i SCATTER_TARGET_RIGHT_LOWER_CORNER = new Vector2i(27, 34);
+    iVector2D SCATTER_TARGET_LEFT_UPPER_CORNER  = new iVector2D(2, 0);
+    iVector2D SCATTER_TARGET_RIGHT_UPPER_CORNER = new iVector2D(25, 0);
+    iVector2D SCATTER_TARGET_LEFT_LOWER_CORNER  = new iVector2D(0, 34);
+    iVector2D SCATTER_TARGET_RIGHT_LOWER_CORNER = new iVector2D(27, 34);
 
 
-    Vector2f BONUS_POSITION = halfTileRightOf(13, 20);
-    Vector2f PAC_POSITION   = halfTileRightOf(13, 26);
+    fVector2D BONUS_POSITION = halfTileRightOf(13, 20);
+    fVector2D PAC_POSITION   = halfTileRightOf(13, 26);
 
 
     static World createPacManWorld() {
@@ -64,17 +71,18 @@ public interface PacmanMap {
                             TILES_X, TILES_Y, world.numCols(), world.numRows()));
         }
         var house = new House();
-        house.setTopLeftTile(new Vector2i(10, 15));
-        house.setSize(new Vector2i(8, 5));
-        house.setDoor(new Door(new Vector2i(13, 15), new Vector2i(14, 15)));
+        house.setTopLeftTile(new iVector2D(10, 15));
+        house.setSize(new iVector2D(8, 5));
+        house.setDoor(new Door(new iVector2D(13, 15), new iVector2D(14, 15)));
         world.setHouse(house);
         return world;
     }
 
 
     //Position for ghost to stand in house
-    Vector2f HOUSE_LEFT_SEAT   = halfTileRightOf(11, 17);
-    Vector2f HOUSE_MIDDLE_SEAT = halfTileRightOf(13, 17);
-    Vector2f HOUSE_RIGHT_SEAT  = halfTileRightOf(15, 17);
+    fVector2D HOUSE_LEFT_SEAT   = halfTileRightOf(11, 17);
+    fVector2D HOUSE_MIDDLE_SEAT = halfTileRightOf(13, 17);
+    fVector2D HOUSE_RIGHT_SEAT  = halfTileRightOf(15, 17);
+    fVector2D HOUSE_DOOR_SEAT       = halfTileRightOf(13, 14);
 
 }

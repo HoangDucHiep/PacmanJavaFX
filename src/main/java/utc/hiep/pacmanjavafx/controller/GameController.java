@@ -4,18 +4,14 @@ import javafx.animation.AnimationTimer;
 import utc.hiep.pacmanjavafx.event.KeyListener;
 import utc.hiep.pacmanjavafx.event.KeyType;
 import utc.hiep.pacmanjavafx.lib.Direction;
-import utc.hiep.pacmanjavafx.lib.Vector2f;
-import utc.hiep.pacmanjavafx.lib.Vector2i;
 import utc.hiep.pacmanjavafx.model.entity.Pacman;
+import utc.hiep.pacmanjavafx.model.level.GameLevel;
 import utc.hiep.pacmanjavafx.model.world.World;
 import utc.hiep.pacmanjavafx.scene.GameView;
 import utc.hiep.pacmanjavafx.model.Timer;
 
 import java.util.List;
 import java.util.Stack;
-import java.util.function.Consumer;
-
-import static utc.hiep.pacmanjavafx.model.level.GameModel.*;
 
 public class GameController {
     private final GameView gameView;
@@ -24,6 +20,8 @@ public class GameController {
     private final World map;
     private Timer timer;
     private Pacman pacman;
+
+    private GameLevel gameLevel;
 
 
     private KeyListener kl;
@@ -34,8 +32,14 @@ public class GameController {
         this.gameView = new GameView();
         timer = new Timer();
         score = 0;
-        map = gameView.getWorld();
-        pacman = gameView.getPacman();
+
+        gameLevel = new GameLevel();
+
+        map = gameLevel.getWorld();
+        pacman = gameLevel.getPacman();
+
+        gameView.setGameEntity(pacman, map);
+
         kl = new KeyListener(gameView);
         running();
     }
@@ -87,75 +91,19 @@ public class GameController {
         if (timer.isPaused()) {
             return;
         }
-        movePacman();
-        handlePacmanEatFoot();
+        gameLevel.update();
     }
 
 
 
-    public void movePacman() {
-        Vector2i currentTile = pacman.atTile();
-
-        /* Handle turn back instantly */
-        if(pacman.movingDir().opposite().equals(pacman.nextDir())) {
-            pacman.turnBackInstantly();
-            return;
-        }
-
-        /*  handle pacman be blocked by wall or smth */
-        if(!pacman.canAccessTile(pacman.tilesAhead(1), map) && pacman.offset().almostEquals(Vector2f.ZERO, pacman.currentSpeed(),  pacman.currentSpeed())) {
-            if(!pacman.isStanding()) {
-                pacman.placeAtTile(currentTile.toFloatVec());
-                pacman.standing();
-            }
-        }
-        /*  handle pacman at intersection */
-        else if(map.isIntersection(currentTile)) {
-            //if pacman haven't aligned to tile, but almost aligned, then aligned it
-            if(pacman.isNewTileEntered() && pacman.offset().almostEquals(Vector2f.ZERO, pacman.currentSpeed(), pacman.currentSpeed())) {
-                pacman.placeAtTile(currentTile.toFloatVec());
-            }
-        }
-        //Handle if pacman gothrough portal
-        else if(map.belongsToPortal(currentTile)) {
-            if(!map.belongsToPortal(pacman.tilesAhead(1))) {
-                Vector2i teleportTo = map.portals().otherTunnel(currentTile);
-                pacman.placeAtTile(teleportTo.toFloatVec());
-            }
-        }
-
-        /* Handle if pacman be blocked in next turn, it'll keep moving in current direction*/
-        if(pacman.isAlignedToTile()) {
-            if(pacman.canAccessTile(currentTile.plus(pacman.nextDir().vector()), map)) {
-                pacman.setMovingDir(pacman.nextDir());
-            }
-        }
 
 
-        // If pacman is not standing, it can move :)))
-        if(!pacman.isStanding()) {
-            pacman.move();
-        }
-    }
-
-    public void updateAnimator() {
+    private void updateAnimator() {
         pacman.animatorUpdate();
         map.animatorUpdate();
     }
 
-    private void handlePacmanEatFoot() {
-        Vector2i currentTile = pacman.atTile();
-        if(map.hasFoodAt(currentTile) && !map.hasEatenFoodAt(currentTile)) {
-            map.removeFood(currentTile);
-            if(map.isEnergizerTile(currentTile)) {
-                score += ENERGIZER_POINT;
-            } else {
-                score += PELLET_POINT;
-            }
 
-            System.out.println("Current score: " + score);
-        }
-    }
 
 
 

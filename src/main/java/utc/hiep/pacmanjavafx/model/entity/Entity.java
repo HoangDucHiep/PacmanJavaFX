@@ -1,8 +1,8 @@
 package utc.hiep.pacmanjavafx.model.entity;
 
 import javafx.scene.canvas.GraphicsContext;
-import utc.hiep.pacmanjavafx.lib.Vector2f;
-import utc.hiep.pacmanjavafx.lib.Vector2i;
+import utc.hiep.pacmanjavafx.lib.fVector2D;
+import utc.hiep.pacmanjavafx.lib.iVector2D;
 
 import static utc.hiep.pacmanjavafx.lib.Global.*;
 
@@ -10,7 +10,6 @@ public abstract class Entity {
     protected boolean visible = false;
     private float posX;                     //coordinate in world
     private float posY;                     //coordinate in world
-
 
 
     public void reset() {
@@ -44,8 +43,8 @@ public abstract class Entity {
     }
 
 
-    public Vector2f position() {
-        return new Vector2f(posX, posY);
+    public fVector2D position() {
+        return new fVector2D(posX, posY);
     }
 
     public void setPosX(float posX) {
@@ -56,7 +55,7 @@ public abstract class Entity {
         this.posY = posY;
     }
 
-    public void setPosition(Vector2f position) {
+    public void setPosition(fVector2D position) {
         checkNotNull(position);
         posX = position.x();
         posY = position.y();
@@ -67,20 +66,20 @@ public abstract class Entity {
         posY = y;
     }
 
-    public Vector2f center() {
-        return new Vector2f(posX + HALF_TILE_SIZE, posY + HALF_TILE_SIZE);
+    public fVector2D center() {
+        return new fVector2D(posX + HALF_TILE_SIZE, posY + HALF_TILE_SIZE);
     }
 
 
-    public Vector2i atTile() {
+    public iVector2D atTile() {
         return tileAt(posX + HALF_TILE_SIZE, posY + HALF_TILE_SIZE);
     }
 
 
 
-    public Vector2f offset() {
+    public fVector2D offset() {
         var tile = atTile();
-        return new Vector2f(posX - TILE_SIZE * tile.x(), posY - TILE_SIZE * tile.y());
+        return new fVector2D(posX - TILE_SIZE * tile.x(), posY - TILE_SIZE * tile.y());
     }
 
 

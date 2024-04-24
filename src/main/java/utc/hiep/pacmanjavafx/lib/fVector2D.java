@@ -2,9 +2,9 @@ package utc.hiep.pacmanjavafx.lib;
 
 import java.util.Objects;
 
-public final class Vector2f {
+public final class fVector2D {
 
-    public static final Vector2f ZERO = new Vector2f(0, 0);             //Vector zero
+    public static final fVector2D ZERO = new fVector2D(0, 0);             //Vector zero
     public static final float EPSILON = 1e-6f;                                //epsilon
 
     private final float x;                          //x coordinate
@@ -15,7 +15,7 @@ public final class Vector2f {
      * @param y y coordinate
      * Constructor with 2 parameters x and y
      */
-    public Vector2f(float x, float y) {
+    public fVector2D(float x, float y) {
         this.x = x;
         this.y = y;
     }
@@ -43,8 +43,8 @@ public final class Vector2f {
      * @param v other vector
      * @return new vector with x and y added by other vector
      */
-    public Vector2f plus(Vector2f v) {
-        return new Vector2f(x + v.x, y + v.y);
+    public fVector2D plus(fVector2D v) {
+        return new fVector2D(x + v.x, y + v.y);
     }
 
 
@@ -53,8 +53,8 @@ public final class Vector2f {
      * @param vy y coordinate
      * @return new vector with x and y added by vx and vy
      */
-    public Vector2f plus(float vx, float vy) {
-        return new Vector2f(x + vx, y + vy);
+    public fVector2D plus(float vx, float vy) {
+        return new fVector2D(x + vx, y + vy);
     }
 
 
@@ -62,8 +62,8 @@ public final class Vector2f {
      * @param v other vector
      * @return new vector with x and y subtracted by other vector
      */
-    public Vector2f minus(Vector2f v) {
-        return new Vector2f(x - v.x, y - v.y);
+    public fVector2D minus(fVector2D v) {
+        return new fVector2D(x - v.x, y - v.y);
     }
 
 
@@ -72,8 +72,8 @@ public final class Vector2f {
      * @param vy y coordinate
      * @return new vector with x and y subtracted by vx and vy
      */
-    public Vector2f minus(float vx, float vy) {
-        return new Vector2f(x - vx, y - vy);
+    public fVector2D minus(float vx, float vy) {
+        return new fVector2D(x - vx, y - vy);
     }
 
 
@@ -81,16 +81,16 @@ public final class Vector2f {
      * @param s scale
      * @return new vector with x and y scaled by s
      */
-    public Vector2f scaled(float s) {
-        return new Vector2f(s * x, s * y);
+    public fVector2D scaled(float s) {
+        return new fVector2D(s * x, s * y);
     }
 
 
     /**
      * @return new vector with x and y negated
      */
-    public Vector2f inverse() {
-        return new Vector2f(-x, -y);
+    public fVector2D inverse() {
+        return new fVector2D(-x, -y);
     }
 
 
@@ -105,9 +105,9 @@ public final class Vector2f {
     /**
      * @return new vector with x and y normalized
      */
-    public Vector2f normalized() {
+    public fVector2D normalized() {
         float len = length();
-        return new Vector2f(x / len, y / len);
+        return new fVector2D(x / len, y / len);
     }
 
 
@@ -115,7 +115,7 @@ public final class Vector2f {
      * @param v other vector
      * @return dot product of 2 vectors
      */
-    public float euclideanDistance(Vector2f v) {
+    public float euclideanDistance(fVector2D v) {
         return this.minus(v).length();
     }
 
@@ -127,7 +127,7 @@ public final class Vector2f {
      * @param dy y coordinate
      * @return true if 2 vectors are almost equal
      */
-    public boolean almostEquals(Vector2f v, float dx, float dy) {
+    public boolean almostEquals(fVector2D v, float dx, float dy) {
         return differsAtMost(dx, x, v.x) && differsAtMost(dy, y, v.y);
     }
 
@@ -162,7 +162,7 @@ public final class Vector2f {
             return false;
         if (getClass() != other.getClass())
             return false;
-        Vector2f v = (Vector2f) other;
+        fVector2D v = (fVector2D) other;
         return Math.abs(v.x - x) <= EPSILON && Math.abs(v.y - y) <= EPSILON;
     }
 

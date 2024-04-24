@@ -1,9 +1,15 @@
 package utc.hiep.pacmanjavafx.model.level;
 
+import utc.hiep.pacmanjavafx.lib.fVector2D;
+import utc.hiep.pacmanjavafx.lib.iVector2D;
+import utc.hiep.pacmanjavafx.model.entity.Pacman;
+import utc.hiep.pacmanjavafx.model.world.PacmanMap;
+import utc.hiep.pacmanjavafx.model.world.World;
+
+import static utc.hiep.pacmanjavafx.model.level.GameModel.*;
+
 public class GameLevel {
     private int level;
-    private int score;
-    private int life;
 
     public record Data(
             int number, // Level number, starts at 1.
@@ -27,29 +33,93 @@ public class GameLevel {
         }
     }
 
-    final byte[][] RAW_LEVEL_DATA = {
-            /* 1*/ { 80, 75, 40,  20,  80, 10,  85,  90, 50, 6, 5, 0},
-            /* 2*/ { 90, 85, 45,  30,  90, 15,  95,  95, 55, 5, 5, 1},
-            /* 3*/ { 90, 85, 45,  40,  90, 20,  95,  95, 55, 4, 5, 0},
-            /* 4*/ { 90, 85, 45,  40,  90, 20,  95,  95, 55, 3, 5, 0},
-            /* 5*/ {100, 95, 50,  40, 100, 20, 105, 100, 60, 2, 5, 2},
-            /* 6*/ {100, 95, 50,  50, 100, 25, 105, 100, 60, 5, 5, 0},
-            /* 7*/ {100, 95, 50,  50, 100, 25, 105, 100, 60, 2, 5, 0},
-            /* 8*/ {100, 95, 50,  50, 100, 25, 105, 100, 60, 2, 5, 0},
-            /* 9*/ {100, 95, 50,  60, 100, 30, 105, 100, 60, 1, 3, 3},
-            /*10*/ {100, 95, 50,  60, 100, 30, 105, 100, 60, 5, 5, 0},
-            /*11*/ {100, 95, 50,  60, 100, 30, 105, 100, 60, 2, 5, 0},
-            /*12*/ {100, 95, 50,  80, 100, 40, 105, 100, 60, 1, 3, 0},
-            /*13*/ {100, 95, 50,  80, 100, 40, 105, 100, 60, 1, 3, 3},
-            /*14*/ {100, 95, 50,  80, 100, 40, 105, 100, 60, 3, 5, 0},
-            /*15*/ {100, 95, 50, 100, 100, 50, 105, 100, 60, 1, 3, 0},
-            /*16*/ {100, 95, 50, 100, 100, 50, 105, 100, 60, 1, 3, 0},
-            /*17*/ {100, 95, 50, 100, 100, 50, 105,   0,  0, 0, 0, 3},
-            /*18*/ {100, 95, 50, 100, 100, 50, 105, 100, 60, 1, 3, 0},
-            /*19*/ {100, 95, 50, 120, 100, 60, 105,   0,  0, 0, 0, 0},
-            /*20*/ {100, 95, 50, 120, 100, 60, 105,   0,  0, 0, 0, 0},
-            /*21*/ { 90, 95, 50, 120, 100, 60, 105,   0,  0, 0, 0, 0},
-    };
+    private Pacman pacman;
+    private World world;
+    private Data data;
 
 
+    public GameLevel() {
+        this.level = 1;
+        data = new Data(level, false, RAW_LEVEL_DATA[level - 1]);
+
+        this.pacman = new Pacman("PACMAN");
+        this.world = PacmanMap.createPacManWorld();
+        setUpPacman();
+    }
+
+
+    private void setUpPacman() {
+        pacman.setDefaultSpeed((float) PPS_AT_100_PERCENT / FPS);
+        pacman.setPercentageSpeed(data.pacSpeedPercentage);
+        pacman.placeAtTile(PacmanMap.PAC_POSITION);
+
+    }
+
+    public Pacman getPacman() {
+        return pacman;
+    }
+
+    public World getWorld() {
+        return world;
+    }
+
+
+    public void update() {
+        movePacman();
+        handlePacmanEatFoot();
+    }
+
+
+    public void movePacman() {
+        iVector2D currentTile = pacman.atTile();
+
+        /* Handle turn back instantly */
+        if(pacman.movingDir().opposite().equals(pacman.nextDir())) {
+            pacman.turnBackInstantly();
+            return;
+        }
+
+        /*  handle pacman be blocked by wall or smth */
+        if(!pacman.canAccessTile(pacman.tilesAhead(1), world) && pacman.offset().almostEquals(fVector2D.ZERO, pacman.currentSpeed(),  pacman.currentSpeed())) {
+            if(!pacman.isStanding()) {
+                pacman.placeAtTile(currentTile.toFloatVec());
+                pacman.standing();
+            }
+        }
+        /*  handle pacman at intersection */
+        else if(world.isIntersection(currentTile)) {
+            //if pacman haven't aligned to tile, but almost aligned, then aligned it
+            if(pacman.isNewTileEntered() && pacman.offset().almostEquals(fVector2D.ZERO, pacman.currentSpeed(), pacman.currentSpeed())) {
+                pacman.placeAtTile(currentTile.toFloatVec());
+            }
+        }
+        //Handle if pacman gothrough portal
+        else if(world.belongsToPortal(currentTile)) {
+            if(!world.belongsToPortal(pacman.tilesAhead(1))) {
+                iVector2D teleportTo = world.portals().otherTunnel(currentTile);
+                pacman.placeAtTile(teleportTo.toFloatVec());
+            }
+        }
+
+        /* Handle if pacman be blocked in next turn, it'll keep moving in current direction*/
+        if(pacman.isAlignedToTile()) {
+            if(pacman.canAccessTile(currentTile.plus(pacman.nextDir().vector()), world)) {
+                pacman.setMovingDir(pacman.nextDir());
+            }
+        }
+
+
+        // If pacman is not standing, it can move :)))
+        if(!pacman.isStanding()) {
+            pacman.move();
+        }
+    }
+
+
+    private void handlePacmanEatFoot() {
+        iVector2D currentTile = pacman.atTile();
+        if(world.hasFoodAt(currentTile) && !world.hasEatenFoodAt(currentTile)) {
+            world.removeFood(currentTile);
+        }
+    }
 }

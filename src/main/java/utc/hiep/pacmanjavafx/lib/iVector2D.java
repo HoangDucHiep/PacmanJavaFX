@@ -8,9 +8,9 @@ import java.util.stream.Stream;
  * A 2D vector use interger x and y.
  */
 
-public final class Vector2i {
+public final class iVector2D {
 
-    public static final Vector2i ZERO = new Vector2i(0, 0);             //Vector zero
+    public static final iVector2D ZERO = new iVector2D(0, 0);             //Vector zero
 
     private final int x;                                //x coordinate
     private final int y;                                //y coordinate
@@ -20,7 +20,7 @@ public final class Vector2i {
      * @param y y coordinate
      * Constructor with 2 parameters x and y
      */
-    public Vector2i(int x, int y) {
+    public iVector2D(int x, int y) {
         this.x = x;
         this.y = y;
     }
@@ -48,8 +48,8 @@ public final class Vector2i {
      * @param s scale
      * @return new vector with x and y scaled by s
      */
-    public Vector2i scaled(int s) {
-        return new Vector2i(s * x, s * y);
+    public iVector2D scaled(int s) {
+        return new iVector2D(s * x, s * y);
     }
 
 
@@ -57,8 +57,8 @@ public final class Vector2i {
      * @param v other vector
      * @return new vector with x and y added by other vector
      */
-    public Vector2i plus(Vector2i v) {
-        return new Vector2i(x + v.x, y + v.y);
+    public iVector2D plus(iVector2D v) {
+        return new iVector2D(x + v.x, y + v.y);
     }
 
 
@@ -67,8 +67,8 @@ public final class Vector2i {
      * @param dy y coordinate
      * @return new vector with x and y added by dx and dy
      */
-    public Vector2i plus(int dx, int dy) {
-        return new Vector2i(x + dx, y + dy);
+    public iVector2D plus(int dx, int dy) {
+        return new iVector2D(x + dx, y + dy);
     }
 
 
@@ -76,8 +76,8 @@ public final class Vector2i {
      * @param v other vector
      * @return new vector with x and y subtracted by other vector
      */
-    public Vector2i minus(Vector2i v) {
-        return new Vector2i(x - v.x, y - v.y);
+    public iVector2D minus(iVector2D v) {
+        return new iVector2D(x - v.x, y - v.y);
     }
 
 
@@ -86,15 +86,15 @@ public final class Vector2i {
      * @param dy y coordinate
      * @return new vector with x and y subtracted by dx and dy
      */
-    public Vector2i minus(int dx, int dy) {
-        return new Vector2i(x - dx, y - dy);
+    public iVector2D minus(int dx, int dy) {
+        return new iVector2D(x - dx, y - dy);
     }
 
 
     /**
      * @return length of vector
      */
-    public float euclideanDistance(Vector2i v) {
+    public float euclideanDistance(iVector2D v) {
         return (float) Math.hypot(x - v.x, y - v.y);
     }
 
@@ -105,7 +105,7 @@ public final class Vector2i {
      * @param x2 x coordinate 2
      * @return true if x1 and x2 are different at most dx
      */
-    public float manhattanDistance(Vector2i v) {
+    public float manhattanDistance(iVector2D v) {
         return Math.abs(x - v.x) + Math.abs(y - v.y);
     }
 
@@ -113,7 +113,7 @@ public final class Vector2i {
     /**
      * @return Stream of 4 neighbors of this vector (up, right, down, left)
      */
-    public Stream<Vector2i> neighbors() {
+    public Stream<iVector2D> neighbors() {
         return Stream.of(Direction.UP, Direction.RIGHT, Direction.DOWN, Direction.LEFT).map(dir -> this.plus(dir.vector()));
     }
 
@@ -125,8 +125,8 @@ public final class Vector2i {
     /**
      * @return new vector with x and y in float
      */
-    public Vector2f toFloatVec() {
-        return new Vector2f(x, y);
+    public fVector2D toFloatVec() {
+        return new fVector2D(x, y);
     }
 
 
@@ -143,7 +143,7 @@ public final class Vector2i {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        Vector2i other = (Vector2i) obj;
+        iVector2D other = (iVector2D) obj;
         return x == other.x && y == other.y;
     }
 }
