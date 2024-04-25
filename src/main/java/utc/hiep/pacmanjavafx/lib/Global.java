@@ -63,6 +63,15 @@ public class Global {
         return new fVector2D((float) (TILE_SIZE * tileX + HALF_TILE_SIZE) / TILE_SIZE, tileY);
     }
 
+    /**
+     * @param tileX tile x Index
+     * @param tileY tile y Index
+     * @return position half tile right of tile origin
+     */
+    public static fVector2D halfTileLeftOf(int tileX, int tileY) {
+        return new fVector2D((float) (TILE_SIZE * tileX - HALF_TILE_SIZE) / TILE_SIZE, tileY);
+    }
+
 
     /**
      * @param tileX tile x index

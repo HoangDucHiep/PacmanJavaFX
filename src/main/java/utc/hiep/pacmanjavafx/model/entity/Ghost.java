@@ -95,6 +95,10 @@ public class Ghost extends MovableEntity{
         return false;
     }
 
+    public fVector2D getRevivalPosition() {
+        return revivalPosition;
+    }
+
     @Override
     public boolean canAccessTile(iVector2D tile, World world) {
         checkNotNull(tile);
@@ -113,10 +117,19 @@ public class Ghost extends MovableEntity{
         }
         if (house.door().occupies(tile)) {
             //return is(ENTERING_HOUSE, LEAVING_HOUSE);
+            return false;
         }
+
+        if (world.house().contains(tile)) {
+            return false;
+        }
+
         if (world.insideBounds(tile)) {
             return !world.isWall(tile);
         }
+
+
+
         return world.belongsToPortal(tile);
     }
 

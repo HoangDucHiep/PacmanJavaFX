@@ -9,6 +9,7 @@ import utc.hiep.pacmanjavafx.model.world.PacmanMap;
 import utc.hiep.pacmanjavafx.model.world.World;
 
 import static utc.hiep.pacmanjavafx.model.level.GameModel.*;
+import static utc.hiep.pacmanjavafx.lib.Global.*;
 
 public class GameLevel {
     private int level;
@@ -47,7 +48,7 @@ public class GameLevel {
 
         this.pacman = new Pacman("PACMAN");
         this.world = PacmanMap.createPacManWorld();
-        this.testGhost = new Ghost(RED_GHOST, "BLINKY");
+        this.testGhost = new Ghost(PINK_GHOST, "Pinky");
         setUpPacman();
         setUpGhost();
     }
@@ -63,8 +64,10 @@ public class GameLevel {
     private void setUpGhost() {
         testGhost.setHouse(world.house());
         testGhost.setDefaultSpeed((float) PPS_AT_100_PERCENT / FPS);
-        testGhost.setPercentageSpeed(data.ghostSpeedPercentage);
-        testGhost.placeAtTile(PacmanMap.HOUSE_DOOR_SEAT);
+        testGhost.setPercentageSpeed((byte) data.ghostSpeedPercentage);
+        testGhost.setRevivalPosition(PacmanMap.HOUSE_LEFT_SEAT);
+        testGhost.placeAtTile(testGhost.getRevivalPosition());
+        testGhost.setMovingDir(Direction.UP);
     }
 
     public Pacman getPacman() {
@@ -81,7 +84,7 @@ public class GameLevel {
 
 
     public void update() {
-        moveGhost();
+        moveLockedGhost();
     }
 
 
@@ -135,6 +138,23 @@ public class GameLevel {
             testGhost.move();
         }
     }
+
+
+    private void moveLockedGhost() {
+        testGhost.setPercentageSpeed((byte) 50);
+        fVector2D currentTile = halfTileLeftOf(testGhost.atTile().x(), testGhost.atTile().y());
+        System.out.println(currentTile);
+        System.out.println(testGhost.getRevivalPosition());
+
+        if(!currentTile.equals(testGhost.getRevivalPosition())) {
+            testGhost.setNextDir(testGhost.movingDir().opposite());
+            testGhost.turnBackInstantly();
+        }
+
+        testGhost.move();
+
+    }
+
 
     private Direction ghostDetermineNextDir() {
         Direction nextDir = Direction.randomDirection(testGhost.movingDir());
