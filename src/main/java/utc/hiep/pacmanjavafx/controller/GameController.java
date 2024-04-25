@@ -6,6 +6,7 @@ import utc.hiep.pacmanjavafx.event.KeyType;
 import utc.hiep.pacmanjavafx.lib.Direction;
 import utc.hiep.pacmanjavafx.lib.fVector2D;
 import utc.hiep.pacmanjavafx.lib.iVector2D;
+import utc.hiep.pacmanjavafx.model.entity.Ghost;
 import utc.hiep.pacmanjavafx.model.entity.Pacman;
 import utc.hiep.pacmanjavafx.model.level.GameLevel;
 import utc.hiep.pacmanjavafx.model.world.World;
@@ -22,6 +23,7 @@ public class GameController {
     private final World world;
     private Timer timer;
     private Pacman pacman;
+    private Ghost testGhost;
 
     private GameLevel gameLevel;
 
@@ -39,8 +41,9 @@ public class GameController {
 
         world = gameLevel.getWorld();
         pacman = gameLevel.getPacman();
+        testGhost = gameLevel.getTestGhost();
 
-        gameView.setGameEntity(pacman, world);
+        gameView.setGameEntity(pacman, world, testGhost);
 
         kl = new KeyListener(gameView);
         running();
@@ -158,6 +161,7 @@ public class GameController {
     private void updateAnimator() {
         pacman.animatorUpdate();
         world.animatorUpdate();
+        testGhost.animatorUpdate();
     }
 
 

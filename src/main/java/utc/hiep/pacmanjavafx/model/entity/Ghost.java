@@ -61,6 +61,7 @@ public class Ghost extends MovableEntity{
     public Ghost(byte id, String name) {
         //checkGhostID(id);
         checkNotNull(name);
+        reset();
         this.id = id;
         this.name = name;
         this.animator = AnimatorLib.GHOST_ANIMATOR[id];
@@ -122,6 +123,10 @@ public class Ghost extends MovableEntity{
 
     @Override
     public void render(GraphicsContext gc) {
+        gc.drawImage(sprite_sheet, animator.getAnimationPos().posX(), animator.getAnimationPos().posY(), GHOST_UI_SIZE, GHOST_UI_SIZE, posX() - HALF_TILE_SIZE, posY() - HALF_TILE_SIZE, 32, 32);
+    }
 
+    public void animatorUpdate() {
+        animator.update(movingDir());
     }
 }

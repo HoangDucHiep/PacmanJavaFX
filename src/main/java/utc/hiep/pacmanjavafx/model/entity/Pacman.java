@@ -56,10 +56,7 @@ public class Pacman extends MovableEntity{
     }
 
 
-    public void standing() {
-        setIsStanding(true);
-        setVelocity(0, 0);
-    }
+
 
     public void animatorUpdate() {
         if(!isStanding()) {

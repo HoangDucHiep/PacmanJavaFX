@@ -227,6 +227,10 @@ public abstract class MovableEntity extends Entity {
         return atTile().plus(movingDir.vector().scaled(numTiles));
     }
 
+    public iVector2D tilesAhead(int numTiles, Direction dir) {
+        return atTile().plus(dir.vector().scaled(numTiles));
+    }
+
 
 //    public iVector2D tilesAheadWithOverflowBug(int numTiles) {
 //        iVector2D ahead = atTile().plus(movingDir.vector().scaled(numTiles));
@@ -286,5 +290,10 @@ public abstract class MovableEntity extends Entity {
 
     public float currentSpeed() {
         return currentSpeed;
+    }
+
+    public void standing() {
+        setIsStanding(true);
+        setVelocity(0, 0);
     }
 }

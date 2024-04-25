@@ -8,6 +8,7 @@ import javafx.scene.paint.Color;
 import utc.hiep.pacmanjavafx.lib.AnimatorLib;
 import utc.hiep.pacmanjavafx.lib.ImageLibrary;
 import utc.hiep.pacmanjavafx.model.Animator;
+import utc.hiep.pacmanjavafx.model.entity.Ghost;
 import utc.hiep.pacmanjavafx.model.entity.Pacman;
 import utc.hiep.pacmanjavafx.model.world.PacmanMap;
 import utc.hiep.pacmanjavafx.model.world.World;
@@ -31,6 +32,7 @@ public class GameView extends GeneralScene{
     //Game entity
     private World world;
     private Pacman pacman;
+    private Ghost testGhost;
 
 
     /**
@@ -49,9 +51,6 @@ public class GameView extends GeneralScene{
         canvas = new Canvas(GAME_WIDTH, GAME_HEIGHT);
         gc = canvas.getGraphicsContext2D();
         getRootPane().getChildren().add(canvas);
-
-
-
         //World
         //world = PacmanMap.createPacManWorld();
 
@@ -59,9 +58,10 @@ public class GameView extends GeneralScene{
         //pacman = new Pacman("PACMAN");
     }
 
-    public void setGameEntity(Pacman pacman, World world) {
+    public void setGameEntity(Pacman pacman, World world, Ghost testGhost) {
         this.pacman = pacman;
         this.world = world;
+        this.testGhost = testGhost;
     }
 
 
@@ -94,6 +94,7 @@ public class GameView extends GeneralScene{
 
         world.drawMap(gc);
         pacman.render(gc);
+        testGhost.render(gc);
     }
 
 

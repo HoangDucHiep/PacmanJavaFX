@@ -1,7 +1,9 @@
 package utc.hiep.pacmanjavafx.model.level;
 
+import utc.hiep.pacmanjavafx.lib.Direction;
 import utc.hiep.pacmanjavafx.lib.fVector2D;
 import utc.hiep.pacmanjavafx.lib.iVector2D;
+import utc.hiep.pacmanjavafx.model.entity.Ghost;
 import utc.hiep.pacmanjavafx.model.entity.Pacman;
 import utc.hiep.pacmanjavafx.model.world.PacmanMap;
 import utc.hiep.pacmanjavafx.model.world.World;
@@ -36,6 +38,7 @@ public class GameLevel {
     private Pacman pacman;
     private World world;
     private Data data;
+    private Ghost testGhost;
 
 
     public GameLevel() {
@@ -44,7 +47,9 @@ public class GameLevel {
 
         this.pacman = new Pacman("PACMAN");
         this.world = PacmanMap.createPacManWorld();
+        this.testGhost = new Ghost(RED_GHOST, "BLINKY");
         setUpPacman();
+        setUpGhost();
     }
 
 
@@ -52,7 +57,14 @@ public class GameLevel {
         pacman.setDefaultSpeed((float) PPS_AT_100_PERCENT / FPS);
         pacman.setPercentageSpeed(data.pacSpeedPercentage);
         pacman.placeAtTile(PacmanMap.PAC_POSITION);
+    }
 
+
+    private void setUpGhost() {
+        testGhost.setHouse(world.house());
+        testGhost.setDefaultSpeed((float) PPS_AT_100_PERCENT / FPS);
+        testGhost.setPercentageSpeed(data.ghostSpeedPercentage);
+        testGhost.placeAtTile(PacmanMap.HOUSE_DOOR_SEAT);
     }
 
     public Pacman getPacman() {
@@ -63,9 +75,73 @@ public class GameLevel {
         return world;
     }
 
+    public Ghost getTestGhost() {
+        return testGhost;
+    }
+
 
     public void update() {
+        moveGhost();
+    }
 
+
+
+    private void moveGhost() {
+        iVector2D currentTile = testGhost.atTile();
+
+
+        /* Handle turn back instantly */
+//        if(pacman.movingDir().opposite().equals(pacman.nextDir())) {
+//            pacman.turnBackInstantly();
+//            return;
+//        }
+
+        /*  handle ghost be blocked by wall or smth */
+        if(!testGhost.canAccessTile(testGhost.tilesAhead(1), world) && testGhost.offset().almostEquals(fVector2D.ZERO, testGhost.currentSpeed(),  testGhost.currentSpeed())) {
+            if(!testGhost.isStanding()) {
+                testGhost.placeAtTile(currentTile.toFloatVec());
+                testGhost.standing();
+            }
+        }
+
+        /*  handle ghost at intersection */
+        else if(world.isIntersection(currentTile)) {
+            //if ghost haven't aligned to tile, but almost aligned, then aligned it
+            if(testGhost.isNewTileEntered() && testGhost.offset().almostEquals(fVector2D.ZERO, testGhost.currentSpeed(), testGhost.currentSpeed())) {
+                testGhost.placeAtTile(currentTile.toFloatVec());
+            }
+        }
+
+        //Handle if ghost gothrough portal
+        else if(world.belongsToPortal(currentTile)) {
+            if(!world.belongsToPortal(testGhost.tilesAhead(1))) {
+                iVector2D teleportTo = world.portals().otherTunnel(currentTile);
+                testGhost.placeAtTile(teleportTo.toFloatVec());
+            }
+        }
+
+        /* Handle if ghost be blocked in next turn, it'll keep moving in current direction*/
+        if(testGhost.isAlignedToTile()) {
+            testGhost.setNextDir(ghostDetermineNextDir());
+
+            if(testGhost.canAccessTile(currentTile.plus(testGhost.nextDir().vector()), world)) {
+                testGhost.setMovingDir(testGhost.nextDir());
+            }
+        }
+
+
+        // If ghost is not standing, it can move :)))
+        if(!testGhost.isStanding()) {
+            testGhost.move();
+        }
+    }
+
+    private Direction ghostDetermineNextDir() {
+        Direction nextDir = Direction.randomDirection(testGhost.movingDir());
+        while(!testGhost.canAccessTile(testGhost.tilesAhead(1, nextDir), world) || testGhost.movingDir().opposite().equals(nextDir)) {
+            nextDir = nextDir.nextClockwise();
+        }
+        return nextDir;
     }
 
 

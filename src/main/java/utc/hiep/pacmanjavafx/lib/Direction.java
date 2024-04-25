@@ -70,4 +70,13 @@ public enum Direction {
         return isHorizontal() && other.isHorizontal() || isVertical() && other.isVertical();
     }
 
+    public static Direction randomDirection(Direction currentDir) {
+        List<Direction> dirs = shuffled();
+        int nextDir = Global.RND.nextInt(4);
+//        while (dirs.get(nextDir) == currentDir.opposite()) {
+//            nextDir = Global.RND.nextInt(4);
+//        }
+        return dirs.get(nextDir);
+    }
+
 }
