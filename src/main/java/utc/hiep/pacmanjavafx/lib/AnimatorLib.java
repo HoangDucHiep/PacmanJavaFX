@@ -49,95 +49,115 @@ public class AnimatorLib {
 
     /* For GHOST */
         /* for RED one */
-    private static final Animator.AnimatorPos[] RED_LEFT = new Animator.AnimatorPos[] {
+    private static final Animator.AnimatorPos[] RED_RIGHT = new Animator.AnimatorPos[] {
             new Animator.AnimatorPos(0, 64),
-            new Animator.AnimatorPos(32, 64),
+            new Animator.AnimatorPos(16, 64),
     };
 
-    private static final Animator.AnimatorPos[] RED_RIGHT = new Animator.AnimatorPos[] {
+    private static final Animator.AnimatorPos[] RED_LEFT = new Animator.AnimatorPos[] {
+            new Animator.AnimatorPos(32, 64),
             new Animator.AnimatorPos(48, 64),
-            new Animator.AnimatorPos(64, 64),
     };
 
     private static final Animator.AnimatorPos[] RED_UP = new Animator.AnimatorPos[] {
+            new Animator.AnimatorPos(64, 64),
             new Animator.AnimatorPos(80, 64),
-            new Animator.AnimatorPos(96, 64),
     };
 
     private static final Animator.AnimatorPos[] RED_DOWN = new Animator.AnimatorPos[] {
+            new Animator.AnimatorPos(96, 64),
             new Animator.AnimatorPos(112, 64),
-            new Animator.AnimatorPos(128, 64),
     };
         /* for PINK one */
     private static final Animator.AnimatorPos[] PINK_LEFT = new Animator.AnimatorPos[] {
-            new Animator.AnimatorPos(0, 80),
             new Animator.AnimatorPos(32, 80),
+                new Animator.AnimatorPos(48, 80),
     };
 
     private static final Animator.AnimatorPos[] PINK_RIGHT = new Animator.AnimatorPos[] {
-            new Animator.AnimatorPos(48, 80),
-            new Animator.AnimatorPos(64, 80),
+            new Animator.AnimatorPos(0, 80),
+            new Animator.AnimatorPos(16, 80),
     };
 
     private static final Animator.AnimatorPos[] PINK_UP = new Animator.AnimatorPos[] {
+            new Animator.AnimatorPos(64, 80),
             new Animator.AnimatorPos(80, 80),
-            new Animator.AnimatorPos(96, 80),
     };
 
     private static final Animator.AnimatorPos[] PINK_DOWN = new Animator.AnimatorPos[] {
+            new Animator.AnimatorPos(96, 80),
             new Animator.AnimatorPos(112, 80),
-            new Animator.AnimatorPos(128, 80),
     };
         /* for CYAN one */
 
     private static final Animator.AnimatorPos[] CYAN_LEFT = new Animator.AnimatorPos[] {
-            new Animator.AnimatorPos(0, 96),
             new Animator.AnimatorPos(32, 96),
+            new Animator.AnimatorPos(48, 96),
     };
 
     private static final Animator.AnimatorPos[] CYAN_RIGHT = new Animator.AnimatorPos[] {
-            new Animator.AnimatorPos(48, 96),
-            new Animator.AnimatorPos(64, 96),
+            new Animator.AnimatorPos(0, 96),
+            new Animator.AnimatorPos(16, 96),
     };
 
     private static final Animator.AnimatorPos[] CYAN_UP = new Animator.AnimatorPos[] {
+            new Animator.AnimatorPos(64, 96),
             new Animator.AnimatorPos(80, 96),
-            new Animator.AnimatorPos(96, 96),
     };
 
     private static final Animator.AnimatorPos[] CYAN_DOWN = new Animator.AnimatorPos[] {
+            new Animator.AnimatorPos(96, 96),
             new Animator.AnimatorPos(112, 96),
-            new Animator.AnimatorPos(128, 96),
     };
 
         /* for ORANGE one */
     private static final Animator.AnimatorPos[] ORANGE_LEFT = new Animator.AnimatorPos[] {
-            new Animator.AnimatorPos(0, 112),
             new Animator.AnimatorPos(32, 112),
+            new Animator.AnimatorPos(48, 112),
     };
 
     private static final Animator.AnimatorPos[] ORANGE_RIGHT = new Animator.AnimatorPos[] {
-            new Animator.AnimatorPos(48, 112),
-            new Animator.AnimatorPos(64, 112),
+            new Animator.AnimatorPos(0, 112),
+            new Animator.AnimatorPos(16, 112),
     };
 
     private static final Animator.AnimatorPos[] ORANGE_UP = new Animator.AnimatorPos[] {
+            new Animator.AnimatorPos(64, 112),
             new Animator.AnimatorPos(80, 112),
-            new Animator.AnimatorPos(96, 112),
     };
 
     private static final Animator.AnimatorPos[] ORANGE_DOWN = new Animator.AnimatorPos[] {
+            new Animator.AnimatorPos(96, 112),
             new Animator.AnimatorPos(112, 112),
-            new Animator.AnimatorPos(128, 112),
     };
 
         /* for FRIGHTENED one */
     private static final Animator.AnimatorPos[] FRIGHTENED = new Animator.AnimatorPos[] {
+            new Animator.AnimatorPos(128, 64),
             new Animator.AnimatorPos(144, 64),
             new Animator.AnimatorPos(160, 64),
             new Animator.AnimatorPos(176, 64),
-            new Animator.AnimatorPos(192, 64),
     };
+
+
+        /*  for Eaten one */
+    private static final Animator.AnimatorPos[] EATEN_RIGHT = new Animator.AnimatorPos[] {
+            new Animator.AnimatorPos(128, 80),
+    };
+
+    private static final Animator.AnimatorPos[] EATEN_LEFT = new Animator.AnimatorPos[] {
+            new Animator.AnimatorPos(144, 80),
+    };
+
+    private static final Animator.AnimatorPos[] EATEN_UP = new Animator.AnimatorPos[] {
+            new Animator.AnimatorPos(160, 80),
+    };
+
+    private static final Animator.AnimatorPos[] EATEN_DOWN = new Animator.AnimatorPos[] {
+            new Animator.AnimatorPos(176, 80),
+    };
+
+
 
 
 
@@ -177,6 +197,10 @@ public class AnimatorLib {
      */
     private static final Animator FRIGHTENED_ANIMATOR = Animator.getDirAnimator(GameModel.GHOST_ANIMATION_RATE, FRIGHTENED, FRIGHTENED, FRIGHTENED, FRIGHTENED);
 
+    /**
+     * Animator for Eaten-Ghosts
+     */
+    private static final Animator EATEN_ANIMATOR = Animator.getDirAnimator(GameModel.GHOST_ANIMATION_RATE, EATEN_LEFT, EATEN_RIGHT, EATEN_UP, EATEN_DOWN);
 
     /**
      * Get animator for ghost, index is one of
@@ -186,7 +210,7 @@ public class AnimatorLib {
      * {@link GameModel#ORANGE_GHOST},
      * {@link GameModel#FRIGHTENED_GHOST}
      */
-    public static final Animator[] GHOST_ANIMATOR = {RED_ANIMATOR, PINK_ANIMATOR, CYAN_ANIMATOR, ORANGE_ANIMATOR, FRIGHTENED_ANIMATOR};
+    public static final Animator[] GHOST_ANIMATOR = {RED_ANIMATOR, PINK_ANIMATOR, CYAN_ANIMATOR, ORANGE_ANIMATOR, FRIGHTENED_ANIMATOR, EATEN_ANIMATOR};
 
 
 }
