@@ -19,7 +19,7 @@ public abstract class MovableEntity extends Entity {
     private float currentSpeed;                 //Speed after percentage adjustment (per tick)
 
 
-    protected boolean newTileEntered;
+    public boolean newTileEntered;
     protected boolean gotReverseCommand;
     protected boolean canTeleport;
     protected float corneringSpeedUp;

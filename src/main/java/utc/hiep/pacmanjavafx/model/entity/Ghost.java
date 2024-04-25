@@ -43,7 +43,7 @@ public class Ghost extends MovableEntity{
     private GhostState state;
     //private Consumer<Ghost> huntingBehavior;
     //private Consumer<Ghost> frightenedBehavior;
-    private House house;
+    public House house;
     private fVector2D revivalPosition;
     private float speedReturningToHouse;
     private float speedInsideHouse;
@@ -78,6 +78,9 @@ public class Ghost extends MovableEntity{
         revivalPosition = position;
     }
 
+    public void setState(GhostState state) {
+        this.state = state;
+    }
 
 
 
@@ -141,5 +144,9 @@ public class Ghost extends MovableEntity{
 
     public void animatorUpdate() {
         animator.update(movingDir());
+    }
+
+    public GhostState getState() {
+        return state;
     }
 }

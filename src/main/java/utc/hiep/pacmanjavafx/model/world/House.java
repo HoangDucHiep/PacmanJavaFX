@@ -6,6 +6,7 @@ import utc.hiep.pacmanjavafx.lib.iVector2D;
 import java.util.Objects;
 
 import static utc.hiep.pacmanjavafx.lib.Global.HALF_TILE_SIZE;
+import static utc.hiep.pacmanjavafx.lib.Global.TILE_SIZE;
 
 public class House {
 
@@ -45,7 +46,7 @@ public class House {
 
 
     public fVector2D center() {
-        return minTile.toFloatVec().scaled(HALF_TILE_SIZE).plus(size.toFloatVec().scaled(HALF_TILE_SIZE));
+        return minTile.toFloatVec().scaled(TILE_SIZE).plus(size.toFloatVec().scaled(HALF_TILE_SIZE));
     }
 
 
