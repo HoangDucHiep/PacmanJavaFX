@@ -51,11 +51,7 @@ public class GameView extends GeneralScene{
         canvas = new Canvas(GAME_WIDTH, GAME_HEIGHT);
         gc = canvas.getGraphicsContext2D();
         getRootPane().getChildren().add(canvas);
-        //World
-        //world = PacmanMap.createPacManWorld();
 
-        //Pacman
-        //pacman = new Pacman("PACMAN");
     }
 
     public void setGameEntity(Pacman pacman, World world, Ghost testGhost) {

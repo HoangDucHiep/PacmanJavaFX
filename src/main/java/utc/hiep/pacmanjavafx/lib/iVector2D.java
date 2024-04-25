@@ -3,6 +3,8 @@ package utc.hiep.pacmanjavafx.lib;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+import static utc.hiep.pacmanjavafx.lib.Global.centerOfTile;
+
 
 /**
  * A 2D vector use interger x and y.
@@ -94,8 +96,12 @@ public final class iVector2D {
     /**
      * @return length of vector
      */
-    public float euclideanDistance(iVector2D v) {
-        return (float) Math.hypot(x - v.x, y - v.y);
+    public float sqrEuclideanDistance(iVector2D v) {
+        float thisXcenter = centerOfTile(this).x();
+        float thisYcenter = centerOfTile(this).y();
+        float vXcenter = centerOfTile(v).x();
+        float vYcenter = centerOfTile(v).y();
+        return (thisXcenter - vXcenter) * (thisXcenter - vXcenter) + (thisYcenter - vYcenter) * (thisYcenter - vYcenter);
     }
 
 

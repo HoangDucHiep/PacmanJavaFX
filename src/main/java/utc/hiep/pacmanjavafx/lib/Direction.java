@@ -12,9 +12,9 @@ import java.util.stream.Stream;
  */
 public enum Direction {
 
-    LEFT(-1, 0), RIGHT(1, 0), UP(0, -1), DOWN(0, 1);
+    UP(0, -1), LEFT(-1, 0), DOWN(0, 1), RIGHT(1, 0);
 
-    private static final Direction[] OPPOSITE = {RIGHT, LEFT, DOWN, UP};        //opposite direction
+    private static final Direction[] OPPOSITE = {DOWN, RIGHT, UP, LEFT};        //opposite direction
 
     public static Stream<Direction> stream() {
         return Stream.of(values());
@@ -77,6 +77,10 @@ public enum Direction {
 //            nextDir = Global.RND.nextInt(4);
 //        }
         return dirs.get(nextDir);
+    }
+
+    public boolean isHigherPriority(Direction other) {
+        return this.ordinal() >= other.ordinal();
     }
 
 }

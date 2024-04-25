@@ -17,7 +17,8 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import static utc.hiep.pacmanjavafx.lib.Global.*;
-import static utc.hiep.pacmanjavafx.model.entity.GhostState.HUNTING_PAC;
+import static utc.hiep.pacmanjavafx.model.entity.GhostState.*;
+import static utc.hiep.pacmanjavafx.model.level.GameModel.*;
 
 public class Ghost extends MovableEntity{
 
@@ -45,8 +46,13 @@ public class Ghost extends MovableEntity{
     //private Consumer<Ghost> frightenedBehavior;
     public House house;
     private fVector2D revivalPosition;
+    private float outOfHouseSpeed;
     private float speedReturningToHouse;
     private float speedInsideHouse;
+
+    //eaten food counter for exit house
+    private int eatenFoodCounter;
+
     //private Map<Vector2i, List<Direction>> forbiddenMoves = Collections.emptyMap();
 
 
@@ -64,6 +70,9 @@ public class Ghost extends MovableEntity{
         reset();
         this.id = id;
         this.name = name;
+        state = LOCKED;
+        eatenFoodCounter = 0;
+        updateState();
         this.animator = AnimatorLib.GHOST_ANIMATOR[id];
     }
 
@@ -78,12 +87,34 @@ public class Ghost extends MovableEntity{
         revivalPosition = position;
     }
 
-    public void setState(GhostState state) {
-        this.state = state;
+
+    public void updateEatenFoodCounter() {
+        eatenFoodCounter++;
     }
 
+    public void updateState() {
+        if(eatenFoodCounter == 0) {
+            state = LOCKED;
+            updateDefaultSpeed(speedInsideHouse);
+            return;
+        }
+
+        if(eatenFoodCounter == 30) {
+            state = LEAVING_HOUSE;
+            updateDefaultSpeed(speedInsideHouse);
+            return;
+        }
 
 
+        fVector2D houseEntryPosition = house.door().entryPosition();
+        if (state == LEAVING_HOUSE && posY() == houseEntryPosition.y()) {
+            state = SCATTER;
+            updateDefaultSpeed(outOfHouseSpeed);
+            return;
+        }
+
+
+    }
 
 
 
@@ -131,8 +162,6 @@ public class Ghost extends MovableEntity{
             return !world.isWall(tile);
         }
 
-
-
         return world.belongsToPortal(tile);
     }
 
@@ -149,4 +178,18 @@ public class Ghost extends MovableEntity{
     public GhostState getState() {
         return state;
     }
+
+
+    public void setOutOfHouseSpeed(float pixelsPerTick) {
+        outOfHouseSpeed = pixelsPerTick;
+    }
+
+    public void setDefaultSpeedInsideHouse(float pixelsPerTick) {
+        speedInsideHouse = pixelsPerTick;
+    }
+
+    public void setDefaultSpeedReturnHouse(float pixelsPerTick) {
+        speedReturningToHouse = pixelsPerTick;
+    }
+
 }

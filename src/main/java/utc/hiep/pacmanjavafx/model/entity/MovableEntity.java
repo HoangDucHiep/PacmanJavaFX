@@ -17,7 +17,7 @@ public abstract class MovableEntity extends Entity {
 
     private float defaultSpeed;                 //Base speed (per tick)
     private float currentSpeed;                 //Speed after percentage adjustment (per tick)
-
+    private byte currentPercentageSpeed;
 
     public boolean newTileEntered;
     protected boolean gotReverseCommand;
@@ -185,7 +185,7 @@ public abstract class MovableEntity extends Entity {
             movingDir = dir;
             setIsStanding(false);
             setVelocity(movingDir.vector().toFloatVec().scaled(currentSpeed));
-            System.out.println("new move dir: " + movingDir + " " + this);
+            //System.out.println("new move dir: " + movingDir + " " + this);
         }
     }
 
@@ -206,7 +206,7 @@ public abstract class MovableEntity extends Entity {
     public void setNextDir(Direction dir) {
         checkNotNull(dir);
         nextDir = nextDir != dir ? dir : nextDir;
-        System.out.println("next move dir: " + nextDir + " " + this);
+        //System.out.println("next move dir: " + nextDir + " " + this);
     }
 
     /**
@@ -246,7 +246,7 @@ public abstract class MovableEntity extends Entity {
        setIsStanding(false);
        newTileEntered = false;
        setMovingDir(nextDir);
-       System.out.println("Turn back instantly: " + this);
+       //System.out.println("Turn back instantly: " + this);
     }
 
     /**
@@ -257,8 +257,14 @@ public abstract class MovableEntity extends Entity {
         if (percentage < 0) {
             throw new IllegalArgumentException("Negative speed percentage: " + percentage);
         }
+        currentPercentageSpeed = percentage;
         currentSpeed = (float) 0.01 * percentage * defaultSpeed;
         setSpeed(currentSpeed);
+    }
+
+    public void updateDefaultSpeed(float pixelsPerTick) {
+        setDefaultSpeed(pixelsPerTick);
+        setPercentageSpeed(currentPercentageSpeed);
     }
 
     /**
