@@ -4,14 +4,15 @@ import javafx.scene.Scene;
 import utc.hiep.pacmanjavafx.lib.Direction;
 import utc.hiep.pacmanjavafx.lib.fVector2D;
 import utc.hiep.pacmanjavafx.lib.iVector2D;
+import utc.hiep.pacmanjavafx.model.Timer;
 import utc.hiep.pacmanjavafx.model.entity.Ghost;
 import utc.hiep.pacmanjavafx.model.entity.GhostState;
 import utc.hiep.pacmanjavafx.model.entity.Pacman;
 import utc.hiep.pacmanjavafx.model.world.PacmanMap;
 import utc.hiep.pacmanjavafx.model.world.World;
 
+
 import static utc.hiep.pacmanjavafx.model.entity.GhostState.*;
-import static utc.hiep.pacmanjavafx.model.entity.GhostState.LEAVING_HOUSE;
 import static utc.hiep.pacmanjavafx.model.level.GameModel.*;
 import static utc.hiep.pacmanjavafx.lib.Global.*;
 
@@ -44,6 +45,7 @@ public class GameLevel {
     private World world;
     private Data data;
     private Ghost testGhost;
+    private Timer huntingTimer;
 
 
     public GameLevel() {
@@ -53,6 +55,7 @@ public class GameLevel {
         this.pacman = new Pacman("PACMAN");
         this.world = PacmanMap.createPacManWorld();
         this.testGhost = new Ghost(PINK_GHOST, "Pinky");
+        huntingTimer = new Timer();
         setUpPacman();
         setUpGhost();
     }
@@ -68,7 +71,7 @@ public class GameLevel {
     private void setUpGhost() {
         testGhost.setHouse(world.house());
         testGhost.setRevivalPosition(PacmanMap.HOUSE_LEFT_SEAT);
-        testGhost.setTargetTile(PacmanMap.SCATTER_TARGET_RIGHT_LOWER_CORNER);
+        testGhost.setTargetTile(PacmanMap.SCATTER_TARGET_LEFT_UPPER_CORNER);
         testGhost.placeAtTile(testGhost.getRevivalPosition());
         testGhost.placeAtTile(PacmanMap.HOUSE_LEFT_SEAT);
         testGhost.setMovingDir(Direction.UP);
@@ -81,6 +84,7 @@ public class GameLevel {
 
 
     public void update() {
+        huntingTimer.updateTimer();
         testGhost.updateState();
         if(testGhost.getState() == LOCKED) {
             moveLockedGhost();
@@ -88,9 +92,9 @@ public class GameLevel {
             ghostLeavingHouse();
         } else
             moveScatterGhost();
-
-        System.out.println(testGhost.getState());
-
+        if(huntingTimer.getSecondTimer() > 10) {
+            testGhost.setTargetTile(pacman.atTile());
+        }
     }
 
 
