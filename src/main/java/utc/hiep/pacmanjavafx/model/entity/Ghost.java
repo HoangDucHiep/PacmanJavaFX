@@ -114,8 +114,16 @@ public class Ghost extends MovableEntity{
         }
 
 
+
+
     }
 
+
+    public void changeToHunter() {
+        state = HUNTING_PAC;
+        turnBackInstantly();
+        updateDefaultSpeed(outOfHouseSpeed);
+    }
 
 
     @Override

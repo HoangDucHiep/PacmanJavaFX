@@ -92,7 +92,10 @@ public class GameLevel {
             ghostLeavingHouse();
         } else
             moveScatterGhost();
-        if(huntingTimer.getSecondTimer() > 10) {
+        if((int)huntingTimer.getSecondTimer() > 10) {
+            if(testGhost.getState() == SCATTER) {
+                testGhost.changeToHunter();
+            }
             testGhost.setTargetTile(pacman.atTile());
         }
     }

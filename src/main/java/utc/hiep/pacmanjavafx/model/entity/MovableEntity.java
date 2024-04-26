@@ -245,7 +245,7 @@ public abstract class MovableEntity extends Entity {
        gotReverseCommand = true;
        setIsStanding(false);
        newTileEntered = false;
-       setMovingDir(nextDir);
+       setMovingDir(movingDir.opposite());
        //System.out.println("Turn back instantly: " + this);
     }
 
