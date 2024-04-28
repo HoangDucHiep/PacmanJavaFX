@@ -151,7 +151,6 @@ public class GameController {
         iVector2D currentTile = pacman.atTile();
         if(world.hasFoodAt(currentTile) && !world.hasEatenFoodAt(currentTile)) {
             world.removeFood(currentTile);
-            testGhost.updateEatenFoodCounter();
         }
     }
 

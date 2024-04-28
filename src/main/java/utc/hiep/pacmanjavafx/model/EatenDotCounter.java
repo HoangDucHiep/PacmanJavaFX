@@ -2,6 +2,10 @@ package utc.hiep.pacmanjavafx.model;
 
 import utc.hiep.pacmanjavafx.model.world.World;
 
+
+/**
+ * Counter for eaten dots
+ */
 public class EatenDotCounter {
     private int acumulatedDot;
 
@@ -41,6 +45,11 @@ public class EatenDotCounter {
         deActivatePoint = world.eatenFoodCount();
         isActivated = false;
         acumulatedDot += (deActivatePoint -  activatePoint);
+    }
+
+    public void reset() {
+        acumulatedDot = 0;
+        isActivated = false;
     }
 
 

@@ -1,6 +1,5 @@
 package utc.hiep.pacmanjavafx.model.level;
 
-import javafx.scene.Scene;
 import utc.hiep.pacmanjavafx.lib.Direction;
 import utc.hiep.pacmanjavafx.lib.fVector2D;
 import utc.hiep.pacmanjavafx.lib.iVector2D;
@@ -54,7 +53,7 @@ public class GameLevel {
 
         this.pacman = new Pacman("PACMAN");
         this.world = PacmanMap.createPacManWorld();
-        this.testGhost = new Ghost(PINK_GHOST, "Pinky");
+        this.testGhost = new Ghost(PINK_GHOST, "Pinky", world);
         huntingTimer = new Timer();
         setUpPacman();
         setUpGhost();
@@ -86,14 +85,14 @@ public class GameLevel {
     public void update() {
         huntingTimer.updateTimer();
         testGhost.updateState();
-        if(testGhost.getState() == LOCKED) {
+        if(testGhost.state() == LOCKED) {
             moveLockedGhost();
-        }else if(testGhost.getState() == GhostState.LEAVING_HOUSE) {
+        }else if(testGhost.state() == GhostState.LEAVING_HOUSE) {
             ghostLeavingHouse();
         } else
             moveScatterGhost();
         if((int)huntingTimer.getSecondTimer() > 10) {
-            if(testGhost.getState() == SCATTER) {
+            if(testGhost.state() == SCATTER) {
                 testGhost.changeToHunter();
             }
             testGhost.setTargetTile(pacman.atTile());
@@ -164,31 +163,7 @@ public class GameLevel {
 
 
     private void ghostLeavingHouse() {
-        fVector2D houseEntryPosition = testGhost.house.door().entryPosition();
-        if (testGhost.posY() <= houseEntryPosition.y()) {
-            // has raised and is outside house
-            testGhost.setPosition(houseEntryPosition);
-            testGhost.setMovingDir(Direction.LEFT);
-            testGhost.setNextDir(Direction.LEFT);
-            testGhost.newTileEntered = false;
-            return;
-        }
-        // move inside house
-        float centerX = testGhost.center().x();
-        float houseCenterX = testGhost.house.center().x();
-        if (differsAtMost(0.5f * testGhost.currentSpeed(), centerX, houseCenterX)) {
-            // align horizontally and raise
-            testGhost.setPosX(houseCenterX - HALF_TILE_SIZE);
-            testGhost.setMovingDir(Direction.UP);
-            testGhost.setNextDir(Direction.UP);
-        } else {
-            // move sidewards until center axis is reached
-            testGhost.setMovingDir(centerX < houseCenterX ? Direction.RIGHT : Direction.LEFT);
-            testGhost.setNextDir(centerX < houseCenterX ? Direction.RIGHT : Direction.LEFT);
-        }
-
-        testGhost.move();
-
+        testGhost.leaveHouse();
     }
 
 

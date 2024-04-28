@@ -271,7 +271,7 @@ public abstract class MovableEntity extends Entity {
      * Calculate speed with base speed and percentage speed
      * @param pixelSpeed
      */
-    private void setSpeed(float pixelSpeed) {
+    protected void setSpeed(float pixelSpeed) {
         if (pixelSpeed < 0) {
             throw new IllegalArgumentException("Negative pixel speed: " + pixelSpeed);
         }
