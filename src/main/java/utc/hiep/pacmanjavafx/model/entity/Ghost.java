@@ -22,18 +22,6 @@ import static utc.hiep.pacmanjavafx.model.level.GameModel.*;
 
 public class Ghost extends MovableEntity{
 
-
-    public static final String ANIM_GHOST_NORMAL     = "normal";
-    public static final String ANIM_GHOST_FRIGHTENED = "frightened";
-    public static final String ANIM_GHOST_EYES       = "eyes";
-    public static final String ANIM_GHOST_FLASHING   = "flashing";
-    public static final String ANIM_GHOST_NUMBER     = "number";
-    public static final String ANIM_BLINKY_DAMAGED   = "damaged";
-    public static final String ANIM_BLINKY_STRETCHED = "stretched";
-    public static final String ANIM_BLINKY_PATCHED   = "patched";
-    public static final String ANIM_BLINKY_NAKED     = "naked";
-
-
     private static final int GHOST_UI_SIZE = 16;
     private Image sprite_sheet = ImageLibrary.SPRITE_SHEET;
     private Animator animator;
