@@ -9,6 +9,8 @@ public interface GameModel {
     byte ORANGE_GHOST = 3;
     byte FRIGHTENED_GHOST = 4;  //use only for animation
 
+    String[] GHOST_NAME = {"Blinky", "Pinky", "Inky", "Clyde"};
+
     /** Game loop frequency. */
     short FPS = 60;
 
@@ -52,4 +54,23 @@ public interface GameModel {
             /*20*/ {100, 95, 50, 120, 100, 60, 105,   0,  0, 0, 0, 0},
             /*21*/ { 90, 95, 50, 120, 100, 60, 105,   0,  0, 0, 0, 0},
     };
+
+
+    // Hunting duration (in ticks) of chase and scatter phases. See Pac-Man dossier.
+    final int[][] CHASING_TARGET_DURATIONS = {
+            {7 * FPS, 20 * FPS, 7 * FPS, 20 * FPS, 5 * FPS,   20 * FPS, 5 * FPS, -1}, // Level 1
+            {7 * FPS, 20 * FPS, 7 * FPS, 20 * FPS, 5 * FPS, 1033 * FPS,       1, -1}, // Levels 2-4
+            {5 * FPS, 20 * FPS, 5 * FPS, 20 * FPS, 5 * FPS, 1037 * FPS,       1, -1}, // Levels 5+
+    };
+
+
+    static int chasingTargetDuration(int level, long huntingPhaseIndex) {
+        return CHASING_TARGET_DURATIONS[level == 1 ? 0 : level <= 4 ? 1 : 2][(int) huntingPhaseIndex];
+    }
+
+
+
+    public static String ghostName(byte id) {
+        return GHOST_NAME[id];
+    }
 }

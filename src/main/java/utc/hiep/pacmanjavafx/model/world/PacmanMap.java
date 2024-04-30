@@ -3,6 +3,8 @@ package utc.hiep.pacmanjavafx.model.world;
 import utc.hiep.pacmanjavafx.lib.fVector2D;
 import utc.hiep.pacmanjavafx.lib.iVector2D;
 
+import java.util.List;
+
 import static utc.hiep.pacmanjavafx.lib.Global.*;
 public interface PacmanMap {
 
@@ -84,5 +86,9 @@ public interface PacmanMap {
     fVector2D HOUSE_MIDDLE_SEAT = halfTileRightOf(13, 17);
     fVector2D HOUSE_RIGHT_SEAT  = halfTileRightOf(15, 17);
     fVector2D HOUSE_DOOR_SEAT       = halfTileRightOf(13, 14);
+
+    List<iVector2D> PACMAN_RED_ZONE = List.of(
+            new iVector2D(12, 14), new iVector2D(15, 14),
+            new iVector2D(12, 26), new iVector2D(15, 26));
 
 }

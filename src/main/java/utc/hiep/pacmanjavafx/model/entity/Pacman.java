@@ -18,6 +18,7 @@ public class Pacman extends MovableEntity{
     private final String name;
     private static final float PACMAN_DEFAULT_SPEED = (float) PPS_AT_100_PERCENT / FPS;
 
+    private long starvingTicks;
     private static final int PAC_UI_SIZE = 15;  //size of pacman int sprite_sheet.png
 
     //UI part
@@ -28,8 +29,9 @@ public class Pacman extends MovableEntity{
         super();
         //set animation sprite ui
         checkNotNull(name);
-        this.name = name;
         reset();
+        this.name = name;
+        this.starvingTicks = 0;
     }
 
 
@@ -55,13 +57,22 @@ public class Pacman extends MovableEntity{
         return world.belongsToPortal(tile);
     }
 
+    public long starvingTicks() {
+        return starvingTicks;
+    }
+
+    public void starve() {
+        ++starvingTicks;
+    }
+
+    public void endStarving() {
+        starvingTicks = 0;
+    }
 
 
 
     public void animatorUpdate() {
-        if(!isStanding()) {
-            animator.update(movingDir());
-        }
+        animator.update(movingDir());
     }
 
 

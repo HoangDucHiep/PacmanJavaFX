@@ -4,8 +4,12 @@ import utc.hiep.pacmanjavafx.model.entity.Ghost;
 import utc.hiep.pacmanjavafx.model.level.GameLevel;
 import utc.hiep.pacmanjavafx.model.level.GameModel;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Stream;
+
+import static utc.hiep.pacmanjavafx.model.entity.GhostState.LEAVING_HOUSE;
+import static utc.hiep.pacmanjavafx.model.entity.GhostState.LOCKED;
 
 public class GhostHouseControl {
     private static final byte UNLIMITED = -1;
@@ -30,53 +34,51 @@ public class GhostHouseControl {
     public void resetGlobalCounterAndSetEnabled(boolean enabled) {
         globalCounter = 0;
         globalCounterEnabled = enabled;
-        Logger.trace("Global dot counter set to 0 and {}", enabled ? "enabled" : "disabled");
     }
 
     public void updateDotCount(GameLevel level) {
         if (globalCounterEnabled) {
             if (level.ghost(GameModel.ORANGE_GHOST).is(LOCKED) && globalCounter == 32) {
-                Logger.trace("{} inside house when global counter reached 32", level.ghost(GameModel.ORANGE_GHOST).name());
                 resetGlobalCounterAndSetEnabled(false);
             } else {
                 globalCounter++;
-                Logger.trace("Global dot counter = {}", globalCounter);
             }
         } else {
-            level.ghosts(LOCKED)
+            Arrays.stream(level.ghosts()).filter(ghost -> ghost.is(LOCKED))
                     .filter(ghost -> ghost.insideHouse(level.world().house()))
                     .findFirst().ifPresent(ghost -> {
                         counters[ghost.id()]++;
-                        Logger.trace("{} dot counter = {}", ghost.name(), counters[ghost.id()]);
                     });
         }
     }
 
-    public Optional<GhostUnlockInfo> unlockGhost(GameLevel level) {
+    public void unlockGhost(GameLevel level) {
         if (level.ghost(GameModel.RED_GHOST).is(LOCKED)) {
-            return Optional.of(new GhostUnlockInfo(level.ghost(GameModel.RED_GHOST), "Gets unlocked immediately"));
+            level.ghost(GameModel.RED_GHOST).setState(LEAVING_HOUSE);
         }
-        Ghost candidate = Stream.of(GameModel.PINK_GHOST, GameModel.CYAN_GHOST, GameModel.ORANGE_GHOST)
-                .map(level::ghost).filter(ghost -> ghost.is(LOCKED)).findFirst().orElse(null);
-        if (candidate == null) {
-            return Optional.empty();
+
+        Ghost[] lockedGhosts = Arrays.stream(level.ghosts()).filter(ghost -> ghost.is(LOCKED)).toArray(Ghost[]::new);
+
+        if (lockedGhosts.length == 0) {
+            return;
         }
-        // check private dot counter first (if enabled)
-        if (!globalCounterEnabled && counters[candidate.id()] >= privateDotLimit(level.number(), candidate)) {
-            return Optional.of(new GhostUnlockInfo(candidate,
-                    "Private dot counter at limit (%d)", privateDotLimit(level.number(), candidate)));
+
+        for (var ghost : lockedGhosts) {
+            // check private dot counter first (if enabled)
+            if (!globalCounterEnabled && counters[ghost.id()] >= privateDotLimit(level.levelNum(), ghost)) {
+                ghost.setState(LEAVING_HOUSE);
+            }
+            // check global dot counter
+            if (globalLimits[ghost.id()] != UNLIMITED && globalCounter >= globalLimits[ghost.id()]) {
+                ghost.setState(LEAVING_HOUSE);
+            }
         }
-        // check global dot counter
-        if (globalLimits[candidate.id()] != UNLIMITED && globalCounter >= globalLimits[candidate.id()]) {
-            return Optional.of(new GhostUnlockInfo(candidate,
-                    "Global dot counter at limit (%d)", globalLimits[candidate.id()]));
-        }
+
+
         // check Pac-Man starving time
-        if (level.pac().starvingTicks() >= pacStarvingLimitTicks) {
-            level.pac().endStarving();
-            return Optional.of(new GhostUnlockInfo(candidate,
-                    "%s reached starving limit (%d ticks)", level.pac().name(), pacStarvingLimitTicks));
+        if (level.pacman().starvingTicks() >= pacStarvingLimitTicks) {
+            lockedGhosts[0].setState(LEAVING_HOUSE);
+            level.pacman().endStarving();
         }
-        return Optional.empty();
     }
 }

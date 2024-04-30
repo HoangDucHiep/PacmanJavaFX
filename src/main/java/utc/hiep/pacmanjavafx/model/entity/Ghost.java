@@ -9,8 +9,12 @@ import utc.hiep.pacmanjavafx.model.level.GameModel;
 import utc.hiep.pacmanjavafx.model.world.House;
 import utc.hiep.pacmanjavafx.model.world.World;
 
-import static utc.hiep.pacmanjavafx.lib.Direction.LEFT;
-import static utc.hiep.pacmanjavafx.lib.Direction.RIGHT;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
+
+import static utc.hiep.pacmanjavafx.lib.Direction.*;
 import static utc.hiep.pacmanjavafx.lib.Global.*;
 import static utc.hiep.pacmanjavafx.model.entity.GhostState.*;
 
@@ -24,8 +28,8 @@ public class Ghost extends MovableEntity{
     private final byte id;
     private final String name;
     private GhostState state;
-    //private Consumer<Ghost> huntingBehavior;
-    //private Consumer<Ghost> frightenedBehavior;
+    private Consumer<Ghost> huntingBehavior;
+    private Consumer<Ghost> frightenedBehavior;
     public House house;
     private fVector2D revivalPosition;
     private float outOfHouseSpeed;
@@ -35,7 +39,7 @@ public class Ghost extends MovableEntity{
     //eaten food counter for exit house
     private EatenDotCounter eatenFoodCounter;
 
-    //private Map<Vector2i, List<Direction>> forbiddenMoves = Collections.emptyMap();
+    private Map<iVector2D, List<Direction>> forbiddenMoves = Collections.emptyMap();
 
 
     /**
@@ -46,14 +50,13 @@ public class Ghost extends MovableEntity{
      * {@link GameModel#ORANGE_GHOST}.
      * @param name the ghost's readable name, e.g. "Pinky"
      */
-    public Ghost(byte id, String name, World world) {
+    public Ghost(byte id, String name) {
         //checkGhostID(id);
         checkNotNull(name);
         reset();
         this.id = id;
         this.name = name;
         state = LOCKED;
-        updateState();
         this.animator = AnimatorLib.GHOST_ANIMATOR[id];
     }
 
@@ -62,6 +65,9 @@ public class Ghost extends MovableEntity{
         this.house = house;
     }
 
+    public boolean insideHouse(House house) {
+        return house.contains(atTile());
+    }
 
     public void setRevivalPosition(fVector2D position) {
         checkNotNull(position);
@@ -69,7 +75,22 @@ public class Ghost extends MovableEntity{
     }
 
 
-    public void leaveHouse() {
+    public void setForbiddenMoves(Map<iVector2D, List<Direction>> moves) {
+        forbiddenMoves = moves;
+    }
+
+
+    public void updateStateLocked() {
+        updateDefaultSpeed(speedInsideHouse);
+        fVector2D currentTile = halfTileLeftOf(atTile().x(), atTile().y());
+        if(!currentTile.equals(getRevivalPosition())) {
+            setNextDir(movingDir().opposite());
+            turnBackInstantly();
+        }
+        move();
+    }
+
+    public void updateStateLeavingHouse() {
         fVector2D houseEntryPosition = house.door().entryPosition();
         if (posY() <= houseEntryPosition.y()) {
             // has raised and is outside house
@@ -77,6 +98,7 @@ public class Ghost extends MovableEntity{
             setMovingDir(LEFT);
             setNextDir(LEFT);
             newTileEntered = false;
+            setState(CHASING_TARGET);
             return;
         }
         // move inside house
@@ -124,46 +146,33 @@ public class Ghost extends MovableEntity{
         }
     }
 
-
-    public void updateState() {
-        if(eatenFoodCounter.getCounter() == 0) {
-            state = LOCKED;
-            updateDefaultSpeed(speedInsideHouse);
-            return;
-        }
-
-        if(eatenFoodCounter.getCounter() == 30) {
-            state = LEAVING_HOUSE;
-            updateDefaultSpeed(speedInsideHouse);
-            return;
-        }
-
-
-        fVector2D houseEntryPosition = house.door().entryPosition();
-        if (state == LEAVING_HOUSE && posY() == houseEntryPosition.y()) {
-            state = SCATTER;
-            updateDefaultSpeed(outOfHouseSpeed);
-            return;
-        }
-
+    public void setHuntingBehavior(Consumer<Ghost> function) {
+        checkNotNull(function);
+        huntingBehavior = function;
     }
 
-
-    public void changeToHunter() {
-        state = HUNTING_PAC;
-        turnBackInstantly();
-        updateDefaultSpeed(outOfHouseSpeed);
+    /**
+     * @param function function specifying the behavior when frightened
+     */
+    public void setFrightenedBehavior(Consumer<Ghost> function) {
+        checkNotNull(function);
+        frightenedBehavior = function;
     }
 
+    public byte id() {
+        return id;
+    }
 
     @Override
     public String name() {
         return name;
     }
 
+
     @Override
     public boolean canTurnBack() {
-        return newTileEntered && is(HUNTING_PAC, FRIGHTENED);
+        //return newTileEntered && is(CHASING_TARGET, FRIGHTENED);
+        return false;
     }
 
     public fVector2D getRevivalPosition() {
@@ -175,17 +184,16 @@ public class Ghost extends MovableEntity{
         checkNotNull(tile);
 
         // hunting ghosts cannot move up at certain tiles in Pac-Man game
-//        if (state == HUNTING_PAC) {
-//            var currentTile = tile();
-//            if (forbiddenMoves.containsKey(currentTile)) {
-//                for (Direction dir : forbiddenMoves.get(currentTile)) {
-//                    if (currentTile.plus(dir.vector()).equals(tile)) {
-//                        Logger.trace("Hunting {} cannot move {} at {}", name, dir, currentTile);
-//                        return false;
-//                    }
-//                }
-//            }
-//        }
+        if (state == CHASING_TARGET) {
+            var currentTile = atTile();
+            if (forbiddenMoves.containsKey(currentTile)) {
+                for (Direction dir : forbiddenMoves.get(currentTile)) {
+                    if (currentTile.plus(dir.vector()).equals(tile)) {
+                        return false;
+                    }
+                }
+            }
+        }
         if (house.door().occupies(tile)) {
             return is(ENTERING_HOUSE, LEAVING_HOUSE);
         }
@@ -195,14 +203,7 @@ public class Ghost extends MovableEntity{
         return world.belongsToPortal(tile);
     }
 
-    @Override
-    public void render(GraphicsContext gc) {
-        gc.drawImage(sprite_sheet, animator.getAnimationPos().posX(), animator.getAnimationPos().posY(), GHOST_UI_SIZE, GHOST_UI_SIZE, posX() - HALF_TILE_SIZE, posY() - HALF_TILE_SIZE, 32, 32);
-    }
 
-    public void animatorUpdate() {
-        animator.update(movingDir());
-    }
 
 
     public void setOutOfHouseSpeed(float pixelsPerTick) {
@@ -218,9 +219,6 @@ public class Ghost extends MovableEntity{
     }
 
 
-    public void setEatenFoodCounter(EatenDotCounter eatenFoodCounter) {
-        this.eatenFoodCounter = eatenFoodCounter;
-    }
 
 
 
@@ -251,41 +249,61 @@ public class Ghost extends MovableEntity{
      *
      * @param state the new state
      */
-//    public void setState(GhostState state) {
-//        checkNotNull(state);
-//        if (this.state == state) {
-//            Logger.trace("{} is already in state {}", name, state);
-//        }
-//        this.state = state;
-//        switch (state) {
-//            case LOCKED, HUNTING_PAC -> selectAnimation(ANIM_GHOST_NORMAL);
+    public void setState(GhostState state) {
+        checkNotNull(state);
+        if (this.state == state) {
+            return;
+        }
+        this.state = state;
+        switch (state) {
+            case LOCKED, LEAVING_HOUSE -> {
+                updateDefaultSpeed(speedInsideHouse);
+            }
+            case CHASING_TARGET -> {
+                updateDefaultSpeed(outOfHouseSpeed);
+                //huntingBehavior.accept(this);
+            }
 //            case ENTERING_HOUSE, RETURNING_TO_HOUSE -> selectAnimation(ANIM_GHOST_EYES);
 //            case FRIGHTENED -> selectAnimation(ANIM_GHOST_FRIGHTENED);
-//            default -> {}
-//        }
-//    }
+            default -> {}
+        }
+    }
 
 
     /**
      * Executes a single simulation step for this ghost in the current game level.
      *
-     * @param pac Pac-Man or Ms. Pac-Man
+//     * @param pac Pac-Man or Ms. Pac-Man
      */
-//    public void update(Pac pac, World world) {
-//        checkNotNull(pac);
-//        switch (state) {
-//            case LOCKED             -> updateStateLocked(pac);
-//            case LEAVING_HOUSE      -> updateStateLeavingHouse(pac);
-//            case HUNTING_PAC        -> updateStateHuntingPac();
+    public void update(Pacman pac, World world) {
+        checkNotNull(pac);
+        switch (state) {
+            case LOCKED             -> updateStateLocked();
+            case LEAVING_HOUSE      -> updateStateLeavingHouse();
+            case CHASING_TARGET        -> updateStateChaingTarget();
 //            case FRIGHTENED         -> updateStateFrightened(pac);
 //            case EATEN              -> updateStateEaten();
 //            case RETURNING_TO_HOUSE -> updateStateReturningToHouse(world);
 //            case ENTERING_HOUSE     -> updateStateEnteringHouse();
-//        }
-//    }
-//
+        }
+        animatorUpdate();
+    }
+
+    private void updateStateChaingTarget() {
+        huntingBehavior.accept(this);
+    }
+
 //    public void eaten(int index) {
 //        setState(EATEN);
-//        selectAnimation(ANIM_GHOST_NUMBER, index);
 //    }
+
+
+    @Override
+    public void render(GraphicsContext gc) {
+        gc.drawImage(sprite_sheet, animator.getAnimationPos().posX(), animator.getAnimationPos().posY(), GHOST_UI_SIZE, GHOST_UI_SIZE, posX() - HALF_TILE_SIZE, posY() - HALF_TILE_SIZE, 32, 32);
+    }
+
+    public void animatorUpdate() {
+        animator.update(movingDir());
+    }
 }

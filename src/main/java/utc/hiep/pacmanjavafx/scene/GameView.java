@@ -32,7 +32,7 @@ public class GameView extends GeneralScene{
     //Game entity
     private World world;
     private Pacman pacman;
-    private Ghost testGhost;
+    private Ghost[] ghosts;
 
 
     /**
@@ -54,10 +54,10 @@ public class GameView extends GeneralScene{
 
     }
 
-    public void setGameEntity(Pacman pacman, World world, Ghost testGhost) {
+    public void setGameEntity(Pacman pacman, World world, Ghost[] ghosts) {
         this.pacman = pacman;
         this.world = world;
-        this.testGhost = testGhost;
+        this.ghosts = ghosts;
     }
 
 
@@ -69,14 +69,6 @@ public class GameView extends GeneralScene{
         getRootPane().setBackground(new Background(background));
     }
 
-
-    public World getWorld() {
-        return world;
-    }
-
-    public Pacman getPacman() {
-        return pacman;
-    }
 
     /**
      * Drawing game each pulse
@@ -90,7 +82,9 @@ public class GameView extends GeneralScene{
 
         world.drawMap(gc);
         pacman.render(gc);
-        testGhost.render(gc);
+        for (Ghost ghost : ghosts) {
+            ghost.render(gc);
+        }
     }
 
 

@@ -108,11 +108,11 @@ public class Global {
 //        checkNotNull(game, MSG_GAME_NULL);
 //    }
 //
-//    public static void checkGhostID(byte id) {
-//        if (id < 0 || id > 3) {
-//            throw new IllegalGhostIDException(id);
-//        }
-//    }
+    public static void checkGhostID(byte id) {
+        if (id < 0 || id > 3) {
+            throw new IllegalArgumentException("Illegal ghost ID: " + id);
+        }
+    }
 //
 //    public static void checkLevelNumber(int number) {
 //        if (number < 1) {

@@ -1,7 +1,5 @@
 package utc.hiep.pacmanjavafx.model;
 
-import javafx.animation.AnimationTimer;
-
 public class Timer {
     public static final long ONE_SECOND = 1_000_000_000; // One second in nanoseconds
     private static final long ONE_MILISECOND = 1_000; // One second in milisecond
@@ -39,17 +37,22 @@ public class Timer {
         tick++;
     }
 
-    public long getTick() {
+    public long ticks() {
         return tick;
     }
 
-    public double getSecondTimer() {
+    public double seconds() {
         return second;
     }
 
     public void switchPause(long updateTime) {
         lastUpdate = updateTime;
         isPaused = !isPaused;
+    }
+
+    public void reset() {
+        tick = 0;
+        second = 0;
     }
 
     public boolean isPaused() {

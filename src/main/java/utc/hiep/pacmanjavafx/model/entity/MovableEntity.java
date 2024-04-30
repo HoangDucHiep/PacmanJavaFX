@@ -20,9 +20,9 @@ public abstract class MovableEntity extends Entity {
     private byte currentPercentageSpeed;
 
     public boolean newTileEntered;
-    protected boolean gotReverseCommand;
+    protected boolean gotTurnBackCommand;
     protected boolean canTeleport;
-    protected float corneringSpeedUp;
+    public float corneringSpeedUp;
 
 
     private float velX;                 //velocity
@@ -30,7 +30,6 @@ public abstract class MovableEntity extends Entity {
     private float accX;                 //acceleration
     private float accY;
 
-    private boolean isStanding;
 
     public MovableEntity() {
         super();
@@ -40,15 +39,25 @@ public abstract class MovableEntity extends Entity {
         accY = 0;
     }
 
+    /**
+     * Init default state for entity
+     * Things that setted:
+     * @see Entity#reset()
+     * movingDir = Direction. LEFT
+     * nextDir = Direction. LEFT
+     * targetTile = null
+     * newTileEntered = true
+     * gotTurnBackCommand = false
+     * canTeleport = true
+     * */
     public void reset() {
         super.reset();
         movingDir = Direction.LEFT;
         nextDir = Direction.LEFT;
         targetTile = null;
         newTileEntered = true;
-        gotReverseCommand = false;
+        gotTurnBackCommand = false;
         canTeleport = true;
-        isStanding = false;
     }
 
     /**
@@ -105,12 +114,12 @@ public abstract class MovableEntity extends Entity {
     /**
      * Move entity to next pos in current direction with velocity in one frame
      */
-    public void move() {
+    public void
+    move() {
         iVector2D prevTile = atTile();
         setPosition(posX() + velX, posY() + velY);
         velX += accX;
         velY += accY;
-        setIsStanding(false);
         if(!atTile().equals(prevTile)) {
             newTileEntered = true;
         }
@@ -175,6 +184,15 @@ public abstract class MovableEntity extends Entity {
 
 
     /**
+     * Places this creature centered over the given tile.
+     *
+     * @param tile tile where creature is placed
+     */
+    public void centerOverTile(iVector2D tile) {
+        placeAtTile(tile.x(), tile.y(), 0, 0);
+    }
+
+    /**
      * Set moving direction - turn entity to move in this direction
      * @param dir direction to move
      */
@@ -183,8 +201,7 @@ public abstract class MovableEntity extends Entity {
 
         if(movingDir != dir) {
             movingDir = dir;
-            setIsStanding(false);
-            setVelocity(movingDir.vector().toFloatVec().scaled(currentSpeed));
+            setVelocity(movingDir.vector().toFloatVec().scaled(velocity().length()));
             //System.out.println("new move dir: " + movingDir + " " + this);
         }
     }
@@ -232,21 +249,26 @@ public abstract class MovableEntity extends Entity {
     }
 
 
-//    public iVector2D tilesAheadWithOverflowBug(int numTiles) {
-//        iVector2D ahead = atTile().plus(movingDir.vector().scaled(numTiles));
-//        return movingDir == Direction.UP ? ahead.minus(numTiles, 0) : ahead;
-//    }
+    /**
+     * Get tile ahead of entity - use for getting tile ahead of entity with overflow bug
+     * Help to get target for ghost
+     * @param numTiles number of tiles ahead
+     * @return tile ahead of entity
+     */
+    public iVector2D tilesAheadWithOverflowBug(int numTiles) {
+        iVector2D ahead = atTile().plus(movingDir.vector().scaled(numTiles));
+        return movingDir == Direction.UP ? ahead.minus(numTiles, 0) : ahead;
+    }
 
 
     /**
      * Turn back instantly -  no need to be at intersection  or to be blocked to turn back
      */
     public void turnBackInstantly() {
-       gotReverseCommand = true;
-       setIsStanding(false);
+       gotTurnBackCommand = true;
        newTileEntered = false;
        setMovingDir(movingDir.opposite());
-       //System.out.println("Turn back instantly: " + this);
+       setNextDir(movingDir);
     }
 
     /**
@@ -282,14 +304,6 @@ public abstract class MovableEntity extends Entity {
         return newTileEntered;
     }
 
-    public boolean isStanding() {
-        return isStanding;
-    }
-
-    public void setIsStanding(boolean isStanding) {
-        this.isStanding = isStanding;
-    }
-
     public boolean isAlignedToTile() {
         return center().almostEquals(centerOfTile(atTile()), 0, 0);
     }
@@ -298,8 +312,15 @@ public abstract class MovableEntity extends Entity {
         return currentSpeed;
     }
 
-    public void standing() {
-        setIsStanding(true);
-        setVelocity(0, 0);
+    public boolean canTeleport() {
+        return canTeleport;
+    }
+
+    public boolean gotTurnBackCommand() {
+        return gotTurnBackCommand;
+    }
+
+    public void setGotTurnBackCommand(boolean gotTurnBackCommand) {
+        this.gotTurnBackCommand = gotTurnBackCommand;
     }
 }
