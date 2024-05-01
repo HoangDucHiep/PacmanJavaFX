@@ -6,7 +6,7 @@ import utc.hiep.pacmanjavafx.model.level.GameModel;
 
 /**
  * Library for all animators
- * @implNote Position of each sprite calculated based on the sprite sheet in {@link ImageLibrary#SPRITE_SHEET},
+ * @implNote Position of each sprite calculated based on the sprite sheet in {@link ImageLib#SPRITE_SHEET},
  */
 public class AnimatorLib {
 

@@ -116,14 +116,6 @@ public class GameLevel {
         Arrays.stream(ghosts()).forEach(ghost -> {
             ghost.update(pacman, world);
         });
-
-        System.out.println(ghosts[ORANGE_GHOST].currentSpeed());
-        System.out.println(ghosts[ORANGE_GHOST].movingDir());
-        System.out.println(ghosts[ORANGE_GHOST].nextDir());
-
-
-
-
     }
 
     private void frightenedBehaviorPacManGame(Ghost ghost) {

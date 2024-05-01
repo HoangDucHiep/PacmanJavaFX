@@ -2,9 +2,8 @@ package utc.hiep.pacmanjavafx.model.entity;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import utc.hiep.pacmanjavafx.lib.AnimatorLib;
-import utc.hiep.pacmanjavafx.lib.ImageLibrary;
+import utc.hiep.pacmanjavafx.lib.ImageLib;
 import utc.hiep.pacmanjavafx.lib.iVector2D;
 import utc.hiep.pacmanjavafx.model.Animator;
 import utc.hiep.pacmanjavafx.model.world.World;
@@ -22,7 +21,7 @@ public class Pacman extends MovableEntity{
     private static final int PAC_UI_SIZE = 15;  //size of pacman int sprite_sheet.png
 
     //UI part
-    private final Image spriteSheet = ImageLibrary.SPRITE_SHEET;
+    private final Image spriteSheet = ImageLib.SPRITE_SHEET;
     private final Animator animator = AnimatorLib.PACMAN_ANIMATOR;
 
     public Pacman(String name) {
@@ -33,7 +32,6 @@ public class Pacman extends MovableEntity{
         this.name = name;
         this.starvingTicks = 0;
     }
-
 
 
     @Override

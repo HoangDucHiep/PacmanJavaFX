@@ -1,23 +1,31 @@
 package utc.hiep.pacmanjavafx.controller;
 
 import javafx.animation.AnimationTimer;
+import javafx.stage.Stage;
 import utc.hiep.pacmanjavafx.event.KeyListener;
 import utc.hiep.pacmanjavafx.event.KeyType;
 import utc.hiep.pacmanjavafx.lib.Direction;
 import utc.hiep.pacmanjavafx.lib.EntityMovement;
 import utc.hiep.pacmanjavafx.lib.iVector2D;
+import utc.hiep.pacmanjavafx.model.SceneController;
 import utc.hiep.pacmanjavafx.model.entity.Ghost;
 import utc.hiep.pacmanjavafx.model.entity.Pacman;
 import utc.hiep.pacmanjavafx.model.level.GameLevel;
 import utc.hiep.pacmanjavafx.model.world.World;
 import utc.hiep.pacmanjavafx.scene.GameView;
 import utc.hiep.pacmanjavafx.model.Timer;
+import utc.hiep.pacmanjavafx.scene.ScoreScene;
+import utc.hiep.pacmanjavafx.scene.WelcomeScene;
 
 import java.util.List;
 import java.util.Stack;
 
 public class GameController {
     private final GameView gameView;
+    private final ScoreScene scoreScene = new ScoreScene();
+    private final WelcomeScene welcomeScene = new WelcomeScene();
+    private SceneController sceneController;
+
     private List<KeyType> pressedKey = new Stack<>();
 
     private final World world;
@@ -190,5 +198,8 @@ public class GameController {
 
     public GameView getGameView() {
         return gameView;
+    }
+    public void setSceneController(SceneController sceneController) {
+        this.sceneController = sceneController;
     }
 }

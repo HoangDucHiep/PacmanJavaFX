@@ -21,7 +21,7 @@ import static utc.hiep.pacmanjavafx.model.entity.GhostState.*;
 public class Ghost extends MovableEntity{
 
     private static final int GHOST_UI_SIZE = 16;
-    private Image sprite_sheet = ImageLibrary.SPRITE_SHEET;
+    private Image sprite_sheet = ImageLib.SPRITE_SHEET;
     private Animator animator;
 
 

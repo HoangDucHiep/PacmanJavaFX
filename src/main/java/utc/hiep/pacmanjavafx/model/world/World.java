@@ -3,7 +3,7 @@ package utc.hiep.pacmanjavafx.model.world;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import utc.hiep.pacmanjavafx.lib.AnimatorLib;
-import utc.hiep.pacmanjavafx.lib.ImageLibrary;
+import utc.hiep.pacmanjavafx.lib.ImageLib;
 import utc.hiep.pacmanjavafx.lib.iVector2D;
 import utc.hiep.pacmanjavafx.model.Animator;
 
@@ -18,10 +18,10 @@ import static utc.hiep.pacmanjavafx.lib.Global.*;
 
 public class World {
 
-    private static Image mapImage = ImageLibrary.MAP_EMPTY;
-    private static Image mapFlashingImage = ImageLibrary.FLASHING_MAZE;
-    private static Image pellet = ImageLibrary.PELLET;
-    private static Image energizer = ImageLibrary.ENERGIZER_SHEET;
+    private static Image mapImage = ImageLib.MAP_EMPTY;
+    private static Image mapFlashingImage = ImageLib.FLASHING_MAZE;
+    private static Image pellet = ImageLib.PELLET;
+    private static Image energizer = ImageLib.ENERGIZER_SHEET;
 
     int MAP_WIDTH = TILES_X * TILE_SIZE;
     int MAP_HEIGHT = (TILES_Y - 5) * TILE_SIZE;

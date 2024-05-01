@@ -2,22 +2,15 @@ package utc.hiep.pacmanjavafx.scene;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Ellipse;
-import utc.hiep.pacmanjavafx.lib.AnimatorLib;
-import utc.hiep.pacmanjavafx.lib.ImageLibrary;
-import utc.hiep.pacmanjavafx.lib.iVector2D;
-import utc.hiep.pacmanjavafx.model.Animator;
+import javafx.scene.text.Font;
+import utc.hiep.pacmanjavafx.lib.*;
 import utc.hiep.pacmanjavafx.model.entity.Ghost;
 import utc.hiep.pacmanjavafx.model.entity.Pacman;
 import utc.hiep.pacmanjavafx.model.level.GameLevel;
-import utc.hiep.pacmanjavafx.model.level.GameModel;
 import utc.hiep.pacmanjavafx.model.world.PacmanMap;
 import utc.hiep.pacmanjavafx.model.world.World;
-
-import java.util.function.Consumer;
 
 import static utc.hiep.pacmanjavafx.lib.Global.*;
 import static utc.hiep.pacmanjavafx.model.level.GameModel.*;
@@ -73,7 +66,7 @@ public class GameView extends GeneralScene {
      * Set background for main pane
      */
     private void setBackGround() {
-        BackgroundImage background = new BackgroundImage(ImageLibrary.BACKGROUND_IMAGE, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT);
+        BackgroundImage background = new BackgroundImage(ImageLib.BACKGROUND_IMAGE, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT);
         getRootPane().setBackground(new Background(background));
     }
 
@@ -84,69 +77,77 @@ public class GameView extends GeneralScene {
     @Override
     public void render() {
         gc.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT); //clear last frame rendering
-
-
         world.drawMap(gc);
+
         if (isGridDisplayed) {
             drawTileSystem();
+            drawGhostTarget();
         }
+
 
         pacman.render(gc);
 
-        if (isGridDisplayed) {
-            drawGhostTarget();
-        }
         for (Ghost ghost : ghosts) {
             ghost.render(gc);
         }
     }
 
 
+
+
+    //Use only for testing things
     public void switchGridDisplay() {
         isGridDisplayed = !isGridDisplayed;
     }
 
-
-    //Use only for testing things
     private void drawTileSystem() {
         for (int i = 0; i < TILES_X; i++) {
             for (int j = 0; j < TILES_Y; j++) {
-                gc.setStroke(Color.color(0.12, 0.23, 0.12));
+                gc.setStroke(Color.color(0.12, 0.23, 0.12, 0.4));
                 gc.strokeRect(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE);
             }
         }
-
-
     }
 
+    private final Font targetFont = FontLib.EMULOGIC(12);
+    private final Font textFont = FontLib.EMULOGIC(5);
+    private void drawTargetTile(int ghostID, Color color) {
+        if(ghosts[ghostID].targetTile().isEmpty()) return;
+        iVector2D target = ghosts[ghostID].targetTile().get();
+        gc.setFill(color);
+        gc.setFont(targetFont);
+        gc.fillText("X", target.x()*TILE_SIZE + 1.5, target.y()*TILE_SIZE + 13);
+        gc.setFont(textFont);
+        if(ghostID == RED_GHOST || ghostID == PINK_GHOST)
+            gc.fillText("(Target)", (target.x() - 0.75) * TILE_SIZE, (target.y() + 2) * TILE_SIZE);
+        else
+            gc.fillText("(Target)", (target.x() - 0.75) * TILE_SIZE, (target.y() - 0.5) * TILE_SIZE);
+    }
     public void drawGhostTarget() {
         //Draw portal
         //red
+
         if (ghosts[RED_GHOST].targetTile().isPresent()) {
-            gc.setStroke(Color.RED);
-            gc.strokeRect((ghosts[RED_GHOST].targetTile().get().x() * TILE_SIZE) + 3, (ghosts[RED_GHOST].targetTile().get().y() * TILE_SIZE) + 2, TILE_SIZE, TILE_SIZE);
+            drawTargetTile(RED_GHOST, Color.RED);
         }
 
         if (ghosts[PINK_GHOST].targetTile().isPresent()) {
-            gc.setStroke(Color.HOTPINK);
-            gc.strokeRect(ghosts[PINK_GHOST].targetTile().get().x() * TILE_SIZE, ghosts[PINK_GHOST].targetTile().get().y() * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+            drawTargetTile(PINK_GHOST, Color.color(1, 0.71, 1));
         }
 
-        if (ghosts[CYAN_GHOST].targetTile().isPresent()) {
-
-            gc.setStroke(Color.CYAN);
-            gc.strokeRect(ghosts[CYAN_GHOST].targetTile().get().x() * TILE_SIZE, ghosts[CYAN_GHOST].targetTile().get().y() * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+        if (ghosts[CYAN_GHOST].targetTile().isPresent()) if(ghosts[PINK_GHOST].targetTile().isEmpty()) return;
+        {
+            drawTargetTile(CYAN_GHOST, Color.CYAN);
         }
-
         if (ghosts[ORANGE_GHOST].targetTile().isPresent()) {
-            gc.setStroke(Color.ORANGE);
-            gc.strokeRect(ghosts[ORANGE_GHOST].targetTile().get().x() * TILE_SIZE, ghosts[ORANGE_GHOST].targetTile().get().y() * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+            if(ghosts[ORANGE_GHOST].targetTile().isEmpty()) return;
             iVector2D target = ghosts[ORANGE_GHOST].targetTile().get();
+
             if (gameLevel.currentChasingTargetPhaseName().equals(GameLevel.CHASING)) {
                 double centerX = ghosts[ORANGE_GHOST].posX();
                 double centerY = ghosts[ORANGE_GHOST].posY();
                 double radius = 8 * TILE_SIZE;
-                int numDashes = 50;
+                int numDashes = 30;
 
                 double dashAngle = 360.0 / numDashes;
 
@@ -162,14 +163,20 @@ public class GameView extends GeneralScene {
                     double endX = centerX + radius * Math.cos(endAngle);
                     double endY = centerY + radius * Math.sin(endAngle);
 
-                    if(target.equals(PacmanMap.SCATTER_TARGET_LEFT_LOWER_CORNER)) {
-                        gc.setStroke(Color.color(0.66, 0.26, 0.07));
+                    if (target.equals(PacmanMap.SCATTER_TARGET_LEFT_LOWER_CORNER)) {
+                        gc.setStroke(Color.color(1, 0.71, 0.31, 0.3));
+                    } else {
+                        gc.setStroke(Color.color(1, 0.71, 0.31, 0.8));
                     }
 
-                    gc.setLineWidth(2);
                     gc.strokeLine(startX, startY, endX, endY);
                 }
+
+
+                drawTargetTile(ORANGE_GHOST, Color.ORANGE);
             }
         }
     }
+
 }
+

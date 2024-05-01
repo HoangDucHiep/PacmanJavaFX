@@ -79,10 +79,12 @@ public interface EntityMovement {
         if(!tryTeleport(entity, world))
             return;
 
+
         if (entity.gotTurnBackCommand() && entity.canTurnBack()) {
-            entity.setMovingDir(entity.movingDir().opposite());
+            entity.setMovingDir(entity.nextDir());
             entity.setGotTurnBackCommand(false);
         }
+
         if(move(entity, world, entity.nextDir()))
             entity.setMovingDir(entity.nextDir());
         else
