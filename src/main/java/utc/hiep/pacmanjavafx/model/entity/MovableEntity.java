@@ -267,8 +267,7 @@ public abstract class MovableEntity extends Entity {
     public void turnBackInstantly() {
        gotTurnBackCommand = true;
        newTileEntered = false;
-       setMovingDir(movingDir.opposite());
-       setNextDir(movingDir);
+       setNextDir(movingDir.opposite());
     }
 
     /**

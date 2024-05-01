@@ -86,6 +86,8 @@ public class Ghost extends MovableEntity{
         if(!currentTile.equals(getRevivalPosition())) {
             setNextDir(movingDir().opposite());
             turnBackInstantly();
+            setMovingDir(movingDir().opposite());
+            setNextDir(movingDir());
         }
         move();
     }

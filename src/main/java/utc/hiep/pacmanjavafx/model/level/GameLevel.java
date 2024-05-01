@@ -216,8 +216,6 @@ public class GameLevel {
             }
 
         }
-
-
     }
 
     private iVector2D chasingTarget(byte ghostID) {
