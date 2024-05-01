@@ -97,11 +97,7 @@ public final class iVector2D {
      * @return length of vector
      */
     public float sqrEuclideanDistance(iVector2D v) {
-        float thisXcenter = centerOfTile(this).x();
-        float thisYcenter = centerOfTile(this).y();
-        float vXcenter = centerOfTile(v).x();
-        float vYcenter = centerOfTile(v).y();
-        return (thisXcenter - vXcenter) * (thisXcenter - vXcenter) + (thisYcenter - vYcenter) * (thisYcenter - vYcenter);
+        return (v.x() - x()) * (v.x() - x()) + (v.y() - y()) * (v.y() - y());
     }
 
 

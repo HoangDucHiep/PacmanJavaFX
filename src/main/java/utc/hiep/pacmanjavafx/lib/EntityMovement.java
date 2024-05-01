@@ -23,8 +23,12 @@ public interface EntityMovement {
 
     static Direction computeTargetDir(MovableEntity entity, World world) {
         final var currentTile = entity.atTile();
-        iVector2D targetTile;
 
+        //if ghost about to teleport, kinda dummy way, will try to fix it later
+        if(world.isTunnel(currentTile) || world.belongsToPortal(currentTile))
+            return entity.movingDir();
+
+        iVector2D targetTile;
         if(entity.targetTile().isPresent())
             targetTile = entity.targetTile().get();
         else

@@ -200,7 +200,7 @@ public class Ghost extends MovableEntity{
         if (world.insideBounds(tile)) {
             return !world.isWall(tile);
         }
-        return world.belongsToPortal(tile);
+        return world.belongsToPortal(tile) || world.isTunnel(tile);
     }
 
 

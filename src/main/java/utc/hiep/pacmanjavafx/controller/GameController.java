@@ -43,6 +43,7 @@ public class GameController {
         ghosts = gameLevel.ghosts();
 
         gameView.setGameEntity(pacman, world, ghosts);
+        gameView.setGameLevel(gameLevel);
 
         kl = new KeyListener(gameView);
         running();

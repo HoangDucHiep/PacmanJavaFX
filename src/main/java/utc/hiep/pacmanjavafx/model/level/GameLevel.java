@@ -108,16 +108,22 @@ public class GameLevel {
     }
 
     public void update() {
-        huntingTimer.updateTimer();
-        updateChasingTargetPhase();
-        System.out.println(currentChasingTargetPhaseName());
-
-
 
         houseControl.unlockGhost(this);
+        huntingTimer.updateTimer();
+        updateChasingTargetPhase();
+
         Arrays.stream(ghosts()).forEach(ghost -> {
             ghost.update(pacman, world);
         });
+
+        System.out.println(ghosts[ORANGE_GHOST].currentSpeed());
+        System.out.println(ghosts[ORANGE_GHOST].movingDir());
+        System.out.println(ghosts[ORANGE_GHOST].nextDir());
+
+
+
+
     }
 
     private void frightenedBehaviorPacManGame(Ghost ghost) {
@@ -138,7 +144,6 @@ public class GameLevel {
         if (chasingPhase().isPresent() || ghost.id() == GameModel.RED_GHOST && cruiseElroyState > 0) {
             //chase pacman
             ghost.setHuntingBehavior(g -> {
-                System.out.println("Here");
                 g.setTargetTile(chasingTarget(g.id()));
                 EntityMovement.chaseTarget(g, world);
             });
@@ -187,9 +192,14 @@ public class GameLevel {
         return isOdd(huntingPhaseIndex) ? Optional.of(huntingPhaseIndex / 2) : Optional.empty();
     }
 
+
+    public static String SCATTERING = "Scattering";
+    public static String CHASING = "Chasing";
     public String currentChasingTargetPhaseName() {
-        return isEven(huntingPhaseIndex) ? "Scattering" : "Chasing";
+        return isEven(huntingPhaseIndex) ? SCATTERING : CHASING;
     }
+
+
 
     public void updateChasingTargetPhase() {
         int currentPhaseDuration = GameModel.chasingTargetDuration(levelNum, huntingPhaseIndex);
@@ -200,11 +210,13 @@ public class GameLevel {
         if (huntingTimer.ticks() >= currentPhaseDuration) {
             huntingTimer.reset();
             huntingPhaseIndex++;
+            for(var ghost : ghosts) {
+                ghost.turnBackInstantly();
+                huntingBehavior(ghost);
+            }
+
         }
 
-        for(var ghost : ghosts) {
-            huntingBehavior(ghost);
-        }
 
     }
 
@@ -217,9 +229,12 @@ public class GameLevel {
             // Inky: attacks from opposite side as Blinky
             case GameModel.CYAN_GHOST -> pacman.tilesAheadWithOverflowBug(2).scaled(2).minus(ghosts[GameModel.RED_GHOST].atTile());
             // Clyde/Sue: attacks directly but retreats if Pac is near
-            case GameModel.ORANGE_GHOST -> ghosts[GameModel.ORANGE_GHOST].atTile().sqrEuclideanDistance(pacman.atTile()) < (8 * 8)      //using squared distance
-                    ? ghostScatterTarget(GameModel.ORANGE_GHOST)
-                    : pacman.atTile();
+
+
+            case GameModel.ORANGE_GHOST -> Math.sqrt(ghosts[GameModel.ORANGE_GHOST].atTile().sqrEuclideanDistance(pacman.atTile())) < (8)      //using squared distance
+                        ? pacman.atTile()
+                        : ghostScatterTarget(GameModel.ORANGE_GHOST);
+
             default -> throw new IllegalArgumentException("Illegal ghost ID: " + ghostID);
         };
     }
@@ -290,5 +305,7 @@ public class GameLevel {
     public GhostHouseControl houseControl() {
         return houseControl;
     }
+
+
 
 }

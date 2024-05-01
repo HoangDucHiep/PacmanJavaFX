@@ -2,6 +2,8 @@ package utc.hiep.pacmanjavafx.lib;
 
 import java.util.Objects;
 
+import static utc.hiep.pacmanjavafx.lib.Global.centerOfTile;
+
 public final class fVector2D {
 
     public static final fVector2D ZERO = new fVector2D(0, 0);             //Vector zero
@@ -115,8 +117,8 @@ public final class fVector2D {
      * @param v other vector
      * @return dot product of 2 vectors
      */
-    public float euclideanDistance(fVector2D v) {
-        return this.minus(v).length();
+    public float sqrEuclideanDistance(iVector2D v) {
+        return (v.x() - x()) * (v.x() - x()) + (v.y() - y()) * (v.y() - y());
     }
 
 

@@ -5,21 +5,24 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Ellipse;
 import utc.hiep.pacmanjavafx.lib.AnimatorLib;
 import utc.hiep.pacmanjavafx.lib.ImageLibrary;
+import utc.hiep.pacmanjavafx.lib.iVector2D;
 import utc.hiep.pacmanjavafx.model.Animator;
 import utc.hiep.pacmanjavafx.model.entity.Ghost;
 import utc.hiep.pacmanjavafx.model.entity.Pacman;
+import utc.hiep.pacmanjavafx.model.level.GameLevel;
+import utc.hiep.pacmanjavafx.model.level.GameModel;
 import utc.hiep.pacmanjavafx.model.world.PacmanMap;
 import utc.hiep.pacmanjavafx.model.world.World;
 
 import java.util.function.Consumer;
 
 import static utc.hiep.pacmanjavafx.lib.Global.*;
-import static utc.hiep.pacmanjavafx.model.level.GameModel.FPS;
-import static utc.hiep.pacmanjavafx.model.level.GameModel.PPS_AT_100_PERCENT;
+import static utc.hiep.pacmanjavafx.model.level.GameModel.*;
 
-public class GameView extends GeneralScene{
+public class GameView extends GeneralScene {
     public static final int GAME_WIDTH = TILE_SIZE * TILES_X;   //all size is pixel
     public static final int GAME_HEIGHT = TILE_SIZE * TILES_Y;
 
@@ -33,6 +36,7 @@ public class GameView extends GeneralScene{
     private World world;
     private Pacman pacman;
     private Ghost[] ghosts;
+    private GameLevel gameLevel;
 
 
     /**
@@ -60,6 +64,10 @@ public class GameView extends GeneralScene{
         this.ghosts = ghosts;
     }
 
+    public void setGameLevel(GameLevel gameLevel) {
+        this.gameLevel = gameLevel;
+    }
+
 
     /**
      * Set background for main pane
@@ -77,19 +85,21 @@ public class GameView extends GeneralScene{
     public void render() {
         gc.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT); //clear last frame rendering
 
-        if (isGridDisplayed)
-            drawTileSystem();
 
         world.drawMap(gc);
+        if (isGridDisplayed) {
+            drawTileSystem();
+        }
+
         pacman.render(gc);
+
+        if (isGridDisplayed) {
+            drawGhostTarget();
+        }
         for (Ghost ghost : ghosts) {
             ghost.render(gc);
         }
     }
-
-
-
-
 
 
     public void switchGridDisplay() {
@@ -105,6 +115,61 @@ public class GameView extends GeneralScene{
                 gc.strokeRect(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE);
             }
         }
+
+
     }
 
+    public void drawGhostTarget() {
+        //Draw portal
+        //red
+        if (ghosts[RED_GHOST].targetTile().isPresent()) {
+            gc.setStroke(Color.RED);
+            gc.strokeRect((ghosts[RED_GHOST].targetTile().get().x() * TILE_SIZE) + 3, (ghosts[RED_GHOST].targetTile().get().y() * TILE_SIZE) + 2, TILE_SIZE, TILE_SIZE);
+        }
+
+        if (ghosts[PINK_GHOST].targetTile().isPresent()) {
+            gc.setStroke(Color.HOTPINK);
+            gc.strokeRect(ghosts[PINK_GHOST].targetTile().get().x() * TILE_SIZE, ghosts[PINK_GHOST].targetTile().get().y() * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+        }
+
+        if (ghosts[CYAN_GHOST].targetTile().isPresent()) {
+
+            gc.setStroke(Color.CYAN);
+            gc.strokeRect(ghosts[CYAN_GHOST].targetTile().get().x() * TILE_SIZE, ghosts[CYAN_GHOST].targetTile().get().y() * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+        }
+
+        if (ghosts[ORANGE_GHOST].targetTile().isPresent()) {
+            gc.setStroke(Color.ORANGE);
+            gc.strokeRect(ghosts[ORANGE_GHOST].targetTile().get().x() * TILE_SIZE, ghosts[ORANGE_GHOST].targetTile().get().y() * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+            iVector2D target = ghosts[ORANGE_GHOST].targetTile().get();
+            if (gameLevel.currentChasingTargetPhaseName().equals(GameLevel.CHASING)) {
+                double centerX = ghosts[ORANGE_GHOST].posX();
+                double centerY = ghosts[ORANGE_GHOST].posY();
+                double radius = 8 * TILE_SIZE;
+                int numDashes = 50;
+
+                double dashAngle = 360.0 / numDashes;
+
+                for (int i = 0; i < numDashes; i++) {
+                    double startAngle = i * dashAngle;
+                    double endAngle = (i + 0.5) * dashAngle;
+
+                    startAngle = Math.toRadians(startAngle);
+                    endAngle = Math.toRadians(endAngle);
+
+                    double startX = centerX + radius * Math.cos(startAngle);
+                    double startY = centerY + radius * Math.sin(startAngle);
+                    double endX = centerX + radius * Math.cos(endAngle);
+                    double endY = centerY + radius * Math.sin(endAngle);
+
+                    if(target.equals(PacmanMap.SCATTER_TARGET_LEFT_LOWER_CORNER)) {
+                        gc.setStroke(Color.color(0.66, 0.26, 0.07));
+                    }
+
+                    gc.setLineWidth(2);
+                    gc.strokeLine(startX, startY, endX, endY);
+                }
+            }
+        }
+    }
 }
