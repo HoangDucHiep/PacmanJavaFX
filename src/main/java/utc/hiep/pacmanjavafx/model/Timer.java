@@ -50,6 +50,15 @@ public class Timer {
         isPaused = !isPaused;
     }
 
+    public void pause() {
+        isPaused = true;
+    }
+
+    public void resume() {
+        isPaused = false;
+        lastUpdate = System.nanoTime();
+    }
+
     public void reset() {
         tick = 0;
         second = 0;

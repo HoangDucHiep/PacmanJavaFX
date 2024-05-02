@@ -266,7 +266,7 @@ public class Ghost extends MovableEntity{
                 //huntingBehavior.accept(this);
             }
 //            case ENTERING_HOUSE, RETURNING_TO_HOUSE -> selectAnimation(ANIM_GHOST_EYES);
-//            case FRIGHTENED -> selectAnimation(ANIM_GHOST_FRIGHTENED);
+            case FRIGHTENED -> updateDefaultSpeed(speedReturningToHouse);
             default -> {}
         }
     }
@@ -282,15 +282,19 @@ public class Ghost extends MovableEntity{
         switch (state) {
             case LOCKED             -> updateStateLocked();
             case LEAVING_HOUSE      -> updateStateLeavingHouse();
-            case CHASING_TARGET        -> updateStateChaingTarget();
-//            case FRIGHTENED         -> updateStateFrightened(pac);
+            case CHASING_TARGET     -> updateStateChasingTarget();
+            case FRIGHTENED         -> updateStateFrightened();
 //            case EATEN              -> updateStateEaten();
 //            case RETURNING_TO_HOUSE -> updateStateReturningToHouse(world);
 //            case ENTERING_HOUSE     -> updateStateEnteringHouse();
         }
     }
 
-    private void updateStateChaingTarget() {
+    private void updateStateFrightened() {
+        frightenedBehavior.accept(this);
+    }
+
+    private void updateStateChasingTarget() {
         huntingBehavior.accept(this);
     }
 

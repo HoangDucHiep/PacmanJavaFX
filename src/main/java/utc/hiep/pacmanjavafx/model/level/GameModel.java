@@ -64,8 +64,15 @@ public interface GameModel {
     };
 
 
+    final int[] FRIGHTENED_DURATION = {6 * FPS, 5 * FPS, 4 * FPS, 3 * FPS, 2 * FPS, 5 * FPS, 2 * FPS, 2 * FPS, FPS, 5 * FPS, 2 * FPS, FPS, FPS, 3 * FPS, FPS};
+
+
     static int chasingTargetDuration(int level, long huntingPhaseIndex) {
         return CHASING_TARGET_DURATIONS[level == 1 ? 0 : level <= 4 ? 1 : 2][(int) huntingPhaseIndex];
+    }
+
+    static int frightenedDuration(int level) {
+        return FRIGHTENED_DURATION[level < 15 ? level - 1 : 14];
     }
 
 

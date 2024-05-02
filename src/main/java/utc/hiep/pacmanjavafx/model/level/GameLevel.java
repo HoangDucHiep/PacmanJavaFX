@@ -3,7 +3,6 @@ package utc.hiep.pacmanjavafx.model.level;
 import utc.hiep.pacmanjavafx.event.GameEvent;
 import utc.hiep.pacmanjavafx.lib.*;
 import utc.hiep.pacmanjavafx.model.Timer;
-import utc.hiep.pacmanjavafx.model.entity.Entity;
 import utc.hiep.pacmanjavafx.model.entity.Ghost;
 import utc.hiep.pacmanjavafx.model.entity.GhostState;
 import utc.hiep.pacmanjavafx.model.entity.Pacman;
@@ -47,13 +46,15 @@ public class GameLevel {
         }
     }
 
-    private GameEvent currentEvent;
+    private LevelState levelState;
+    private GameEvent gameEvent;
     private Pacman pacman;
     private World world;
     private Data data;
     private final Ghost[] ghosts;
     private Timer huntingTimer;
-    private Timer gameEventTimer;
+    private Timer levelStateTimer;
+    private Timer frightenedTimer;
     private byte huntingPhaseIndex;
     private byte totalNumGhostsKilled;
     private byte cruiseElroyState;
@@ -61,12 +62,12 @@ public class GameLevel {
 
 
 
-
     public GameLevel() {
         this.levelNum = 1;
         data = new Data(levelNum, false, RAW_LEVEL_DATA[levelNum - 1]);
-        currentEvent = GameEvent.LEVEL_CREATED;
-        gameEventTimer = new Timer();
+        levelState = LevelState.LEVEL_CREATED;
+        levelStateTimer = new Timer();
+        frightenedTimer = new Timer();
 
         this.pacman = new Pacman("PACMAN");
         this.world = PacmanMap.createPacManWorld();
@@ -78,7 +79,11 @@ public class GameLevel {
         Arrays.stream(ghosts()).forEach(ghost -> {
             ghost.reset();
             ghost.setHouse(world.house());
-            ghost.setFrightenedBehavior(this::frightenedBehaviorPacManGame);
+            ghost.setFrightenedBehavior(g -> {
+                byte relSpeed = data.ghostSpeedFrightenedPercentage;
+                g.setPercentageSpeed(relSpeed);
+                EntityMovement.randomMove(g, world);
+            });
             ghost.setRevivalPosition(ghostRevivalPosition(ghost.id()));
             ghost.setOutOfHouseSpeed(GameModel.PPS_AT_100_PERCENT / (float) GameModel.FPS);
             ghost.setDefaultSpeedReturnHouse(GameModel.PPS_GHOST_RETURNING_HOME / (float) GameModel.FPS);
@@ -99,6 +104,7 @@ public class GameLevel {
 
         var forbiddenMovesAtTile = new HashMap<iVector2D, List<Direction>>();
         var up = List.of(UP);
+
         PacmanMap.PACMAN_RED_ZONE.forEach(tile -> forbiddenMovesAtTile.put(tile, up));
         Arrays.stream(ghosts()).forEach(ghost -> {
             ghost.setForbiddenMoves(forbiddenMovesAtTile);
@@ -112,22 +118,32 @@ public class GameLevel {
 
     }
 
+    private void setUpPacman() {
+        pacman.setDefaultSpeed((float) PPS_AT_100_PERCENT / FPS);
+        pacman.setPercentageSpeed(data.pacSpeedPercentage);
+        pacman.placeAtTile(PacmanMap.PAC_POSITION);
+    }
+
 
     public void update() {
-        if(currentEvent == GameEvent.LEVEL_CREATED){
-            gameEventTimer.updateTimer();
-            if((int)gameEventTimer.seconds() == 2) {
+        if(levelState == LevelState.LEVEL_PAUSED) {
+            return;
+        }
+
+        if(levelState == LevelState.LEVEL_CREATED){
+            levelStateTimer.updateTimer();
+            if((int) levelStateTimer.seconds() == 2) {
                 pacman.show();
                 Arrays.stream(ghosts).forEach(Ghost::show);
             }
 
-            if((int)gameEventTimer.seconds() == 4) {
-                currentEvent = GameEvent.LEVEL_STARTED;
-                gameEventTimer.reset();
+            if((int) levelStateTimer.seconds() == 4) {
+                levelState = LevelState.LEVEL_STARTED;
+                levelStateTimer.reset();
             }
         }
 
-        if(currentEvent == GameEvent.LEVEL_STARTED) {
+        if(levelState == LevelState.LEVEL_STARTED) {
             updateLevelStartedStateEvent();
         }
     }
@@ -137,6 +153,7 @@ public class GameLevel {
         houseControl.unlockGhost(this);
         huntingTimer.updateTimer();
         updateChasingTargetPhase();
+        
         Arrays.stream(ghosts()).forEach(ghost -> {
             ghost.update(pacman, world);
         });
@@ -147,21 +164,9 @@ public class GameLevel {
     }
 
 
-    private void frightenedBehaviorPacManGame(Ghost ghost) {
-
-    }
-
-
-    private void setUpPacman() {
-        pacman.setDefaultSpeed((float) PPS_AT_100_PERCENT / FPS);
-        pacman.setPercentageSpeed(data.pacSpeedPercentage);
-        pacman.placeAtTile(PacmanMap.PAC_POSITION);
-    }
-
 
 
     private void huntingBehavior(Ghost ghost) {
-
         if (chasingPhase().isPresent() || ghost.id() == GameModel.RED_GHOST && cruiseElroyState > 0) {
             //chase pacman
             ghost.setHuntingBehavior(g -> {
@@ -180,11 +185,6 @@ public class GameLevel {
             });
         }
     }
-
-
-
-
-
 
     /**
      * @param ghost a ghost
@@ -239,9 +239,11 @@ public class GameLevel {
                 ghost.turnBackInstantly();
                 huntingBehavior(ghost);
             }
-
         }
     }
+
+
+
 
     private iVector2D chasingTarget(byte ghostID) {
         return switch (ghostID) {
@@ -314,7 +316,9 @@ public class GameLevel {
 
         for(var ghost : ghosts) {
             if(pacman.sameTile(ghost)) {
-                currentEvent = GameEvent.LEVEL_LOST;
+                if(ghost.state().equals(GhostState.CHASING_TARGET)) {
+                    levelState = LevelState.LEVEL_LOST;
+                }
             }
         }
     }
@@ -387,6 +391,10 @@ public class GameLevel {
         iVector2D currentTile = pacman.atTile();
         if(world.hasFoodAt(currentTile) && !world.hasEatenFoodAt(currentTile)) {
             houseControl().updateDotCount(this);
+
+            if(world.isEnergizerTile(currentTile)) {
+            }
+
             world.removeFood(currentTile);
             pacman.endStarving();
         }
@@ -399,7 +407,21 @@ public class GameLevel {
         return houseControl;
     }
 
-    public GameEvent currentEvent() {
-        return currentEvent;
+    public LevelState currentEvent() {
+        return levelState;
+    }
+
+    public void updateEvent(LevelState event) {
+        levelState = event;
+    }
+
+    public void switchPause() {
+        if(levelState == LevelState.LEVEL_PAUSED) {
+            levelState = LevelState.LEVEL_STARTED;
+        } else {
+            levelState = LevelState.LEVEL_PAUSED;
+        }
+        huntingTimer.switchPause();
+        levelStateTimer.switchPause();
     }
 }

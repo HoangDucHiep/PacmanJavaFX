@@ -1,36 +1,29 @@
 package utc.hiep.pacmanjavafx.controller;
 
 import javafx.animation.AnimationTimer;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import utc.hiep.pacmanjavafx.event.GameEvent;
 import utc.hiep.pacmanjavafx.event.KeyListener;
 import utc.hiep.pacmanjavafx.event.KeyType;
 import utc.hiep.pacmanjavafx.event.MouseListener;
 import utc.hiep.pacmanjavafx.lib.Direction;
-import utc.hiep.pacmanjavafx.lib.EntityMovement;
-import utc.hiep.pacmanjavafx.lib.iVector2D;
 import utc.hiep.pacmanjavafx.model.SceneControl;
 import utc.hiep.pacmanjavafx.model.entity.Ghost;
-import utc.hiep.pacmanjavafx.model.entity.Pacman;
 import utc.hiep.pacmanjavafx.model.level.GameLevel;
-import utc.hiep.pacmanjavafx.model.world.World;
+import utc.hiep.pacmanjavafx.model.level.LevelState;
 import utc.hiep.pacmanjavafx.scene.GameView;
 import utc.hiep.pacmanjavafx.model.Timer;
 import utc.hiep.pacmanjavafx.scene.ScoreScene;
 import utc.hiep.pacmanjavafx.scene.WelcomeScene;
 
 import java.util.Arrays;
-import java.util.List;
-import java.util.Stack;
-import java.util.function.Consumer;
 
 public class GameController {
 
-    private static int GAME_VIEW = 0;
-    private static int SCORE_SCENE = 1;
-    private static int WELCOME_SCENE = 2;
+    private static final int GAME_VIEW = 0;
+    private static final int SCORE_SCENE = 1;
+    private static final int WELCOME_SCENE = 2;
+
     private int currentScene = WELCOME_SCENE;
 
     private final GameView gameView;
@@ -38,7 +31,6 @@ public class GameController {
     private final WelcomeScene welcomeScene = new WelcomeScene();
     private SceneControl sceneControl;
 
-    private List<KeyType> pressedKey = new Stack<>();
 
     private Timer timer;
     private GameLevel gameLevel;
@@ -52,12 +44,11 @@ public class GameController {
     private MouseListener scoreBtn;
     private MouseListener exitBtn;
 
-    private int score;
+    private long totalScore;
 
     public GameController() {
         this.gameView = new GameView();
-        timer = new Timer();
-        score = 0;
+        totalScore = 0;
 
         gameLevel = new GameLevel();
 
@@ -148,22 +139,17 @@ public class GameController {
 
 
     private void update() {
-        timer.updateTimer();
         if(currentScene == GAME_VIEW) {
             keyHandler();
-            if(gameLevel.currentEvent() == GameEvent.LEVEL_STARTED) {
+            if(gameLevel.currentEvent() == LevelState.LEVEL_STARTED || gameLevel.currentEvent() == LevelState.LEVEL_PAUSED) {
                 updateAnimator();
-                if (timer.isPaused()) {
-                    return;
-                }
-            } else if (gameLevel.currentEvent() == GameEvent.LEVEL_LOST) {
+            }
+            if (gameLevel.currentEvent() == LevelState.LEVEL_LOST) {
                 sceneControl.setScene(scoreScene);
             }
             gameLevel.update();
         }
     }
-
-
 
 
     private void updateAnimator() {
@@ -172,20 +158,12 @@ public class GameController {
         Arrays.stream(gameLevel.ghosts()).forEach(Ghost::animatorUpdate);
     }
 
-
     public void keyHandler() {
         gameViewKL.keyListening();
-        System.out.println(gameViewKL.getPressedKey());
         for (KeyType key : gameViewKL.getPressedKey()) {
             switch (key) {
-                case PAUSE:
-                    timer.switchPause();
-                case GRID_SWITCH:
-                    gameView.switchGridDisplay();
-            }
-
-            if(!timer.isPaused()) {
-                switch (key) {
+                    case PAUSE -> gameLevel.switchPause();
+                    case GRID_SWITCH -> gameView.switchGridDisplay();
                     case TURN_UP -> gameLevel.applyPacDirKey(Direction.UP);
                     case TURN_DOWN -> gameLevel.applyPacDirKey(Direction.DOWN);
                     case TURN_LEFT -> gameLevel.applyPacDirKey(Direction.LEFT);
@@ -194,7 +172,6 @@ public class GameController {
                     case CHANGE_BACK -> sceneControl.setScene(gameView);
                 }
             }
-        }
         gameViewKL.clearKey();
     }
 

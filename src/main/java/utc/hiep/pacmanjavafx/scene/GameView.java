@@ -10,6 +10,7 @@ import utc.hiep.pacmanjavafx.lib.*;
 import utc.hiep.pacmanjavafx.model.entity.Ghost;
 import utc.hiep.pacmanjavafx.model.entity.Pacman;
 import utc.hiep.pacmanjavafx.model.level.GameLevel;
+import utc.hiep.pacmanjavafx.model.level.LevelState;
 import utc.hiep.pacmanjavafx.model.world.PacmanMap;
 import utc.hiep.pacmanjavafx.model.world.World;
 
@@ -92,7 +93,7 @@ public class GameView extends GeneralScene {
                 ghost.render(gc);
         }
 
-        if(gameLevel.currentEvent() == GameEvent.LEVEL_CREATED) {
+        if(gameLevel.currentEvent() == LevelState.LEVEL_CREATED) {
             gc.setFill(Color.YELLOW);
             gc.setFont(eventTextFont);
             gc.fillText("READY!", 11 * TILE_SIZE, 21 * TILE_SIZE);

@@ -1,5 +1,6 @@
 package utc.hiep.pacmanjavafx.lib;
 
+import utc.hiep.pacmanjavafx.model.entity.Entity;
 import utc.hiep.pacmanjavafx.model.entity.MovableEntity;
 import utc.hiep.pacmanjavafx.model.world.Portal;
 import utc.hiep.pacmanjavafx.model.world.World;
@@ -64,6 +65,14 @@ public interface EntityMovement {
         return randomDir;
     }
 
+    static void randomMove(MovableEntity entity, World world) {
+        if((world.isIntersection(entity.atTile()) || !entity.canAccessTile(entity.atTile().plus(entity.movingDir().vector()), world)) && entity.newTileEntered) {
+            entity.setNextDir(computeRandomDir(entity, world));
+        }
+        System.out.println(entity.nextDir());
+        move(entity, world);
+    }
+
 
 
     /**
@@ -76,6 +85,7 @@ public interface EntityMovement {
      * @param world the world/maze
      */
     static void move(MovableEntity entity, World world) {
+        System.out.println("Move");
         if(!tryTeleport(entity, world))
             return;
 
