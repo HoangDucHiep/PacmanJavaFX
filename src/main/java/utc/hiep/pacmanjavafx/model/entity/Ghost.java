@@ -2,9 +2,9 @@ package utc.hiep.pacmanjavafx.model.entity;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
 import utc.hiep.pacmanjavafx.lib.*;
 import utc.hiep.pacmanjavafx.model.Animator;
-import utc.hiep.pacmanjavafx.model.EatenDotCounter;
 import utc.hiep.pacmanjavafx.model.level.GameModel;
 import utc.hiep.pacmanjavafx.model.world.House;
 import utc.hiep.pacmanjavafx.model.world.World;
@@ -37,10 +37,8 @@ public class Ghost extends MovableEntity{
     private float speedInsideHouse;
 
     //eaten food counter for exit house
-    private EatenDotCounter eatenFoodCounter;
-
     private Map<iVector2D, List<Direction>> forbiddenMoves = Collections.emptyMap();
-
+    private int pointDisplay;
 
     /**
      * @param id  The ghost ID. One of
@@ -120,8 +118,10 @@ public class Ghost extends MovableEntity{
         move();
     }
 
-    private void updateStateEaten() {
-        fVector2D houseEntryPosition = house.door().entryPosition();
+    private void updateStateEaten(Pacman pac) {
+        if(pointDisplay != 0)
+            return;
+        pointDisplay = 200 * (int) Math.pow(2, 4 - pac.victims().size() - 1);
     }
 
     private void updateStateReturningToHouse(World world) {
@@ -156,15 +156,10 @@ public class Ghost extends MovableEntity{
         if (posY() >= houseCenter.y()) {
             // reached ground
             setPosY(houseCenter.y());
-            System.out.println("--------");
-            System.out.println("Revival center: " + revivalPosition.x() * TILE_SIZE);
-            System.out.println("Current position: " + posX());
             if (revivalPosition.x() * TILE_SIZE < posX()) {
-                System.out.println("Left");
                 setMovingDir(LEFT);
                 setNextDir(LEFT);
             } else if (revivalPosition.x() * TILE_SIZE > posX()) {
-                System.out.println("Right");
                 setMovingDir(RIGHT);
                 setNextDir(RIGHT);
             }
@@ -172,10 +167,7 @@ public class Ghost extends MovableEntity{
         updateDefaultSpeed(speedReturningToHouse);
         move();
 
-        System.out.println("Current position: " + position());
-        System.out.println("Revival pos: " + revivalPosition);
         if (posY() >= revivalPosition.y() * TILE_SIZE && differsAtMost(currentSpeed(), posX(), revivalPosition.x() * TILE_SIZE)) {
-            System.out.println("There");
             setPosition(revivalPosition.scaled(TILE_SIZE));
             setState(LOCKED);
         }
@@ -288,16 +280,15 @@ public class Ghost extends MovableEntity{
      */
     public void setState(GhostState state) {
         checkNotNull(state);
-        if (this.state == state) {
-            return;
-        }
         this.state = state;
         switch (state) {
             case LOCKED, LEAVING_HOUSE -> {
                 animator = AnimatorLib.GHOST_ANIMATOR[id];
+                System.out.println("SHeeesseeee");
                 updateDefaultSpeed(speedInsideHouse);
             }
             case CHASING_TARGET -> {
+                animator = AnimatorLib.GHOST_ANIMATOR[id];
                 updateDefaultSpeed(outOfHouseSpeed);
                 //huntingBehavior.accept(this);
             }
@@ -323,7 +314,7 @@ public class Ghost extends MovableEntity{
             case LEAVING_HOUSE      -> updateStateLeavingHouse();
             case CHASING_TARGET     -> updateStateChasingTarget();
             case FRIGHTENED         -> updateStateFrightened();
-            case EATEN              -> updateStateEaten();
+            case EATEN              -> updateStateEaten(pac);
             case RETURNING_TO_HOUSE -> updateStateReturningToHouse(world);
             case ENTERING_HOUSE     -> updateStateEnteringHouse();
         }
@@ -331,14 +322,22 @@ public class Ghost extends MovableEntity{
 
 
 
-//    public void eaten(int index) {
-//        setState(EATEN);
-//    }
+    public void eaten(int index) {
+        setState(EATEN);
+    }
 
 
     @Override
     public void render(GraphicsContext gc) {
-        gc.drawImage(sprite_sheet, animator.getAnimationPos().posX(), animator.getAnimationPos().posY(), GHOST_UI_SIZE, GHOST_UI_SIZE, posX() - HALF_TILE_SIZE, posY() - HALF_TILE_SIZE, 32, 32);
+        if(state == EATEN) {
+            gc.setFont(FontLib.EMULOGIC(10));
+            gc.setFill(Color.color(0, 1, 1));
+            gc.fillText(String.valueOf(pointDisplay), posX() - HALF_TILE_SIZE, posY() - HALF_TILE_SIZE);
+        } else {
+            gc.drawImage(sprite_sheet, animator.getAnimationPos().posX(), animator.getAnimationPos().posY(), GHOST_UI_SIZE, GHOST_UI_SIZE, posX() - HALF_TILE_SIZE, posY() - HALF_TILE_SIZE, 32, 32);
+            pointDisplay = 0;
+        }
+
     }
 
     public void animatorUpdate() {

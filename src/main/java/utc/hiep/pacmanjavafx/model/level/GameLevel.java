@@ -18,8 +18,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static utc.hiep.pacmanjavafx.lib.Direction.*;
-import static utc.hiep.pacmanjavafx.model.entity.GhostState.CHASING_TARGET;
-import static utc.hiep.pacmanjavafx.model.entity.GhostState.LOCKED;
+import static utc.hiep.pacmanjavafx.model.entity.GhostState.*;
 import static utc.hiep.pacmanjavafx.model.level.GameModel.*;
 import static utc.hiep.pacmanjavafx.lib.Global.*;
 
@@ -57,6 +56,7 @@ public class GameLevel {
     private Timer huntingTimer;
     private Timer levelStateTimer;
     private Timer frightenedTimer;
+    private Timer gameEventTimer;
     private byte huntingPhaseIndex;
     private byte totalNumGhostsKilled;
     private byte cruiseElroyState;
@@ -71,6 +71,7 @@ public class GameLevel {
         gameEvent = GameEvent.NONE;
         levelStateTimer = new Timer();
         frightenedTimer = new Timer();
+        gameEventTimer = new Timer();
 
         this.pacman = new Pacman("PACMAN");
         this.world = PacmanMap.createPacManWorld();
@@ -133,6 +134,7 @@ public class GameLevel {
             return;
         }
 
+
         if(levelState == LevelState.LEVEL_CREATED){
             levelStateTimer.updateTimer();
             if((int) levelStateTimer.seconds() == 2) {
@@ -155,20 +157,51 @@ public class GameLevel {
     private void updateLevelStartedStateEvent() {
         houseControl.unlockGhost(this);
 
+        if(gameEvent == GameEvent.GHOST_EATEN) {
+            gameEventTimer.updateTimer();
+            System.out.println("Ticks: " + gameEventTimer.ticks());
+            if(gameEventTimer.ticks() <= FPS) {
+                gameEvent = GameEvent.GHOST_EATEN;
+                pacman.hide();
+                Arrays.stream(ghosts).filter(ghost -> ghost.state().equals(GhostState.EATEN)).forEach(ghost -> {
+                    ghost.update(pacman, world);
+                });
+                return;
+            } else {
+                gameEvent = GameEvent.PAC_EAT_ENERGIZER;
+                pacman.show();
+                Arrays.stream(ghosts).filter(ghost -> ghost.state().equals(GhostState.EATEN)).forEach(ghost -> {
+                    ghost.setState(RETURNING_TO_HOUSE);
+                });
+                gameEventTimer.reset();
+            }
+        }
+
         if(gameEvent == GameEvent.PAC_EAT_ENERGIZER) {
             frightenedTimer.updateTimer();
+            updateEventPacEatEnergizer();
+
+            if(frightenedTimer.ticks() >= GameModel.frightenedDuration(levelNum) * 0.6) {
+                for(var ghost : pacman.victims()) {
+                    ghost.setAnimator(AnimatorLib.GHOST_ANIMATOR[LATE_FRIGTHENED_GHOST]);
+                }
+            }
+
             if(frightenedTimer.ticks() >= GameModel.frightenedDuration(levelNum)) {
                 gameEvent = GameEvent.NONE;
                 huntingTimer.resume();
-                Arrays.stream(ghosts).filter(ghost -> ghost.state().equals(GhostState.FRIGHTENED)).forEach(ghost -> {
-                    ghost.setState(CHASING_TARGET);
-                });
-                Arrays.stream(ghosts).forEach(ghost -> {
-                    ghost.setAnimator(AnimatorLib.GHOST_ANIMATOR[ghost.id()]);
-                });
+
+                for(var ghost : pacman.victims()) {
+                    if(ghost.state() == LOCKED)
+                        ghost.setState(LOCKED);
+                    else if(ghost.state() == FRIGHTENED)
+                        ghost.setState(CHASING_TARGET);
+                    else
+                        System.out.println("UnExpected things happened");
+                }
+
                 frightenedTimer.reset();
             }
-            updateEventPacEatEnergizer();
         }
 
         huntingTimer.updateTimer();
@@ -335,7 +368,9 @@ public class GameLevel {
                     levelState = LevelState.LEVEL_LOST;
                 }
                 else if(ghost.state().equals(GhostState.FRIGHTENED)) {
-                    ghost.setState(GhostState.RETURNING_TO_HOUSE);
+                    gameEvent = GameEvent.GHOST_EATEN;
+                    pacman.victims().remove(ghost);
+                    ghost.setState(EATEN);
                 }
             }
         }
@@ -413,9 +448,7 @@ public class GameLevel {
             if(world.isEnergizerTile(currentTile)) {
                 gameEvent = GameEvent.PAC_EAT_ENERGIZER;
                 updateEventPacEatEnergizer();
-                Arrays.stream(ghosts).forEach(ghost -> {
-                    ghost.setAnimator(AnimatorLib.GHOST_ANIMATOR[FRIGHTENED_GHOST]);
-                });
+                pacman.setVictims(ghosts);
                 frightenedTimer.reset();
             }
 
@@ -429,12 +462,13 @@ public class GameLevel {
 
     private void updateEventPacEatEnergizer() {
         if(gameEvent == GameEvent.PAC_EAT_ENERGIZER) {
-            for(var ghost : ghosts) {
+            for(var ghost : pacman.victims()) {
                 if(ghost.state().equals(CHASING_TARGET)) {
                     ghost.setState(GhostState.FRIGHTENED);
                     ghost.setPercentageSpeed(data.ghostSpeedFrightenedPercentage);
                     ghost.turnBackInstantly();
                 }
+                ghost.setAnimator(AnimatorLib.GHOST_ANIMATOR[FRIGHTENED_GHOST]);
             }
             huntingTimer.pause();
         }

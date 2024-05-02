@@ -132,11 +132,16 @@ public class AnimatorLib {
     };
 
         /* for FRIGHTENED one */
-    private static final Animator.AnimatorPos[] FRIGHTENED = new Animator.AnimatorPos[] {
+    private static final Animator.AnimatorPos[] LATE_FRIGHTENED = new Animator.AnimatorPos[] {
             new Animator.AnimatorPos(128, 64),
             new Animator.AnimatorPos(144, 64),
             new Animator.AnimatorPos(160, 64),
             new Animator.AnimatorPos(176, 64),
+    };
+
+    private static final Animator.AnimatorPos[] FRIGHTENED = new Animator.AnimatorPos[]{
+            new Animator.AnimatorPos(128, 64),
+            new Animator.AnimatorPos(144, 64),
     };
 
 
@@ -195,6 +200,8 @@ public class AnimatorLib {
     /**
      * Animator for Frightened-Ghosts
      */
+    private static final Animator LATE_FRIGHTENED_ANIMATOR = Animator.getDirAnimator(GameModel.GHOST_FRIGHTENED_ANIMATION_RATE, LATE_FRIGHTENED, LATE_FRIGHTENED, LATE_FRIGHTENED, LATE_FRIGHTENED);
+
     private static final Animator FRIGHTENED_ANIMATOR = Animator.getDirAnimator(GameModel.GHOST_FRIGHTENED_ANIMATION_RATE, FRIGHTENED, FRIGHTENED, FRIGHTENED, FRIGHTENED);
 
     /**
@@ -210,7 +217,7 @@ public class AnimatorLib {
      * {@link GameModel#ORANGE_GHOST},
      * {@link GameModel#FRIGHTENED_GHOST}
      */
-    public static final Animator[] GHOST_ANIMATOR = {RED_ANIMATOR, PINK_ANIMATOR, CYAN_ANIMATOR, ORANGE_ANIMATOR, FRIGHTENED_ANIMATOR, EATEN_ANIMATOR};
+    public static final Animator[] GHOST_ANIMATOR = {RED_ANIMATOR, PINK_ANIMATOR, CYAN_ANIMATOR, ORANGE_ANIMATOR, FRIGHTENED_ANIMATOR, LATE_FRIGHTENED_ANIMATOR, EATEN_ANIMATOR};
 
 
 }

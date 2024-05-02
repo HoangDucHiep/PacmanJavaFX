@@ -89,6 +89,7 @@ public class Pacman extends MovableEntity{
     public void setVictims(Ghost[] ghosts) {
         victims.clear();
         Collections.addAll(victims, ghosts);
+        System.out.println(victims);
     }
 
     public List<Ghost> victims() {
@@ -97,9 +98,5 @@ public class Pacman extends MovableEntity{
         }
         return victims;
     }
-
-
-
-
 
 }

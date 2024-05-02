@@ -8,7 +8,9 @@ public interface GameModel {
     byte CYAN_GHOST   = 2;
     byte ORANGE_GHOST = 3;
     byte FRIGHTENED_GHOST = 4;  //use only for animation
-    byte EATEN_GHOST = 5;       //use only for animation
+    byte LATE_FRIGTHENED_GHOST = 5;  //use only for animation
+    byte EATEN_GHOST = 6;       //use only for animation
+
     String[] GHOST_NAME = {"Blinky", "Pinky", "Inky", "Clyde"};
 
     /** Game loop frequency. */
@@ -30,6 +32,7 @@ public interface GameModel {
     byte ENERGIZER_BLINKING_RATE = 30;
     byte GHOST_ANIMATION_RATE = 6;
     byte GHOST_FRIGHTENED_ANIMATION_RATE = 15;
+
 
 
     final byte[][] RAW_LEVEL_DATA = {
