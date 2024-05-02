@@ -432,7 +432,7 @@ public class GameLevel {
             for(var ghost : ghosts) {
                 if(ghost.state().equals(CHASING_TARGET)) {
                     ghost.setState(GhostState.FRIGHTENED);
-                    ghost.setPercentageSpeed((byte) 40);
+                    ghost.setPercentageSpeed(data.ghostSpeedFrightenedPercentage);
                     ghost.turnBackInstantly();
                 }
             }

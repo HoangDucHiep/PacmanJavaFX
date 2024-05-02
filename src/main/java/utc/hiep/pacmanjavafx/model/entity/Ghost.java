@@ -132,7 +132,7 @@ public class Ghost extends MovableEntity{
             setNextDir(DOWN);
             setState(ENTERING_HOUSE);
         } else {
-            setSpeed(outOfHouseSpeed);
+            updateDefaultSpeed(speedReturningToHouse);
             setTargetTile(house.door().leftWing().plus(UP.vector()));
             EntityMovement.chaseTarget(this, world);
         }
@@ -169,7 +169,7 @@ public class Ghost extends MovableEntity{
                 setNextDir(RIGHT);
             }
         }
-        setSpeed(speedInsideHouse);
+        updateDefaultSpeed(speedReturningToHouse);
         move();
 
         System.out.println("Current position: " + position());
@@ -294,14 +294,18 @@ public class Ghost extends MovableEntity{
         this.state = state;
         switch (state) {
             case LOCKED, LEAVING_HOUSE -> {
+                animator = AnimatorLib.GHOST_ANIMATOR[id];
                 updateDefaultSpeed(speedInsideHouse);
             }
             case CHASING_TARGET -> {
                 updateDefaultSpeed(outOfHouseSpeed);
                 //huntingBehavior.accept(this);
             }
-///           case ENTERING_HOUSE, RETURNING_TO_HOUSE -> selectAnimation(ANIM_GHOST_EYES);
-            //case FRIGHTENED -> updateDefaultSpeed(speed);
+            case ENTERING_HOUSE, RETURNING_TO_HOUSE -> {
+                animator = AnimatorLib.GHOST_ANIMATOR[GameModel.EATEN_GHOST];
+                setPercentageSpeed((byte) 100);
+            }
+            //case FRIGHTENED -> updateDefaultSpeed(f);
             default -> {}
         }
     }

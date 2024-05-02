@@ -8,6 +8,10 @@ import utc.hiep.pacmanjavafx.lib.iVector2D;
 import utc.hiep.pacmanjavafx.model.Animator;
 import utc.hiep.pacmanjavafx.model.world.World;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import static utc.hiep.pacmanjavafx.lib.Global.*;
 import static utc.hiep.pacmanjavafx.model.level.GameModel.FPS;
 import static utc.hiep.pacmanjavafx.model.level.GameModel.PPS_AT_100_PERCENT;
@@ -20,6 +24,8 @@ public class Pacman extends MovableEntity{
     private long starvingTicks;
     private static final int PAC_UI_SIZE = 15;  //size of pacman int sprite_sheet.png
 
+    private List<Ghost> victims;
+
     //UI part
     private final Image spriteSheet = ImageLib.SPRITE_SHEET;
     private final Animator animator = AnimatorLib.PACMAN_ANIMATOR;
@@ -31,6 +37,7 @@ public class Pacman extends MovableEntity{
         reset();
         this.name = name;
         this.starvingTicks = 0;
+        this.victims = new ArrayList<>();
     }
 
 
@@ -78,6 +85,20 @@ public class Pacman extends MovableEntity{
     public void render(GraphicsContext gc) {
         gc.drawImage(spriteSheet, animator.getAnimationPos().posX(), animator.getAnimationPos().posY(), PAC_UI_SIZE, PAC_UI_SIZE, posX() - HALF_TILE_SIZE, posY() - HALF_TILE_SIZE, 32, 32);
     }
+
+    public void setVictims(Ghost[] ghosts) {
+        victims.clear();
+        Collections.addAll(victims, ghosts);
+    }
+
+    public List<Ghost> victims() {
+        if(victims.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return victims;
+    }
+
+
 
 
 

@@ -8,7 +8,7 @@ public interface GameModel {
     byte CYAN_GHOST   = 2;
     byte ORANGE_GHOST = 3;
     byte FRIGHTENED_GHOST = 4;  //use only for animation
-
+    byte EATEN_GHOST = 5;       //use only for animation
     String[] GHOST_NAME = {"Blinky", "Pinky", "Inky", "Clyde"};
 
     /** Game loop frequency. */
@@ -20,7 +20,7 @@ public interface GameModel {
     /** Base speed of creatures (Pac-Man, ghosts, moving bonus). */
     short PPS_AT_100_PERCENT = 88 * GAME_SCALE;
     short PPS_GHOST_INHOUSE = 38 * GAME_SCALE;
-    short PPS_GHOST_RETURNING_HOME = 150 * GAME_SCALE;
+    short PPS_GHOST_RETURNING_HOME = 250 * GAME_SCALE;
     short POINTS_NORMAL_PELLET = 10;
     short POINTS_ENERGIZER = 50;
     short POINTS_ALL_GHOSTS_KILLED_IN_LEVEL = 12_000;
