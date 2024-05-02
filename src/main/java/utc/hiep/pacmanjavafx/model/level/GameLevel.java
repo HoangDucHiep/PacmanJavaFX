@@ -18,6 +18,8 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static utc.hiep.pacmanjavafx.lib.Direction.*;
+import static utc.hiep.pacmanjavafx.model.entity.GhostState.CHASING_TARGET;
+import static utc.hiep.pacmanjavafx.model.entity.GhostState.LOCKED;
 import static utc.hiep.pacmanjavafx.model.level.GameModel.*;
 import static utc.hiep.pacmanjavafx.lib.Global.*;
 
@@ -66,6 +68,7 @@ public class GameLevel {
         this.levelNum = 1;
         data = new Data(levelNum, false, RAW_LEVEL_DATA[levelNum - 1]);
         levelState = LevelState.LEVEL_CREATED;
+        gameEvent = GameEvent.NONE;
         levelStateTimer = new Timer();
         frightenedTimer = new Timer();
 
@@ -151,9 +154,20 @@ public class GameLevel {
 
     private void updateLevelStartedStateEvent() {
         houseControl.unlockGhost(this);
+        if(gameEvent == GameEvent.PAC_EAT_ENERGIZER) {
+            frightenedTimer.updateTimer();
+            if(frightenedTimer.ticks() >= GameModel.frightenedDuration(levelNum)) {
+                gameEvent = GameEvent.NONE;
+                huntingTimer.resume();
+                Arrays.stream(ghosts).filter(ghost -> ghost.state().equals(GhostState.FRIGHTENED)).forEach(ghost -> {
+                    ghost.setState(CHASING_TARGET);
+                });
+            }
+            updateEventPacEatEnergizer();
+        }
+
         huntingTimer.updateTimer();
         updateChasingTargetPhase();
-        
         Arrays.stream(ghosts()).forEach(ghost -> {
             ghost.update(pacman, world);
         });
@@ -162,8 +176,6 @@ public class GameLevel {
         handlePacmanEatFoot();
         handlePacAndGhostCollision();
     }
-
-
 
 
     private void huntingBehavior(Ghost ghost) {
@@ -255,7 +267,6 @@ public class GameLevel {
             case GameModel.CYAN_GHOST -> pacman.tilesAheadWithOverflowBug(2).scaled(2).minus(ghosts[GameModel.RED_GHOST].atTile());
             // Clyde/Sue: attacks directly but retreats if Pac is near
 
-
             case GameModel.ORANGE_GHOST -> Math.sqrt(ghosts[GameModel.ORANGE_GHOST].atTile().sqrEuclideanDistance(pacman.atTile())) < (8)      //using squared distance
                         ? pacman.atTile()
                         : ghostScatterTarget(GameModel.ORANGE_GHOST);
@@ -313,7 +324,6 @@ public class GameLevel {
 
     private void handlePacAndGhostCollision() {
         //havent have eaten state
-
         for(var ghost : ghosts) {
             if(pacman.sameTile(ghost)) {
                 if(ghost.state().equals(GhostState.CHASING_TARGET)) {
@@ -393,6 +403,11 @@ public class GameLevel {
             houseControl().updateDotCount(this);
 
             if(world.isEnergizerTile(currentTile)) {
+                gameEvent = GameEvent.PAC_EAT_ENERGIZER;
+                updateEventPacEatEnergizer();
+                Arrays.stream(ghosts).forEach(ghost -> {
+                    ghost.setAnimator(AnimatorLib.GHOST_ANIMATOR[FRIGHTENED_GHOST]);
+                });
             }
 
             world.removeFood(currentTile);
@@ -400,6 +415,19 @@ public class GameLevel {
         }
         else {
             pacman.starve();
+        }
+    }
+
+    private void updateEventPacEatEnergizer() {
+        if(gameEvent == GameEvent.PAC_EAT_ENERGIZER) {
+            for(var ghost : ghosts) {
+                if(ghost.state().equals(CHASING_TARGET)) {
+                    ghost.setState(GhostState.FRIGHTENED);
+                    ghost.setPercentageSpeed(data.ghostSpeedFrightenedPercentage);
+                    ghost.turnBackInstantly();
+                }
+            }
+            huntingTimer.pause();
         }
     }
 

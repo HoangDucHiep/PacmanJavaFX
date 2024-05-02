@@ -45,7 +45,7 @@ public class GhostHouseControl {
             }
         } else {
             Arrays.stream(level.ghosts()).filter(ghost -> ghost.is(LOCKED))
-                    .filter(ghost -> ghost.insideHouse(level.world().house()))
+                    .filter(ghost -> ghost.insideHouse())
                     .findFirst().ifPresent(ghost -> {
                         counters[ghost.id()]++;
                     });

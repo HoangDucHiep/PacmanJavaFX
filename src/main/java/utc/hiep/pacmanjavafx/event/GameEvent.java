@@ -1,6 +1,7 @@
 package utc.hiep.pacmanjavafx.event;
 
 public enum GameEvent {
+    NONE,
     BONUS_ACTIVATED,
     BONUS_EATEN,
     BONUS_EXPIRED,

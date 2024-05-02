@@ -65,7 +65,7 @@ public class Ghost extends MovableEntity{
         this.house = house;
     }
 
-    public boolean insideHouse(House house) {
+    public boolean insideHouse() {
         return house.contains(atTile());
     }
 
@@ -310,5 +310,9 @@ public class Ghost extends MovableEntity{
 
     public void animatorUpdate() {
         animator.update(movingDir());
+    }
+
+    public void setAnimator(Animator animator) {
+        this.animator = animator;
     }
 }

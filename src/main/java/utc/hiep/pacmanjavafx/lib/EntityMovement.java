@@ -54,6 +54,10 @@ public interface EntityMovement {
 
     static Direction computeRandomDir(MovableEntity entity, World world) {
         final var currentTile = entity.atTile();
+        //if ghost about to teleport, kinda dummy way, will try to fix it later
+        if(world.isTunnel(currentTile) || world.belongsToPortal(currentTile))
+            return entity.movingDir();
+
         Direction randomDir = null;
 
         randomDir = pseudoRandomDirection();
@@ -66,10 +70,10 @@ public interface EntityMovement {
     }
 
     static void randomMove(MovableEntity entity, World world) {
-        if((world.isIntersection(entity.atTile()) || !entity.canAccessTile(entity.atTile().plus(entity.movingDir().vector()), world)) && entity.newTileEntered) {
+        iVector2D currentTile = entity.atTile();
+        if((world.isIntersection(currentTile) || !entity.canAccessTile(currentTile.plus(entity.movingDir().vector()), world)) && entity.newTileEntered) {
             entity.setNextDir(computeRandomDir(entity, world));
         }
-        System.out.println(entity.nextDir());
         move(entity, world);
     }
 
