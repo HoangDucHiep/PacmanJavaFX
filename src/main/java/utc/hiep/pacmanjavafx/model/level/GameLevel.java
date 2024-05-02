@@ -1,11 +1,11 @@
 package utc.hiep.pacmanjavafx.model.level;
 
-import utc.hiep.pacmanjavafx.lib.Direction;
-import utc.hiep.pacmanjavafx.lib.EntityMovement;
-import utc.hiep.pacmanjavafx.lib.fVector2D;
-import utc.hiep.pacmanjavafx.lib.iVector2D;
+import utc.hiep.pacmanjavafx.event.GameEvent;
+import utc.hiep.pacmanjavafx.lib.*;
 import utc.hiep.pacmanjavafx.model.Timer;
+import utc.hiep.pacmanjavafx.model.entity.Entity;
 import utc.hiep.pacmanjavafx.model.entity.Ghost;
+import utc.hiep.pacmanjavafx.model.entity.GhostState;
 import utc.hiep.pacmanjavafx.model.entity.Pacman;
 import utc.hiep.pacmanjavafx.model.world.GhostHouseControl;
 import utc.hiep.pacmanjavafx.model.world.PacmanMap;
@@ -24,8 +24,6 @@ import static utc.hiep.pacmanjavafx.lib.Global.*;
 
 public class GameLevel {
     private int levelNum;
-
-
 
     public record Data(
             int number, // Level number, starts at 1.
@@ -49,11 +47,13 @@ public class GameLevel {
         }
     }
 
+    private GameEvent currentEvent;
     private Pacman pacman;
     private World world;
     private Data data;
     private final Ghost[] ghosts;
     private Timer huntingTimer;
+    private Timer gameEventTimer;
     private byte huntingPhaseIndex;
     private byte totalNumGhostsKilled;
     private byte cruiseElroyState;
@@ -61,13 +61,15 @@ public class GameLevel {
 
 
 
+
     public GameLevel() {
         this.levelNum = 1;
         data = new Data(levelNum, false, RAW_LEVEL_DATA[levelNum - 1]);
+        currentEvent = GameEvent.LEVEL_CREATED;
+        gameEventTimer = new Timer();
 
         this.pacman = new Pacman("PACMAN");
         this.world = PacmanMap.createPacManWorld();
-
         this.houseControl = new GhostHouseControl(levelNum);
 
         ghosts = Stream.of(GameModel.RED_GHOST, GameModel.PINK_GHOST, GameModel.CYAN_GHOST, GameModel.ORANGE_GHOST)
@@ -92,6 +94,8 @@ public class GameLevel {
             ghost.setMovingDir(ghostInhouseInitDir(ghost.id()));
         });
 
+        pacman.hide();
+
 
         var forbiddenMovesAtTile = new HashMap<iVector2D, List<Direction>>();
         var up = List.of(UP);
@@ -99,6 +103,7 @@ public class GameLevel {
         Arrays.stream(ghosts()).forEach(ghost -> {
             ghost.setForbiddenMoves(forbiddenMovesAtTile);
             ghost.setHuntingBehavior(this::huntingBehavior);
+            ghost.hide();
         });
 
         huntingTimer = new Timer();
@@ -109,15 +114,38 @@ public class GameLevel {
 
 
     public void update() {
+        if(currentEvent == GameEvent.LEVEL_CREATED){
+            gameEventTimer.updateTimer();
+            if((int)gameEventTimer.seconds() == 2) {
+                pacman.show();
+                Arrays.stream(ghosts).forEach(Ghost::show);
+            }
 
+            if((int)gameEventTimer.seconds() == 4) {
+                currentEvent = GameEvent.LEVEL_STARTED;
+                gameEventTimer.reset();
+            }
+        }
+
+        if(currentEvent == GameEvent.LEVEL_STARTED) {
+            updateLevelStartedStateEvent();
+        }
+    }
+
+
+    private void updateLevelStartedStateEvent() {
         houseControl.unlockGhost(this);
         huntingTimer.updateTimer();
         updateChasingTargetPhase();
-
         Arrays.stream(ghosts()).forEach(ghost -> {
             ghost.update(pacman, world);
         });
+
+        movePacman();
+        handlePacmanEatFoot();
+        handlePacAndGhostCollision();
     }
+
 
     private void frightenedBehaviorPacManGame(Ghost ghost) {
 
@@ -133,16 +161,20 @@ public class GameLevel {
 
 
     private void huntingBehavior(Ghost ghost) {
-        byte relSpeed = huntingSpeedPercentage(ghost);
+
         if (chasingPhase().isPresent() || ghost.id() == GameModel.RED_GHOST && cruiseElroyState > 0) {
             //chase pacman
             ghost.setHuntingBehavior(g -> {
+                byte relSpeed = huntingSpeedPercentage(g);
+                g.setPercentageSpeed(relSpeed);
                 g.setTargetTile(chasingTarget(g.id()));
                 EntityMovement.chaseTarget(g, world);
             });
         } else {
             //chase scatter
             ghost.setHuntingBehavior(g -> {
+                byte relSpeed = huntingSpeedPercentage(g);
+                g.setPercentageSpeed(relSpeed);
                 g.setTargetTile(ghostScatterTarget(g.id()));
                 EntityMovement.chaseTarget(g, world);
             });
@@ -231,23 +263,6 @@ public class GameLevel {
     }
 
 
-
-
-
-
-    public Pacman pacman() {
-        return pacman;
-    }
-
-    public World world() {
-        return world;
-    }
-
-    public int levelNum() {
-        return levelNum;
-    }
-
-
     /**
      * @param id ghost ID, one of {@link GameModel#RED_GHOST}, {@link GameModel#PINK_GHOST},
      *           {@value GameModel#CYAN_GHOST}, {@link GameModel#ORANGE_GHOST}
@@ -293,10 +308,98 @@ public class GameLevel {
         };
     }
 
+
+    private void handlePacAndGhostCollision() {
+        //havent have eaten state
+
+        for(var ghost : ghosts) {
+            if(pacman.sameTile(ghost)) {
+                currentEvent = GameEvent.LEVEL_LOST;
+            }
+        }
+    }
+
+
+    public Pacman pacman() {
+        return pacman;
+    }
+
+    public World world() {
+        return world;
+    }
+
+    public int levelNum() {
+        return levelNum;
+    }
+
+    public void applyPacDirKey(Direction nextDir) {
+        pacman.setNextDir(nextDir);
+    }
+
+    public void movePacman() {
+        EntityMovement.move(pacman, world);
+//        iVector2D currentTile = pacman.atTile();
+//
+//        /* Handle turn back instantly */
+//        if(pacman.movingDir().opposite().equals(pacman.nextDir())) {
+//            pacman.turnBackInstantly();
+//            return;
+//        }
+//
+//        /*  handle pacman be blocked by wall or smth */
+//        if(!pacman.canAccessTile(pacman.tilesAhead(1), world) && pacman.offset().almostEquals(fVector2D.ZERO, pacman.currentSpeed(),  pacman.currentSpeed())) {
+//            if(!pacman.isStanding()) {
+//                pacman.centerOverTile(currentTile);
+//                pacman.standing();
+//            }
+//        }
+//        /*  handle pacman at intersection */
+//        else if(world.isIntersection(currentTile)) {
+//            //if pacman haven't aligned to tile, but almost aligned, then aligned it
+//            if(pacman.isNewTileEntered() && pacman.offset().almostEquals(fVector2D.ZERO, pacman.currentSpeed(), pacman.currentSpeed())) {
+//                pacman.placeAtTile(currentTile.toFloatVec());
+//            }
+//        }
+//        //Handle if pacman gothrough portal
+//        else if(world.belongsToPortal(currentTile)) {
+//            if(!world.belongsToPortal(pacman.tilesAhead(1))) {
+//                iVector2D teleportTo = world.portals().otherTunnel(currentTile);
+//                pacman.placeAtTile(teleportTo.toFloatVec());
+//            }
+//        }
+//
+//        /* Handle if pacman be blocked in next turn, it'll keep moving in current direction*/
+//        if(pacman.isAlignedToTile()) {
+//            if(pacman.canAccessTile(currentTile.plus(pacman.nextDir().vector()), world)) {
+//                pacman.setMovingDir(pacman.nextDir());
+//            }
+//        }
+//
+//
+//        // If pacman is not standing, it can move :)))
+//        if(!pacman.isStanding()) {
+//            pacman.move();
+//        }
+    }
+
+
+    private void handlePacmanEatFoot() {
+        iVector2D currentTile = pacman.atTile();
+        if(world.hasFoodAt(currentTile) && !world.hasEatenFoodAt(currentTile)) {
+            houseControl().updateDotCount(this);
+            world.removeFood(currentTile);
+            pacman.endStarving();
+        }
+        else {
+            pacman.starve();
+        }
+    }
+
     public GhostHouseControl houseControl() {
         return houseControl;
     }
 
-
-
+    public GameEvent currentEvent() {
+        return currentEvent;
+    }
 }

@@ -288,7 +288,6 @@ public class Ghost extends MovableEntity{
 //            case RETURNING_TO_HOUSE -> updateStateReturningToHouse(world);
 //            case ENTERING_HOUSE     -> updateStateEnteringHouse();
         }
-        animatorUpdate();
     }
 
     private void updateStateChaingTarget() {

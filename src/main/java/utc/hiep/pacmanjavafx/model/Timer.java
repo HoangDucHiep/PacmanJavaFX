@@ -24,7 +24,7 @@ public class Timer {
 
         long now = System.nanoTime();
 
-        if(isPaused) {lastUpdate = 0; return;}
+        if(isPaused) {return;}
         if(lastUpdate == 0) {lastUpdate = now; return;}
 
         delta += now - lastUpdate;
@@ -45,8 +45,8 @@ public class Timer {
         return second;
     }
 
-    public void switchPause(long updateTime) {
-        lastUpdate = updateTime;
+    public void switchPause() {
+        lastUpdate = System.nanoTime();
         isPaused = !isPaused;
     }
 

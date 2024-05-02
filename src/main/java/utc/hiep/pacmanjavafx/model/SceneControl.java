@@ -17,7 +17,5 @@ public class SceneControl {
         stage.close();
     }
 
-    public Stage getStage() {
-        return stage;
-    }
+
 }

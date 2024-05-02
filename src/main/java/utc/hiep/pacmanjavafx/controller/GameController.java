@@ -4,6 +4,7 @@ import javafx.animation.AnimationTimer;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import utc.hiep.pacmanjavafx.event.GameEvent;
 import utc.hiep.pacmanjavafx.event.KeyListener;
 import utc.hiep.pacmanjavafx.event.KeyType;
 import utc.hiep.pacmanjavafx.event.MouseListener;
@@ -20,11 +21,18 @@ import utc.hiep.pacmanjavafx.model.Timer;
 import utc.hiep.pacmanjavafx.scene.ScoreScene;
 import utc.hiep.pacmanjavafx.scene.WelcomeScene;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 import java.util.function.Consumer;
 
 public class GameController {
+
+    private static int GAME_VIEW = 0;
+    private static int SCORE_SCENE = 1;
+    private static int WELCOME_SCENE = 2;
+    private int currentScene = WELCOME_SCENE;
+
     private final GameView gameView;
     private final ScoreScene scoreScene = new ScoreScene();
     private final WelcomeScene welcomeScene = new WelcomeScene();
@@ -32,16 +40,14 @@ public class GameController {
 
     private List<KeyType> pressedKey = new Stack<>();
 
-    private final World world;
     private Timer timer;
-    private Pacman pacman;
-    private Ghost[] ghosts;
     private GameLevel gameLevel;
 
-
+    /*Event listener*/
+    //GameView event listener
     private KeyListener gameViewKL;
 
-
+    //MenuScene event listener
     private MouseListener startBtn;
     private MouseListener scoreBtn;
     private MouseListener exitBtn;
@@ -55,87 +61,47 @@ public class GameController {
 
         gameLevel = new GameLevel();
 
-        world = gameLevel.world();
-        pacman = gameLevel.pacman();
-        ghosts = gameLevel.ghosts();
-
-        gameView.setGameEntity(pacman, world, ghosts);
         gameView.setGameLevel(gameLevel);
 
         gameViewKL = new KeyListener(gameView);
-        gameViewKL.setKeyAction(new Consumer<KeyEvent>() {
-            @Override
-            public void accept(KeyEvent keyEvent) {
-                switch (keyEvent.getCode()) {
-                    case UP -> gameViewKL.getPressedKey().add(KeyType.TURN_UP);
-                    case DOWN -> gameViewKL.getPressedKey().add(KeyType.TURN_DOWN);
-                    case LEFT -> gameViewKL.getPressedKey().add(KeyType.TURN_LEFT);
-                    case RIGHT -> gameViewKL.getPressedKey().add(KeyType.TURN_RIGHT);
-                    case P -> gameViewKL.getPressedKey().add(KeyType.PAUSE);
-                    case G -> gameViewKL.getPressedKey().add(KeyType.GRID_SWITCH);
-                    case C -> gameViewKL.getPressedKey().add(KeyType.CHANGE_SCENE);
-                    case B -> gameViewKL.getPressedKey().add(KeyType.CHANGE_BACK);
-                }
+        gameViewKL.setKeyAction(keyEvent -> {
+            switch (keyEvent.getCode()) {
+                case UP -> gameViewKL.getPressedKey().add(KeyType.TURN_UP);
+                case DOWN -> gameViewKL.getPressedKey().add(KeyType.TURN_DOWN);
+                case LEFT -> gameViewKL.getPressedKey().add(KeyType.TURN_LEFT);
+                case RIGHT -> gameViewKL.getPressedKey().add(KeyType.TURN_RIGHT);
+                case P -> gameViewKL.getPressedKey().add(KeyType.PAUSE);
+                case G -> gameViewKL.getPressedKey().add(KeyType.GRID_SWITCH);
+                case C -> gameViewKL.getPressedKey().add(KeyType.CHANGE_SCENE);
+                case B -> gameViewKL.getPressedKey().add(KeyType.CHANGE_BACK);
             }
         });
 
 
         startBtn = new MouseListener(welcomeScene.getStartButton());
-        startBtn.setMouseAction(new Consumer<MouseEvent>() {
-            @Override
-            public void accept(MouseEvent mouseEvent) {
-                sceneControl.setScene(gameView);
-
-            }
-        }, new Consumer<MouseEvent>() {
-            @Override
-            public void accept(MouseEvent mouseEvent) {
-                welcomeScene.getStartButton().setTextFill(Color.color(1, 0.71, 1));
-            }
-        }, new Consumer<MouseEvent>() {
-            @Override
-            public void accept(MouseEvent mouseEvent) {
-                welcomeScene.getStartButton().setTextFill(Color.WHITE);
-            }
-        });
+        startBtn.setMouseAction(
+                mouseEvent -> {
+                    sceneControl.setScene(gameView);
+                    currentScene = GAME_VIEW;
+                },
+                mouseEvent -> welcomeScene.getStartButton().setTextFill(Color.color(1, 0.71, 1)),
+                mouseEvent -> welcomeScene.getStartButton().setTextFill(Color.WHITE)
+        );
 
 
         exitBtn = new MouseListener(welcomeScene.getExitButton());
-        exitBtn.setMouseAction(new Consumer<MouseEvent>() {
-            @Override
-            public void accept(MouseEvent mouseEvent) {
-                sceneControl.exit();
-            }
-        }, new Consumer<MouseEvent>() {
-            @Override
-            public void accept(MouseEvent mouseEvent) {
-                welcomeScene.getExitButton().setTextFill(Color.color(1, 0.71, 1));
-            }
-        }, new Consumer<MouseEvent>() {
-            @Override
-            public void accept(MouseEvent mouseEvent) {
-                welcomeScene.getExitButton().setTextFill(Color.WHITE);
-            }
-        });
+        exitBtn.setMouseAction(
+                mouseEvent -> sceneControl.exit(),
+                mouseEvent -> welcomeScene.getExitButton().setTextFill(Color.color(1, 0.71, 1)),
+                mouseEvent -> welcomeScene.getExitButton().setTextFill(Color.WHITE)
+        );
 
         scoreBtn = new MouseListener(welcomeScene.getScoreButton());
-        scoreBtn.setMouseAction(new Consumer<MouseEvent>() {
-            @Override
-            public void accept(MouseEvent mouseEvent) {
-                sceneControl.setScene(scoreScene);
-            }
-        }, new Consumer<MouseEvent>() {
-            @Override
-            public void accept(MouseEvent mouseEvent) {
-                welcomeScene.getScoreButton().setTextFill(Color.color(1, 0.71, 1));
-            }
-        }, new Consumer<MouseEvent>() {
-            @Override
-            public void accept(MouseEvent mouseEvent) {
-                welcomeScene.getScoreButton().setTextFill(Color.WHITE);
-            }
-        });
-
+        scoreBtn.setMouseAction(
+                mouseEvent -> sceneControl.setScene(scoreScene),
+                mouseEvent -> welcomeScene.getScoreButton().setTextFill(Color.color(1, 0.71, 1)),
+                mouseEvent -> welcomeScene.getScoreButton().setTextFill(Color.WHITE)
+        );
 
 
         running();
@@ -183,96 +149,47 @@ public class GameController {
 
     private void update() {
         timer.updateTimer();
-        keyHandler();
-        updateAnimator();
-        if (timer.isPaused()) {
-            return;
+        if(currentScene == GAME_VIEW) {
+            keyHandler();
+            if(gameLevel.currentEvent() == GameEvent.LEVEL_STARTED) {
+                updateAnimator();
+                if (timer.isPaused()) {
+                    return;
+                }
+            } else if (gameLevel.currentEvent() == GameEvent.LEVEL_LOST) {
+                sceneControl.setScene(scoreScene);
+            }
+            gameLevel.update();
         }
-        movePacman();
-        handlePacmanEatFoot();
-        gameLevel.update();
-    }
-
-    public void movePacman() {
-        EntityMovement.move(pacman, world);
-//        iVector2D currentTile = pacman.atTile();
-//
-//        /* Handle turn back instantly */
-//        if(pacman.movingDir().opposite().equals(pacman.nextDir())) {
-//            pacman.turnBackInstantly();
-//            return;
-//        }
-//
-//        /*  handle pacman be blocked by wall or smth */
-//        if(!pacman.canAccessTile(pacman.tilesAhead(1), world) && pacman.offset().almostEquals(fVector2D.ZERO, pacman.currentSpeed(),  pacman.currentSpeed())) {
-//            if(!pacman.isStanding()) {
-//                pacman.centerOverTile(currentTile);
-//                pacman.standing();
-//            }
-//        }
-//        /*  handle pacman at intersection */
-//        else if(world.isIntersection(currentTile)) {
-//            //if pacman haven't aligned to tile, but almost aligned, then aligned it
-//            if(pacman.isNewTileEntered() && pacman.offset().almostEquals(fVector2D.ZERO, pacman.currentSpeed(), pacman.currentSpeed())) {
-//                pacman.placeAtTile(currentTile.toFloatVec());
-//            }
-//        }
-//        //Handle if pacman gothrough portal
-//        else if(world.belongsToPortal(currentTile)) {
-//            if(!world.belongsToPortal(pacman.tilesAhead(1))) {
-//                iVector2D teleportTo = world.portals().otherTunnel(currentTile);
-//                pacman.placeAtTile(teleportTo.toFloatVec());
-//            }
-//        }
-//
-//        /* Handle if pacman be blocked in next turn, it'll keep moving in current direction*/
-//        if(pacman.isAlignedToTile()) {
-//            if(pacman.canAccessTile(currentTile.plus(pacman.nextDir().vector()), world)) {
-//                pacman.setMovingDir(pacman.nextDir());
-//            }
-//        }
-//
-//
-//        // If pacman is not standing, it can move :)))
-//        if(!pacman.isStanding()) {
-//            pacman.move();
-//        }
     }
 
 
-    private void handlePacmanEatFoot() {
-        iVector2D currentTile = pacman.atTile();
-        if(world.hasFoodAt(currentTile) && !world.hasEatenFoodAt(currentTile)) {
-            gameLevel.houseControl().updateDotCount(gameLevel);
-            world.removeFood(currentTile);
-            pacman.endStarving();
-        }
-        else {
-            pacman.starve();
-        }
-    }
 
 
     private void updateAnimator() {
-        pacman.animatorUpdate();
-        world.animatorUpdate();
+        gameLevel.pacman().animatorUpdate();
+        gameLevel.world().animatorUpdate();
+        Arrays.stream(gameLevel.ghosts()).forEach(Ghost::animatorUpdate);
     }
 
 
     public void keyHandler() {
         gameViewKL.keyListening();
-
+        System.out.println(gameViewKL.getPressedKey());
         for (KeyType key : gameViewKL.getPressedKey()) {
-            if(key == KeyType.PAUSE) {
-                timer.switchPause(System.nanoTime());
+            switch (key) {
+                case PAUSE:
+                    timer.switchPause();
+                case GRID_SWITCH:
+                    gameView.switchGridDisplay();
             }
+
             if(!timer.isPaused()) {
                 switch (key) {
-                    case TURN_UP -> pacman.setNextDir(Direction.UP);
-                    case TURN_DOWN -> pacman.setNextDir(Direction.DOWN);
-                    case TURN_LEFT -> pacman.setNextDir(Direction.LEFT);
-                    case TURN_RIGHT -> pacman.setNextDir(Direction.RIGHT);
-                    case GRID_SWITCH -> gameView.switchGridDisplay();
+                    case TURN_UP -> gameLevel.applyPacDirKey(Direction.UP);
+                    case TURN_DOWN -> gameLevel.applyPacDirKey(Direction.DOWN);
+                    case TURN_LEFT -> gameLevel.applyPacDirKey(Direction.LEFT);
+                    case TURN_RIGHT -> gameLevel.applyPacDirKey(Direction.RIGHT);
                     case CHANGE_SCENE -> sceneControl.setScene(welcomeScene);
                     case CHANGE_BACK -> sceneControl.setScene(gameView);
                 }

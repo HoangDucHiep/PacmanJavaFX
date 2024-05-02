@@ -5,6 +5,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import utc.hiep.pacmanjavafx.event.GameEvent;
 import utc.hiep.pacmanjavafx.lib.*;
 import utc.hiep.pacmanjavafx.model.entity.Ghost;
 import utc.hiep.pacmanjavafx.model.entity.Pacman;
@@ -20,6 +21,7 @@ public class GameView extends GeneralScene {
     public static final int GAME_HEIGHT = TILE_SIZE * TILES_Y;
 
     private boolean isGridDisplayed = false;
+    private Font eventTextFont = FontLib.EMULOGIC(16);
 
     private Canvas canvas;
     private GraphicsContext gc;
@@ -51,14 +53,12 @@ public class GameView extends GeneralScene {
 
     }
 
-    public void setGameEntity(Pacman pacman, World world, Ghost[] ghosts) {
-        this.pacman = pacman;
-        this.world = world;
-        this.ghosts = ghosts;
-    }
 
     public void setGameLevel(GameLevel gameLevel) {
         this.gameLevel = gameLevel;
+        this.pacman = gameLevel.pacman();
+        this.ghosts = gameLevel.ghosts();
+        this.world = gameLevel.world();
     }
 
 
@@ -84,11 +84,18 @@ public class GameView extends GeneralScene {
             drawGhostTarget();
         }
 
-
-        pacman.render(gc);
+        if(pacman.isVisible())
+            pacman.render(gc);
 
         for (Ghost ghost : ghosts) {
-            ghost.render(gc);
+            if(ghost.isVisible())
+                ghost.render(gc);
+        }
+
+        if(gameLevel.currentEvent() == GameEvent.LEVEL_CREATED) {
+            gc.setFill(Color.YELLOW);
+            gc.setFont(eventTextFont);
+            gc.fillText("READY!", 11 * TILE_SIZE, 21 * TILE_SIZE);
         }
     }
 
@@ -110,14 +117,14 @@ public class GameView extends GeneralScene {
     }
 
     private final Font targetFont = FontLib.EMULOGIC(12);
-    private final Font textFont = FontLib.EMULOGIC(5);
+    private final Font targetTextFont = FontLib.EMULOGIC(5);
     private void drawTargetTile(int ghostID, Color color) {
         if(ghosts[ghostID].targetTile().isEmpty()) return;
         iVector2D target = ghosts[ghostID].targetTile().get();
         gc.setFill(color);
         gc.setFont(targetFont);
         gc.fillText("X", target.x()*TILE_SIZE + 1.5, target.y()*TILE_SIZE + 13);
-        gc.setFont(textFont);
+        gc.setFont(targetTextFont);
         if(ghostID == RED_GHOST || ghostID == PINK_GHOST)
             gc.fillText("(Target)", (target.x() - 0.75) * TILE_SIZE, (target.y() + 2) * TILE_SIZE);
         else
