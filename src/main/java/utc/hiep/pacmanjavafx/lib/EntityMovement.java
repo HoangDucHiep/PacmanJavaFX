@@ -89,7 +89,6 @@ public interface EntityMovement {
      * @param world the world/maze
      */
     static void move(MovableEntity entity, World world) {
-        System.out.println("Move");
         if(!tryTeleport(entity, world))
             return;
 

@@ -195,7 +195,7 @@ public class AnimatorLib {
     /**
      * Animator for Frightened-Ghosts
      */
-    private static final Animator FRIGHTENED_ANIMATOR = Animator.getDirAnimator(GameModel.GHOST_ANIMATION_RATE, FRIGHTENED, FRIGHTENED, FRIGHTENED, FRIGHTENED);
+    private static final Animator FRIGHTENED_ANIMATOR = Animator.getDirAnimator(GameModel.GHOST_FRIGHTENED_ANIMATION_RATE, FRIGHTENED, FRIGHTENED, FRIGHTENED, FRIGHTENED);
 
     /**
      * Animator for Eaten-Ghosts

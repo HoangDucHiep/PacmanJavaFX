@@ -29,6 +29,7 @@ public interface GameModel {
     byte PACMAN_ANIMATION_RATE = 3;
     byte ENERGIZER_BLINKING_RATE = 30;
     byte GHOST_ANIMATION_RATE = 6;
+    byte GHOST_FRIGHTENED_ANIMATION_RATE = 15;
 
 
     final byte[][] RAW_LEVEL_DATA = {

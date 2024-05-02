@@ -106,7 +106,7 @@ public class Ghost extends MovableEntity{
         // move inside house
         float centerX = center().x();
         float houseCenterX = house.center().x();
-        if (differsAtMost(0.5f * currentSpeed(), centerX, houseCenterX)) {
+        if (differsAtMost(currentSpeed(), centerX, houseCenterX)) {
             // align horizontally and raise
             setPosX(houseCenterX - HALF_TILE_SIZE);
             setMovingDir(Direction.UP);
@@ -120,6 +120,32 @@ public class Ghost extends MovableEntity{
         move();
     }
 
+    private void updateStateEaten() {
+        fVector2D houseEntryPosition = house.door().entryPosition();
+    }
+
+    private void updateStateReturningToHouse(World world) {
+        fVector2D houseEntry = house.door().entryPosition();
+        if (position().almostEquals(houseEntry, currentSpeed(), currentSpeed())) {
+            setPosition(houseEntry);
+            setMovingDir(DOWN);
+            setNextDir(DOWN);
+            setState(ENTERING_HOUSE);
+        } else {
+            setSpeed(outOfHouseSpeed);
+            setTargetTile(house.door().leftWing().plus(UP.vector()));
+            EntityMovement.chaseTarget(this, world);
+        }
+    }
+
+    private void updateStateFrightened() {
+        frightenedBehavior.accept(this);
+    }
+
+    private void updateStateChasingTarget() {
+        huntingBehavior.accept(this);
+    }
+
 
     /**
      * When an eaten ghost has arrived at the ghost house door, he falls down to the center of the house,
@@ -130,21 +156,28 @@ public class Ghost extends MovableEntity{
         if (posY() >= houseCenter.y()) {
             // reached ground
             setPosY(houseCenter.y());
-            if (revivalPosition.x() < posX()) {
+            System.out.println("--------");
+            System.out.println("Revival center: " + revivalPosition.x() * TILE_SIZE);
+            System.out.println("Current position: " + posX());
+            if (revivalPosition.x() * TILE_SIZE < posX()) {
+                System.out.println("Left");
                 setMovingDir(LEFT);
                 setNextDir(LEFT);
-            } else if (revivalPosition.x() > posX()) {
+            } else if (revivalPosition.x() * TILE_SIZE > posX()) {
+                System.out.println("Right");
                 setMovingDir(RIGHT);
                 setNextDir(RIGHT);
             }
         }
-        setSpeed(speedReturningToHouse);
+        setSpeed(speedInsideHouse);
         move();
-        if (posY() >= revivalPosition.y() && differsAtMost(0.5 * speedReturningToHouse, posX(), revivalPosition.x())) {
-            setPosition(revivalPosition);
-            setMovingDir(RIGHT);
-            setNextDir(RIGHT);
-            state = LOCKED;
+
+        System.out.println("Current position: " + position());
+        System.out.println("Revival pos: " + revivalPosition);
+        if (posY() >= revivalPosition.y() * TILE_SIZE && differsAtMost(currentSpeed(), posX(), revivalPosition.x() * TILE_SIZE)) {
+            System.out.println("There");
+            setPosition(revivalPosition.scaled(TILE_SIZE));
+            setState(LOCKED);
         }
     }
 
@@ -199,9 +232,11 @@ public class Ghost extends MovableEntity{
         if (house.door().occupies(tile)) {
             return is(ENTERING_HOUSE, LEAVING_HOUSE);
         }
+
         if (world.insideBounds(tile)) {
             return !world.isWall(tile);
         }
+
         return world.belongsToPortal(tile) || world.isTunnel(tile);
     }
 
@@ -265,8 +300,8 @@ public class Ghost extends MovableEntity{
                 updateDefaultSpeed(outOfHouseSpeed);
                 //huntingBehavior.accept(this);
             }
-//            case ENTERING_HOUSE, RETURNING_TO_HOUSE -> selectAnimation(ANIM_GHOST_EYES);
-            case FRIGHTENED -> updateDefaultSpeed(speedReturningToHouse);
+///           case ENTERING_HOUSE, RETURNING_TO_HOUSE -> selectAnimation(ANIM_GHOST_EYES);
+            //case FRIGHTENED -> updateDefaultSpeed(speed);
             default -> {}
         }
     }
@@ -284,19 +319,13 @@ public class Ghost extends MovableEntity{
             case LEAVING_HOUSE      -> updateStateLeavingHouse();
             case CHASING_TARGET     -> updateStateChasingTarget();
             case FRIGHTENED         -> updateStateFrightened();
-//            case EATEN              -> updateStateEaten();
-//            case RETURNING_TO_HOUSE -> updateStateReturningToHouse(world);
-//            case ENTERING_HOUSE     -> updateStateEnteringHouse();
+            case EATEN              -> updateStateEaten();
+            case RETURNING_TO_HOUSE -> updateStateReturningToHouse(world);
+            case ENTERING_HOUSE     -> updateStateEnteringHouse();
         }
     }
 
-    private void updateStateFrightened() {
-        frightenedBehavior.accept(this);
-    }
 
-    private void updateStateChasingTarget() {
-        huntingBehavior.accept(this);
-    }
 
 //    public void eaten(int index) {
 //        setState(EATEN);

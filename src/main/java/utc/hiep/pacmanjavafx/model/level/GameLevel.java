@@ -154,6 +154,7 @@ public class GameLevel {
 
     private void updateLevelStartedStateEvent() {
         houseControl.unlockGhost(this);
+
         if(gameEvent == GameEvent.PAC_EAT_ENERGIZER) {
             frightenedTimer.updateTimer();
             if(frightenedTimer.ticks() >= GameModel.frightenedDuration(levelNum)) {
@@ -162,6 +163,10 @@ public class GameLevel {
                 Arrays.stream(ghosts).filter(ghost -> ghost.state().equals(GhostState.FRIGHTENED)).forEach(ghost -> {
                     ghost.setState(CHASING_TARGET);
                 });
+                Arrays.stream(ghosts).forEach(ghost -> {
+                    ghost.setAnimator(AnimatorLib.GHOST_ANIMATOR[ghost.id()]);
+                });
+                frightenedTimer.reset();
             }
             updateEventPacEatEnergizer();
         }
@@ -329,6 +334,9 @@ public class GameLevel {
                 if(ghost.state().equals(GhostState.CHASING_TARGET)) {
                     levelState = LevelState.LEVEL_LOST;
                 }
+                else if(ghost.state().equals(GhostState.FRIGHTENED)) {
+                    ghost.setState(GhostState.RETURNING_TO_HOUSE);
+                }
             }
         }
     }
@@ -408,6 +416,7 @@ public class GameLevel {
                 Arrays.stream(ghosts).forEach(ghost -> {
                     ghost.setAnimator(AnimatorLib.GHOST_ANIMATOR[FRIGHTENED_GHOST]);
                 });
+                frightenedTimer.reset();
             }
 
             world.removeFood(currentTile);
@@ -423,7 +432,7 @@ public class GameLevel {
             for(var ghost : ghosts) {
                 if(ghost.state().equals(CHASING_TARGET)) {
                     ghost.setState(GhostState.FRIGHTENED);
-                    ghost.setPercentageSpeed(data.ghostSpeedFrightenedPercentage);
+                    ghost.setPercentageSpeed((byte) 40);
                     ghost.turnBackInstantly();
                 }
             }
