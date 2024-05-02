@@ -11,6 +11,8 @@ public class ImageLib {
     private static final String MAP_EMPTY_PATH = "asserts/graphics/map.png";
     private static final String PELLET_PATH = "asserts/graphics/pellet.png";
     private static final String ENERGIZER_PATH = "asserts/graphics/energizer_sheet.png";
+    private static final String MENU_SCENE_BG_PATH = "asserts/graphics/menuscenebg.png";
+    private static final String LOGO_PATH = "asserts/graphics/game_logo.png";
 
 
     public static Image BACKGROUND_IMAGE = new Image(Objects.requireNonNull(ImageLib.class.getResourceAsStream(BACKGROUND_IMAGE_PATH)));;
@@ -19,4 +21,6 @@ public class ImageLib {
     public static Image MAP_EMPTY = new Image(Objects.requireNonNull(ImageLib.class.getResourceAsStream(MAP_EMPTY_PATH)));
     public static Image PELLET = new Image(Objects.requireNonNull(ImageLib.class.getResourceAsStream(PELLET_PATH)));
     public static Image ENERGIZER_SHEET = new Image(Objects.requireNonNull(ImageLib.class.getResourceAsStream(ENERGIZER_PATH)));
+    public static Image MENU_SCENE_BG = new Image(Objects.requireNonNull(ImageLib.class.getResourceAsStream(MENU_SCENE_BG_PATH)));
+    public static Image GAME_LOGO = new Image(Objects.requireNonNull(ImageLib.class.getResourceAsStream(LOGO_PATH)));
 }

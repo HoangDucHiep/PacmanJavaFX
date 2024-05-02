@@ -3,11 +3,7 @@ package utc.hiep.pacmanjavafx;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import utc.hiep.pacmanjavafx.controller.GameController;
-import utc.hiep.pacmanjavafx.model.SceneController;
-import utc.hiep.pacmanjavafx.scene.GameView;
-import utc.hiep.pacmanjavafx.scene.GeneralScene;
-import utc.hiep.pacmanjavafx.scene.ScoreScene;
-import utc.hiep.pacmanjavafx.scene.WelcomeScene;
+import utc.hiep.pacmanjavafx.model.SceneControl;
 
 public class PacManApplication extends Application {
 
@@ -20,13 +16,10 @@ public class PacManApplication extends Application {
     @Override
     public void start(Stage stage) {
         stage.setTitle("Pacman");
-        SceneController sController = new SceneController(stage);
-        gController.setSceneController(sController);
-        stage.setScene(gController.getGameView());
+        stage.setMaximized(true);
+        SceneControl sController = new SceneControl(stage);
+        gController.setSceneControl(sController);
+        sController.setScene(gController.getWelcomeScene());
         stage.show();
     }
-
-
-
-
 }

@@ -1,13 +1,16 @@
 package utc.hiep.pacmanjavafx.controller;
 
 import javafx.animation.AnimationTimer;
-import javafx.stage.Stage;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
 import utc.hiep.pacmanjavafx.event.KeyListener;
 import utc.hiep.pacmanjavafx.event.KeyType;
+import utc.hiep.pacmanjavafx.event.MouseListener;
 import utc.hiep.pacmanjavafx.lib.Direction;
 import utc.hiep.pacmanjavafx.lib.EntityMovement;
 import utc.hiep.pacmanjavafx.lib.iVector2D;
-import utc.hiep.pacmanjavafx.model.SceneController;
+import utc.hiep.pacmanjavafx.model.SceneControl;
 import utc.hiep.pacmanjavafx.model.entity.Ghost;
 import utc.hiep.pacmanjavafx.model.entity.Pacman;
 import utc.hiep.pacmanjavafx.model.level.GameLevel;
@@ -19,12 +22,13 @@ import utc.hiep.pacmanjavafx.scene.WelcomeScene;
 
 import java.util.List;
 import java.util.Stack;
+import java.util.function.Consumer;
 
 public class GameController {
     private final GameView gameView;
     private final ScoreScene scoreScene = new ScoreScene();
     private final WelcomeScene welcomeScene = new WelcomeScene();
-    private SceneController sceneController;
+    private SceneControl sceneControl;
 
     private List<KeyType> pressedKey = new Stack<>();
 
@@ -35,7 +39,12 @@ public class GameController {
     private GameLevel gameLevel;
 
 
-    private KeyListener kl;
+    private KeyListener gameViewKL;
+
+
+    private MouseListener startBtn;
+    private MouseListener scoreBtn;
+    private MouseListener exitBtn;
 
     private int score;
 
@@ -53,7 +62,82 @@ public class GameController {
         gameView.setGameEntity(pacman, world, ghosts);
         gameView.setGameLevel(gameLevel);
 
-        kl = new KeyListener(gameView);
+        gameViewKL = new KeyListener(gameView);
+        gameViewKL.setKeyAction(new Consumer<KeyEvent>() {
+            @Override
+            public void accept(KeyEvent keyEvent) {
+                switch (keyEvent.getCode()) {
+                    case UP -> gameViewKL.getPressedKey().add(KeyType.TURN_UP);
+                    case DOWN -> gameViewKL.getPressedKey().add(KeyType.TURN_DOWN);
+                    case LEFT -> gameViewKL.getPressedKey().add(KeyType.TURN_LEFT);
+                    case RIGHT -> gameViewKL.getPressedKey().add(KeyType.TURN_RIGHT);
+                    case P -> gameViewKL.getPressedKey().add(KeyType.PAUSE);
+                    case G -> gameViewKL.getPressedKey().add(KeyType.GRID_SWITCH);
+                    case C -> gameViewKL.getPressedKey().add(KeyType.CHANGE_SCENE);
+                    case B -> gameViewKL.getPressedKey().add(KeyType.CHANGE_BACK);
+                }
+            }
+        });
+
+
+        startBtn = new MouseListener(welcomeScene.getStartButton());
+        startBtn.setMouseAction(new Consumer<MouseEvent>() {
+            @Override
+            public void accept(MouseEvent mouseEvent) {
+                sceneControl.setScene(gameView);
+
+            }
+        }, new Consumer<MouseEvent>() {
+            @Override
+            public void accept(MouseEvent mouseEvent) {
+                welcomeScene.getStartButton().setTextFill(Color.color(1, 0.71, 1));
+            }
+        }, new Consumer<MouseEvent>() {
+            @Override
+            public void accept(MouseEvent mouseEvent) {
+                welcomeScene.getStartButton().setTextFill(Color.WHITE);
+            }
+        });
+
+
+        exitBtn = new MouseListener(welcomeScene.getExitButton());
+        exitBtn.setMouseAction(new Consumer<MouseEvent>() {
+            @Override
+            public void accept(MouseEvent mouseEvent) {
+                sceneControl.exit();
+            }
+        }, new Consumer<MouseEvent>() {
+            @Override
+            public void accept(MouseEvent mouseEvent) {
+                welcomeScene.getExitButton().setTextFill(Color.color(1, 0.71, 1));
+            }
+        }, new Consumer<MouseEvent>() {
+            @Override
+            public void accept(MouseEvent mouseEvent) {
+                welcomeScene.getExitButton().setTextFill(Color.WHITE);
+            }
+        });
+
+        scoreBtn = new MouseListener(welcomeScene.getScoreButton());
+        scoreBtn.setMouseAction(new Consumer<MouseEvent>() {
+            @Override
+            public void accept(MouseEvent mouseEvent) {
+                sceneControl.setScene(scoreScene);
+            }
+        }, new Consumer<MouseEvent>() {
+            @Override
+            public void accept(MouseEvent mouseEvent) {
+                welcomeScene.getScoreButton().setTextFill(Color.color(1, 0.71, 1));
+            }
+        }, new Consumer<MouseEvent>() {
+            @Override
+            public void accept(MouseEvent mouseEvent) {
+                welcomeScene.getScoreButton().setTextFill(Color.WHITE);
+            }
+        });
+
+
+
         running();
     }
 
@@ -176,10 +260,9 @@ public class GameController {
 
 
     public void keyHandler() {
-        kl.keyListening();
-        pressedKey = kl.getPressedKey();
+        gameViewKL.keyListening();
 
-        for (KeyType key : pressedKey) {
+        for (KeyType key : gameViewKL.getPressedKey()) {
             if(key == KeyType.PAUSE) {
                 timer.switchPause(System.nanoTime());
             }
@@ -190,16 +273,30 @@ public class GameController {
                     case TURN_LEFT -> pacman.setNextDir(Direction.LEFT);
                     case TURN_RIGHT -> pacman.setNextDir(Direction.RIGHT);
                     case GRID_SWITCH -> gameView.switchGridDisplay();
+                    case CHANGE_SCENE -> sceneControl.setScene(welcomeScene);
+                    case CHANGE_BACK -> sceneControl.setScene(gameView);
                 }
             }
         }
-        kl.clearKey();
+        gameViewKL.clearKey();
     }
 
     public GameView getGameView() {
         return gameView;
     }
-    public void setSceneController(SceneController sceneController) {
-        this.sceneController = sceneController;
+
+    public ScoreScene getScoreScene() {
+        return scoreScene;
     }
+
+    public WelcomeScene getWelcomeScene() {
+        return welcomeScene;
+    }
+
+
+    public void setSceneControl(SceneControl sceneControl) {
+        this.sceneControl = sceneControl;
+    }
+
+
 }

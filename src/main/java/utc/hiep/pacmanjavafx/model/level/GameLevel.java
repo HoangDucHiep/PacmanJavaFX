@@ -107,6 +107,7 @@ public class GameLevel {
 
     }
 
+
     public void update() {
 
         houseControl.unlockGhost(this);

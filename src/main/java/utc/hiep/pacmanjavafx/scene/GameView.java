@@ -139,18 +139,24 @@ public class GameView extends GeneralScene {
         {
             drawTargetTile(CYAN_GHOST, Color.CYAN);
         }
+
         if (ghosts[ORANGE_GHOST].targetTile().isPresent()) {
             if(ghosts[ORANGE_GHOST].targetTile().isEmpty()) return;
             iVector2D target = ghosts[ORANGE_GHOST].targetTile().get();
-
+            drawTargetTile(ORANGE_GHOST, Color.ORANGE);
             if (gameLevel.currentChasingTargetPhaseName().equals(GameLevel.CHASING)) {
                 double centerX = ghosts[ORANGE_GHOST].posX();
                 double centerY = ghosts[ORANGE_GHOST].posY();
                 double radius = 8 * TILE_SIZE;
-                int numDashes = 30;
+                int numDashes = 20;
 
                 double dashAngle = 360.0 / numDashes;
 
+                if (target.equals(PacmanMap.SCATTER_TARGET_LEFT_LOWER_CORNER)) {
+                    gc.setStroke(Color.color(1, 0.71, 0.31, 0.3));
+                } else {
+                    gc.setStroke(Color.color(1, 0.71, 0.31, 0.8));
+                }
                 for (int i = 0; i < numDashes; i++) {
                     double startAngle = i * dashAngle;
                     double endAngle = (i + 0.5) * dashAngle;
@@ -162,18 +168,8 @@ public class GameView extends GeneralScene {
                     double startY = centerY + radius * Math.sin(startAngle);
                     double endX = centerX + radius * Math.cos(endAngle);
                     double endY = centerY + radius * Math.sin(endAngle);
-
-                    if (target.equals(PacmanMap.SCATTER_TARGET_LEFT_LOWER_CORNER)) {
-                        gc.setStroke(Color.color(1, 0.71, 0.31, 0.3));
-                    } else {
-                        gc.setStroke(Color.color(1, 0.71, 0.31, 0.8));
-                    }
-
                     gc.strokeLine(startX, startY, endX, endY);
                 }
-
-
-                drawTargetTile(ORANGE_GHOST, Color.ORANGE);
             }
         }
     }

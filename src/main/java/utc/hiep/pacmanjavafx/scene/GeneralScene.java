@@ -1,8 +1,10 @@
 package utc.hiep.pacmanjavafx.scene;
 
 import javafx.scene.Group;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 
 import java.util.HashSet;
@@ -15,12 +17,11 @@ public abstract class GeneralScene extends Scene {
 
     protected Set<KeyCode> activeKeys;
     protected Set<KeyCode> releasedKeys;
-    private StackPane root;
+    private Pane root;
 
     public GeneralScene() {
         super(new Group(), WINDOW_WIDTH, WINDOW_HEIGHT);
-        root = new StackPane();
-        this.setRoot(root);
+        setRootPane(new StackPane());
         activeKeys = new HashSet<>();
         releasedKeys = new HashSet<>();
         this.setOnKeyPressed(e -> activeKeys.add(e.getCode()));
@@ -30,8 +31,13 @@ public abstract class GeneralScene extends Scene {
         });
     }
 
-    public StackPane getRootPane() {
+    public Pane getRootPane() {
         return root;
+    }
+
+    public void setRootPane(Pane root) {
+        this.root = root;
+        this.setRoot(root);
     }
     public abstract void render();
 }

@@ -13,6 +13,8 @@ public enum GameEvent {
     HUNTING_PHASE_STARTED,
     LEVEL_CREATED,
     LEVEL_STARTED,
+    LEVEL_WON,
+    LEVEL_LOST,
     PAC_DIED,
     PAC_FOUND_FOOD,
     PAC_GETS_POWER,

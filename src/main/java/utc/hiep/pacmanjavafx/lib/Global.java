@@ -1,13 +1,15 @@
 package utc.hiep.pacmanjavafx.lib;
 
+import javafx.stage.Screen;
+
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Stream;
 
 public class Global {
-    public static final int WINDOW_WIDTH = 1024;                //window width
-    public static final int WINDOW_HEIGHT = 768;                //window height
+    public static final double WINDOW_WIDTH = Screen.getPrimary().getVisualBounds().getWidth();                //window width
+    public static final double WINDOW_HEIGHT = Screen.getPrimary().getVisualBounds().getHeight();                //window height
 
     public static final int TILE_SIZE = 16;                     //tile size
     public static final int HALF_TILE_SIZE = TILE_SIZE / 2;     //half tile size
