@@ -284,7 +284,6 @@ public class Ghost extends MovableEntity{
         switch (state) {
             case LOCKED, LEAVING_HOUSE -> {
                 animator = AnimatorLib.GHOST_ANIMATOR[id];
-                System.out.println("SHeeesseeee");
                 updateDefaultSpeed(speedInsideHouse);
             }
             case CHASING_TARGET -> {
@@ -334,10 +333,9 @@ public class Ghost extends MovableEntity{
             gc.setFill(Color.color(0, 1, 1));
             gc.fillText(String.valueOf(pointDisplay), posX() - HALF_TILE_SIZE, posY() - HALF_TILE_SIZE);
         } else {
-            gc.drawImage(sprite_sheet, animator.getAnimationPos().posX(), animator.getAnimationPos().posY(), GHOST_UI_SIZE, GHOST_UI_SIZE, posX() - HALF_TILE_SIZE, posY() - HALF_TILE_SIZE, 32, 32);
+            gc.drawImage(sprite_sheet, animator.getAnimationPos().posX(), animator.getAnimationPos().posY(), GHOST_UI_SIZE, GHOST_UI_SIZE, posX() - HALF_TILE_SIZE, posY() - HALF_TILE_SIZE, TILE_SIZE * 2, TILE_SIZE * 2);
             pointDisplay = 0;
         }
-
     }
 
     public void animatorUpdate() {

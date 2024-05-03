@@ -61,11 +61,18 @@ public class GameLevel {
     private byte totalNumGhostsKilled;
     private byte cruiseElroyState;
     private GhostHouseControl houseControl;
+    private int points;
+
 
 
 
     public GameLevel() {
-        this.levelNum = 1;
+        this(1);
+    }
+
+
+    public GameLevel(int levelNum) {
+        this.levelNum = levelNum;
         data = new Data(levelNum, false, RAW_LEVEL_DATA[levelNum - 1]);
         levelState = LevelState.LEVEL_CREATED;
         gameEvent = GameEvent.NONE;
@@ -118,8 +125,8 @@ public class GameLevel {
 
         huntingTimer = new Timer();
         huntingPhaseIndex = 0;
+        points = 0;
         setUpPacman();
-
     }
 
     private void setUpPacman() {
@@ -156,10 +163,8 @@ public class GameLevel {
 
     private void updateLevelStartedStateEvent() {
         houseControl.unlockGhost(this);
-
         if(gameEvent == GameEvent.GHOST_EATEN) {
             gameEventTimer.updateTimer();
-            System.out.println("Ticks: " + gameEventTimer.ticks());
             if(gameEventTimer.ticks() <= FPS) {
                 gameEvent = GameEvent.GHOST_EATEN;
                 pacman.hide();
@@ -179,8 +184,13 @@ public class GameLevel {
 
         if(gameEvent == GameEvent.PAC_EAT_ENERGIZER) {
             frightenedTimer.updateTimer();
-            updateEventPacEatEnergizer();
 
+            updateEventPacEatEnergizer();
+            for(var ghost : ghosts) {
+                if(world.isTunnel(ghost.atTile()) || world.belongsToPortal(ghost.atTile())) {
+                    ghost.setPercentageSpeed(data.ghostSpeedTunnelPercentage);
+                };
+            }
             if(frightenedTimer.ticks() >= GameModel.frightenedDuration(levelNum) * 0.6) {
                 for(var ghost : pacman.victims()) {
                     ghost.setAnimator(AnimatorLib.GHOST_ANIMATOR[LATE_FRIGTHENED_GHOST]);
@@ -370,7 +380,11 @@ public class GameLevel {
                 else if(ghost.state().equals(GhostState.FRIGHTENED)) {
                     gameEvent = GameEvent.GHOST_EATEN;
                     pacman.victims().remove(ghost);
+                    points += 200 * (int) Math.pow(2, 4 - pacman.victims().size() - 1);
+
+                    System.out.println("Points: " + points);
                     ghost.setState(EATEN);
+
                 }
             }
         }
@@ -446,17 +460,26 @@ public class GameLevel {
             houseControl().updateDotCount(this);
 
             if(world.isEnergizerTile(currentTile)) {
+                points += POINTS_ENERGIZER;
                 gameEvent = GameEvent.PAC_EAT_ENERGIZER;
                 updateEventPacEatEnergizer();
                 pacman.setVictims(ghosts);
                 frightenedTimer.reset();
+            } else {
+                points += POINTS_NORMAL_PELLET;
             }
+
+            System.out.println("Points: " + points);
 
             world.removeFood(currentTile);
             pacman.endStarving();
         }
         else {
             pacman.starve();
+        }
+
+        if(world.uneatenFoodCount() == 0) {
+            levelState = LevelState.LEVEL_WON;
         }
     }
 
@@ -484,6 +507,12 @@ public class GameLevel {
 
     public void updateEvent(LevelState event) {
         levelState = event;
+    }
+
+    public GameLevel nextLevel() {
+        GameLevel nextLevel = new GameLevel(this.levelNum + 1);
+        nextLevel.points = this.points;
+        return nextLevel;
     }
 
     public void switchPause() {
