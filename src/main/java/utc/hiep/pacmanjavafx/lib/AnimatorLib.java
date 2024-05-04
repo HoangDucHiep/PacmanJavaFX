@@ -38,11 +38,33 @@ public class AnimatorLib {
     };
 
     private static final Animator.AnimatorPos[] PACMAN_DOWN = new Animator.AnimatorPos[] {
-            new Animator.AnimatorPos(0, 48),
+            new Animator.AnimatorPos(32, 0),
             new Animator.AnimatorPos(0, 48),
             new Animator.AnimatorPos(16, 48),
             new Animator.AnimatorPos(32, 0)
     };
+
+
+    /* For died pacman */
+    private static final Animator.AnimatorPos[] DIED_PACMAN_POS = new Animator.AnimatorPos[] {
+            new Animator.AnimatorPos(32, 0),
+            new Animator.AnimatorPos(48, 0),
+            new Animator.AnimatorPos(64, 0),
+            new Animator.AnimatorPos(80, 0),
+            new Animator.AnimatorPos(96, 0),
+            new Animator.AnimatorPos(112, 0),
+            new Animator.AnimatorPos(128, 0),
+            new Animator.AnimatorPos(144, 0),
+            new Animator.AnimatorPos(160, 0),
+            new Animator.AnimatorPos(176, 0),
+            new Animator.AnimatorPos(192, 0),
+            new Animator.AnimatorPos(208, 0),
+            new Animator.AnimatorPos(176, 32),
+            new Animator.AnimatorPos(176, 32),
+            new Animator.AnimatorPos(176, 32),
+
+    };
+
 
     /* For energizer */
     private static final Animator.AnimatorPos[] ENERGIZER_ANIM_POS = new Animator.AnimatorPos[] {
@@ -174,6 +196,8 @@ public class AnimatorLib {
      * Animator for Pacman
      */
     public static final Animator PACMAN_ANIMATOR = Animator.getDirAnimator(ImageLib.SPRITE_SHEET, GameModel.PACMAN_ANIMATION_RATE, PACMAN_SIZE, 2, PACMAN_LEFT, PACMAN_RIGHT, PACMAN_UP, PACMAN_DOWN);
+
+    public static final Animator DIED_PACMAN_ANIMATOR = Animator.getDirAnimator(ImageLib.SPRITE_SHEET, GameModel.PAC_DIED_ANIMATION_RATE, PACMAN_SIZE, 2, DIED_PACMAN_POS, DIED_PACMAN_POS, DIED_PACMAN_POS, DIED_PACMAN_POS);
 
     /**
      * Animator for Energizer

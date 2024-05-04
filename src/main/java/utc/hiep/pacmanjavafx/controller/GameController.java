@@ -145,10 +145,10 @@ public class GameController {
     private void update() {
         if(currentScene == GAME_VIEW) {
             keyHandler();
-            if(gameLevel.currentEvent() == LevelState.LEVEL_STARTED || gameLevel.currentEvent() == LevelState.LEVEL_PAUSED) {
+            if((gameLevel.currentState() == LevelState.LEVEL_STARTED && (gameLevel.currentEvent() != GameEvent.PAC_DIED)|| gameLevel.currentState() == LevelState.LEVEL_PAUSED)) {
                 updateAnimator();
             }
-            if (gameLevel.currentEvent() == LevelState.LEVEL_LOST) {
+            if (gameLevel.currentState() == LevelState.LEVEL_LOST) {
                 sceneControl.setScene(scoreScene);
             }
             gameLevel.update();
@@ -165,7 +165,7 @@ public class GameController {
 
     public void keyHandler() {
 
-        if(gameLevel.currentEvent() == LevelState.LEVEL_CREATED) {
+        if(gameLevel.currentState() == LevelState.LEVEL_READY) {
             return;
         }
 

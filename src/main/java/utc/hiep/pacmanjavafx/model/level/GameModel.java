@@ -1,5 +1,7 @@
 package utc.hiep.pacmanjavafx.model.level;
 
+import utc.hiep.pacmanjavafx.lib.AnimatorLib;
+
 import static utc.hiep.pacmanjavafx.lib.Global.GAME_SCALE;
 
 public interface GameModel {
@@ -32,6 +34,8 @@ public interface GameModel {
     byte ENERGIZER_BLINKING_RATE = 30;
     byte GHOST_ANIMATION_RATE = 6;
     byte GHOST_FRIGHTENED_ANIMATION_RATE = 15;
+    byte PAC_DIED_ANIMATION_RATE = 8;
+    short PAC_DIED_ANIMATION_LENGTH = 15 * PAC_DIED_ANIMATION_RATE;
 
 
     //phase name

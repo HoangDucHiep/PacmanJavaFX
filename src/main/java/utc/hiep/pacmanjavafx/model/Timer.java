@@ -60,6 +60,7 @@ public class Timer {
     }
 
     public void reset() {
+        lastUpdate = 0;
         tick = 0;
         second = 0;
     }

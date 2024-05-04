@@ -100,7 +100,7 @@ public class GameView extends GeneralScene {
                 ghost.render(gc);
         }
 
-        if(gameLevel.currentEvent() == LevelState.LEVEL_CREATED) {
+        if(gameLevel.currentState() == LevelState.LEVEL_READY) {
             gc.setFill(Color.YELLOW);
             gc.setFont(eventTextFont);
             gc.fillText("READY!", 11 * TILE_SIZE, 21 * TILE_SIZE);

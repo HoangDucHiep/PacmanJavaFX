@@ -3,6 +3,7 @@ package utc.hiep.pacmanjavafx.model.level;
 import utc.hiep.pacmanjavafx.event.GameEvent;
 import utc.hiep.pacmanjavafx.lib.*;
 import utc.hiep.pacmanjavafx.model.Timer;
+import utc.hiep.pacmanjavafx.model.entity.Entity;
 import utc.hiep.pacmanjavafx.model.entity.Ghost;
 import utc.hiep.pacmanjavafx.model.entity.GhostState;
 import utc.hiep.pacmanjavafx.model.entity.Pacman;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static utc.hiep.pacmanjavafx.event.GameEvent.NONE;
 import static utc.hiep.pacmanjavafx.lib.Direction.*;
 import static utc.hiep.pacmanjavafx.model.entity.GhostState.*;
 import static utc.hiep.pacmanjavafx.model.level.GameModel.*;
@@ -87,7 +89,7 @@ public class GameLevel {
         this.levelNum = levelNum;
         data = new Data(levelNum, RAW_LEVEL_DATA[levelNum - 1]);
 
-        levelState = LevelState.LEVEL_CREATED;
+        levelState = LevelState.LEVEL_READY;
         gameEvent = GameEvent.NONE;
 
         levelStateTimer = new Timer();
@@ -101,22 +103,6 @@ public class GameLevel {
                 .map(id -> new Ghost(id, ghostName(id))).toArray(Ghost[]::new);
         this.houseControl = new GhostHouseControl(levelNum);
 
-
-        setUpGhost();
-        setUpPacman();
-
-
-        huntingPhaseIndex = 0;
-    }
-
-    private void setUpPacman() {
-        pacman.setDefaultSpeed((float) PPS_AT_100_PERCENT / FPS);
-        pacman.setPercentageSpeed(data.pacSpeedPercentage);
-        pacman.placeAtTile(PacmanMap.PAC_POSITION);
-        pacman.hide();
-    }
-
-    private void setUpGhost() {
         Arrays.stream(ghosts()).forEach(ghost -> {
             ghost.reset();
             ghost.setHouse(world.house());
@@ -148,6 +134,47 @@ public class GameLevel {
             ghost.setHuntingBehavior(this::huntingBehavior);
             ghost.hide();
         });
+
+
+        setUpGhost();
+        setUpPacman();
+
+
+        huntingPhaseIndex = 0;
+    }
+
+    private void setUpPacman() {
+        pacman.reset();
+        pacman.setDefaultSpeed((float) PPS_AT_100_PERCENT / FPS);
+        pacman.setPercentageSpeed(data.pacSpeedPercentage);
+        pacman.placeAtTile(PacmanMap.PAC_POSITION);
+        pacman.setAnimator(AnimatorLib.PACMAN_ANIMATOR);
+        pacman.hide();
+    }
+
+    private void setUpGhost() {
+        Arrays.stream(ghosts()).forEach(ghost -> {
+            ghost.show();
+            ghost.setState(LOCKED);
+            ghost.setPercentageSpeed(ghostSpeedPercentage(ghost));
+
+            ///------
+            ghost.placeAtTile(ghostRevivalPosition(ghost.id()));
+            if(ghost.id() == GameModel.RED_GHOST) {
+                ghost.placeAtTile(PacmanMap.HOUSE_DOOR_SEAT);
+            }
+            ghost.setMovingDir(ghostInHouseInitDir(ghost.id()));
+        });
+
+        var forbiddenMovesAtTile = new HashMap<iVector2D, List<Direction>>();
+        var up = List.of(UP);
+
+        PacmanMap.PACMAN_RED_ZONE.forEach(tile -> forbiddenMovesAtTile.put(tile, up));
+        Arrays.stream(ghosts()).forEach(ghost -> {
+            ghost.setForbiddenMoves(forbiddenMovesAtTile);
+            ghost.setHuntingBehavior(this::huntingBehavior);
+            ghost.hide();
+        });
     }
 
 
@@ -156,8 +183,8 @@ public class GameLevel {
             return;
         }
 
-        if(levelState == LevelState.LEVEL_CREATED){
-            updateLevelCreatedState();
+        if(levelState == LevelState.LEVEL_READY){
+            updateLevelReadyState();
         }
 
         if(levelState == LevelState.LEVEL_STARTED) {
@@ -169,14 +196,14 @@ public class GameLevel {
     /**
      * When level created, thing's pause, "Ready!" be shown, after 2 sec then pacman and ghosts will be shown, after 4 sec, level will be started
      */
-    private void updateLevelCreatedState() {
+    private void updateLevelReadyState() {
         levelStateTimer.updateTimer();
-        if((int) levelStateTimer.seconds() == 2) {
+        if((int) levelStateTimer.ticks() == 2 * FPS) {
             pacman.show();
             Arrays.stream(ghosts).forEach(Ghost::show);
         }
 
-        if((int) levelStateTimer.seconds() == 4) {
+        if((int) levelStateTimer.ticks() == 4 * FPS) {
             levelState = LevelState.LEVEL_STARTED;
             levelStateTimer.reset();
         }
@@ -189,6 +216,29 @@ public class GameLevel {
      * */
     private void updateLevelStartedState() {
         houseControl.unlockGhost(this);
+
+        if(gameEvent == GameEvent.PAC_DIED) {
+            gameEventTimer.updateTimer();
+
+            if(gameEventTimer.ticks() == FPS) {
+                Arrays.stream(ghosts).forEach(Entity::hide);
+                pacman.setAnimator(AnimatorLib.DIED_PACMAN_ANIMATOR);
+                return;
+            } else if (gameEventTimer.ticks()  <= (PAC_DIED_ANIMATION_LENGTH + FPS)) {
+                pacman.animatorUpdate();
+                return;
+            } else if (gameEventTimer.ticks() > ((PAC_DIED_ANIMATION_LENGTH + 2) * FPS)) {
+                return;
+            }else {
+                gameEvent = NONE;
+                levelState = LevelState.LEVEL_READY;
+                setUpPacman();
+                setUpGhost();
+                gameEventTimer.reset();
+                levelStateTimer.reset();
+                return;
+            }
+        }
 
         //When a ghost be eaten by pacman, it'll be an in eaten state for a while
         if(gameEvent == GameEvent.GHOST_EATEN) {
@@ -379,6 +429,7 @@ public class GameLevel {
         for(var ghost : ghosts) {
             if(pacman.sameTile(ghost) && (pacman.isNewTileEntered() || ghost.isNewTileEntered())) {
                 if(ghost.state().equals(GhostState.CHASING_TARGET)) {
+                    gameEvent = GameEvent.PAC_DIED;
                     lives--;
                 }
                 else if(ghost.state().equals(GhostState.FRIGHTENED)) {
@@ -386,7 +437,6 @@ public class GameLevel {
                     pacman.victims().remove(ghost);
                     score += 200L * (int) Math.pow(2, 4 - pacman.victims().size() - 1);
 
-                    System.out.println("Points: " + score);
                     ghost.setState(EATEN);
                     ghost.setPercentageSpeed(ghostSpeedPercentage(ghost));
                 }
@@ -584,8 +634,12 @@ public class GameLevel {
         return houseControl;
     }
 
-    public LevelState currentEvent() {
+    public LevelState currentState() {
         return levelState;
+    }
+
+    public GameEvent currentEvent() {
+        return gameEvent;
     }
 
 //    public GameLevel nextLevel() {

@@ -125,8 +125,8 @@ public class Animator {
     /* Use for both */
 
     /**
-     * Get the current frame position in sprite sheet
-     * @return the current frame position in sprite sheet
+     * Get the current frame position in a sprite sheet
+     * @return the current frame position in a sprite sheet
      */
     public AnimatorPos getAnimationPos() {
         return ANIMATOR_SPRITE[animationDir][animationCount];

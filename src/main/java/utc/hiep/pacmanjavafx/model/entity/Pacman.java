@@ -25,8 +25,7 @@ public class Pacman extends MovableEntity{
     private List<Ghost> victims;
 
     //UI part
-    private final Image spriteSheet = ImageLib.SPRITE_SHEET;
-    private final Animator animator = AnimatorLib.PACMAN_ANIMATOR;
+    private Animator animator = AnimatorLib.PACMAN_ANIMATOR;
 
     public Pacman(String name) {
         super();
@@ -78,6 +77,9 @@ public class Pacman extends MovableEntity{
         animator.update(movingDir());
     }
 
+    public void setAnimator(Animator animator) {
+        this.animator = animator;
+    }
 
     @Override
     public void render(GraphicsContext gc) {

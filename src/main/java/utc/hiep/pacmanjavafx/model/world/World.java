@@ -18,10 +18,8 @@ import static utc.hiep.pacmanjavafx.lib.Global.*;
 
 public class World {
 
-    private static Image mapImage = ImageLib.MAP_EMPTY;
-    private static Image mapFlashingImage = ImageLib.FLASHING_MAZE;
-    private static Image pellet = ImageLib.PELLET;
-    private static Image energizer = ImageLib.ENERGIZER_SHEET;
+    private static final Image mapImage = ImageLib.MAP_EMPTY;
+    private static final Image pellet = ImageLib.PELLET;
 
     int MAP_WIDTH = TILES_X * TILE_SIZE;
     int MAP_HEIGHT = (TILES_Y - 5) * TILE_SIZE;
@@ -43,7 +41,7 @@ public class World {
 
 
 
-    private Animator energizerAnimator;
+    private final Animator energizerAnimator;
 
     public World(byte[][] mapSource) {
         tileMap = validateTileMapData(mapSource);
@@ -251,9 +249,7 @@ public class World {
 
     public void drawMap(GraphicsContext gc) {
         gc.drawImage(mapImage, 0, TILE_SIZE * 3, MAP_WIDTH, MAP_HEIGHT);
-        tiles().filter(this::hasFoodAt).filter(Predicate.not(this::hasEatenFoodAt)).forEach(tile -> {
-                drawFoodAt(tile, gc);
-        });
+        tiles().filter(this::hasFoodAt).filter(Predicate.not(this::hasEatenFoodAt)).forEach(tile -> drawFoodAt(tile, gc));
     }
 
     private void drawFoodAt(iVector2D tile, GraphicsContext gc) {
