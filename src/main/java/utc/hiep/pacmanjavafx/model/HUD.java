@@ -50,11 +50,13 @@ public class HUD {
         gc.fillText(String.valueOf(highScore), Global.TILE_SIZE * 15, 2 * Global.TILE_SIZE);
         gc.fillText("L" + highLevel, Global.TILE_SIZE * 22 + Global.HALF_TILE_SIZE, 2 * Global.TILE_SIZE);
 
-        for(int i = 0; i < lives; i++) {
+
+        int i = 0;
+        while(i < lives) {
             gc.drawImage(ImageLib.SPRITE_SHEET, 130, 17, 13, 13, Global.TILE_SIZE * (i * 2 + 2) + Global.HALF_TILE_SIZE, (Global.TILES_Y - 2) * Global.TILE_SIZE + (double) Global.HALF_TILE_SIZE / 2, Global.GAME_SCALE * 13, Global.GAME_SCALE * 13);
+            i++;
         }
 
-        gc.drawImage(ImageLib.SPRITE_SHEET, 130, 17, 13, 13, Global.TILE_SIZE * 2 + Global.HALF_TILE_SIZE, (Global.TILES_Y - 2) * Global.TILE_SIZE + (double) Global.HALF_TILE_SIZE / 2, Global.GAME_SCALE * 13, Global.GAME_SCALE * 13);
     }
 
 
