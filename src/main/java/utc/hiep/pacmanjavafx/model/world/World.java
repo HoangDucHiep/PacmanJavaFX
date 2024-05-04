@@ -260,7 +260,7 @@ public class World {
         if (content(tile) == T_PELLET) {
             gc.drawImage(pellet, tile.x() * TILE_SIZE, tile.y() * TILE_SIZE, TILE_SIZE, TILE_SIZE);
         } else if (content(tile) == T_ENERGIZER) {
-            gc.drawImage(energizer, energizerAnimator.getAnimationPos().posX(), energizerAnimator.getAnimationPos().posY(), 8, 8, tile.x() * TILE_SIZE, tile.y() * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+            energizerAnimator.render(gc, tile.x() * TILE_SIZE + HALF_TILE_SIZE, tile.y() * TILE_SIZE + HALF_TILE_SIZE);
         }
     }
 

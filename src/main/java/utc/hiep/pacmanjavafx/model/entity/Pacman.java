@@ -19,10 +19,8 @@ import static utc.hiep.pacmanjavafx.model.level.GameModel.PPS_AT_100_PERCENT;
 public class Pacman extends MovableEntity{
 
     private final String name;
-    private static final float PACMAN_DEFAULT_SPEED = (float) PPS_AT_100_PERCENT / FPS;
 
     private long starvingTicks;
-    private static final int PAC_UI_SIZE = 15;  //size of pacman int sprite_sheet.png
 
     private List<Ghost> victims;
 
@@ -83,7 +81,7 @@ public class Pacman extends MovableEntity{
 
     @Override
     public void render(GraphicsContext gc) {
-        gc.drawImage(spriteSheet, animator.getAnimationPos().posX(), animator.getAnimationPos().posY(), PAC_UI_SIZE, PAC_UI_SIZE, posX() - HALF_TILE_SIZE, posY() - HALF_TILE_SIZE, TILE_SIZE * 2, TILE_SIZE * 2);
+        animator.render(gc, posX(), posY());
     }
 
     public void setVictims(Ghost[] ghosts) {

@@ -20,8 +20,6 @@ import static utc.hiep.pacmanjavafx.model.entity.GhostState.*;
 
 public class Ghost extends MovableEntity{
 
-    private static final int GHOST_UI_SIZE = 16;
-    private Image sprite_sheet = ImageLib.SPRITE_SHEET;
     private Animator animator;
 
 
@@ -326,7 +324,7 @@ public class Ghost extends MovableEntity{
             gc.setFill(Color.color(0, 1, 1));
             gc.fillText(String.valueOf(pointDisplay), posX() - HALF_TILE_SIZE, posY() - HALF_TILE_SIZE);
         } else {
-            gc.drawImage(sprite_sheet, animator.getAnimationPos().posX(), animator.getAnimationPos().posY(), GHOST_UI_SIZE, GHOST_UI_SIZE, posX() - HALF_TILE_SIZE, posY() - HALF_TILE_SIZE, TILE_SIZE * 2, TILE_SIZE * 2);
+            animator.render(gc, posX(), posY());
             pointDisplay = 0;
         }
     }
