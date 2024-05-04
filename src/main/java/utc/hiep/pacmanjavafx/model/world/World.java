@@ -18,7 +18,6 @@ import static utc.hiep.pacmanjavafx.lib.Global.*;
 
 public class World {
 
-    private static final Image mapImage = ImageLib.MAP_EMPTY;
     private static final Image pellet = ImageLib.PELLET;
 
     int MAP_WIDTH = TILES_X * TILE_SIZE;
@@ -42,6 +41,7 @@ public class World {
 
 
     private final Animator energizerAnimator;
+    private final Animator mapAnimator;
 
     public World(byte[][] mapSource) {
         tileMap = validateTileMapData(mapSource);
@@ -65,6 +65,7 @@ public class World {
 
         //Energizer animator
         energizerAnimator = AnimatorLib.ENERGIZER_ANIMATOR;
+        mapAnimator = AnimatorLib.MAP_ANIMATOR;
     }
 
 
@@ -248,7 +249,7 @@ public class World {
 
 
     public void drawMap(GraphicsContext gc) {
-        gc.drawImage(mapImage, 0, TILE_SIZE * 3, MAP_WIDTH, MAP_HEIGHT);
+        mapAnimator.render(gc, HALF_TILE_SIZE, TILE_SIZE * 3 + HALF_TILE_SIZE);
         tiles().filter(this::hasFoodAt).filter(Predicate.not(this::hasEatenFoodAt)).forEach(tile -> drawFoodAt(tile, gc));
     }
 
@@ -259,6 +260,12 @@ public class World {
             energizerAnimator.render(gc, tile.x() * TILE_SIZE + HALF_TILE_SIZE, tile.y() * TILE_SIZE + HALF_TILE_SIZE);
         }
     }
+
+
+    public void blinkMap() {
+        mapAnimator.update();
+    }
+
 
     public void animatorUpdate() {
         energizerAnimator.update();

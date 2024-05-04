@@ -145,12 +145,13 @@ public class GameController {
     private void update() {
         if(currentScene == GAME_VIEW) {
             keyHandler();
-            if((gameLevel.currentState() == LevelState.LEVEL_STARTED && (gameLevel.currentEvent() != GameEvent.PAC_DIED)|| gameLevel.currentState() == LevelState.LEVEL_PAUSED)) {
+            if((gameLevel.currentState() == LevelState.LEVEL_STARTED && (gameLevel.currentEvent() != GameEvent.PAC_DIED && gameLevel.currentEvent() != GameEvent.GAME_WIN) || gameLevel.currentState() == LevelState.LEVEL_PAUSED)) {
                 updateAnimator();
             }
-            if (gameLevel.currentState() == LevelState.LEVEL_LOST) {
+            if (gameLevel.currentState() == LevelState.LEVEL_LOST || gameLevel.currentState() == LevelState.LEVEL_WON){
                 sceneControl.setScene(scoreScene);
             }
+
             gameLevel.update();
             hud.update();
         }

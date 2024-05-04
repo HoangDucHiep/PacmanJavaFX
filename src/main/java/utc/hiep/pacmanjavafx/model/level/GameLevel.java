@@ -149,6 +149,7 @@ public class GameLevel {
         pacman.setPercentageSpeed(data.pacSpeedPercentage);
         pacman.placeAtTile(PacmanMap.PAC_POSITION);
         pacman.setAnimator(AnimatorLib.PACMAN_ANIMATOR);
+        pacman.animatorUpdate();
         pacman.hide();
     }
 
@@ -192,6 +193,14 @@ public class GameLevel {
         }
     }
 
+    private void updateGameOverEvent() {
+        gameEventTimer.updateTimer();
+        if((int) gameEventTimer.ticks() == 10 * FPS) {
+            levelState = LevelState.LEVEL_LOST;
+            gameEventTimer.reset();
+        }
+    }
+
 
     /**
      * When level created, thing's pause, "Ready!" be shown, after 2 sec then pacman and ghosts will be shown, after 4 sec, level will be started
@@ -217,26 +226,43 @@ public class GameLevel {
     private void updateLevelStartedState() {
         houseControl.unlockGhost(this);
 
+        if(gameEvent == GameEvent.GAME_OVER) {
+            updateGameOverEvent();
+            return;
+        }
+
+        if(gameEvent == GameEvent.GAME_WIN) {
+            updateGameWinEvent();
+            return;
+        }
+
         if(gameEvent == GameEvent.PAC_DIED) {
             gameEventTimer.updateTimer();
 
-            if(gameEventTimer.ticks() == FPS) {
+            if(gameEventTimer.ticks() == FPS * 0.5) {
                 Arrays.stream(ghosts).forEach(Entity::hide);
                 pacman.setAnimator(AnimatorLib.DIED_PACMAN_ANIMATOR);
                 return;
-            } else if (gameEventTimer.ticks()  <= (PAC_DIED_ANIMATION_LENGTH + FPS)) {
+            } else if (gameEventTimer.ticks()  < (PAC_DIED_ANIMATION_LENGTH + FPS * 0.5)) {
                 pacman.animatorUpdate();
                 return;
-            } else if (gameEventTimer.ticks() > ((PAC_DIED_ANIMATION_LENGTH + 2) * FPS)) {
+            } else if (gameEventTimer.ticks() > ((PAC_DIED_ANIMATION_LENGTH + 3) * FPS)) {
                 return;
             }else {
-                gameEvent = NONE;
-                levelState = LevelState.LEVEL_READY;
-                setUpPacman();
-                setUpGhost();
-                gameEventTimer.reset();
-                levelStateTimer.reset();
-                return;
+                if(lives == 0) {
+                    gameEvent = GameEvent.GAME_OVER;
+                    pacman.hide();
+                    Arrays.stream(ghosts).forEach(Entity::hide);
+                    return;
+                } else {
+                    gameEvent = NONE;
+                    levelState = LevelState.LEVEL_READY;
+                    setUpPacman();
+                    setUpGhost();
+                    gameEventTimer.reset();
+                    levelStateTimer.reset();
+                    return;
+                }
             }
         }
 
@@ -271,7 +297,21 @@ public class GameLevel {
 
         movePacman();
         handlePacmanEatFoot();
-        handlePacAndGhostCollision();
+        //handlePacAndGhostCollision();
+    }
+
+    private void updateGameWinEvent() {
+        gameEventTimer.updateTimer();
+        if(gameEventTimer.ticks() == 4 * FPS) {
+            gameEvent = NONE;
+            levelState = LevelState.LEVEL_WON;
+            levelStateTimer.reset();
+            gameEventTimer.reset();
+        }
+        else if(gameEventTimer.ticks() >= FPS) {
+            Arrays.stream(ghosts).forEach(Entity::hide);
+            world.blinkMap();
+        }
     }
 
 
@@ -532,7 +572,7 @@ public class GameLevel {
         }
 
         if(world.uneatenFoodCount() == 0) {
-            levelState = LevelState.LEVEL_WON;
+            gameEvent = GameEvent.GAME_WIN;
         }
     }
 

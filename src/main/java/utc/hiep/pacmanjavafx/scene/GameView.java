@@ -5,6 +5,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import utc.hiep.pacmanjavafx.event.GameEvent;
 import utc.hiep.pacmanjavafx.lib.*;
 import utc.hiep.pacmanjavafx.model.HUD;
 import utc.hiep.pacmanjavafx.model.entity.Ghost;
@@ -22,7 +23,7 @@ public class GameView extends GeneralScene {
     public static final int GAME_HEIGHT = TILE_SIZE * TILES_Y;
 
     private boolean isGridDisplayed = false;
-    private Font eventTextFont = FontLib.EMULOGIC(16);
+    private Font eventTextFont = FontLib.EMULOGIC(TILE_SIZE);
 
     private Canvas canvas;
     private GraphicsContext gc;
@@ -104,6 +105,10 @@ public class GameView extends GeneralScene {
             gc.setFill(Color.YELLOW);
             gc.setFont(eventTextFont);
             gc.fillText("READY!", 11 * TILE_SIZE, 21 * TILE_SIZE);
+        } else if(gameLevel.currentEvent() == GameEvent.GAME_OVER) {
+            gc.setFill(Color.RED);
+            gc.setFont(eventTextFont);
+            gc.fillText("GAME OVER", 10 * TILE_SIZE - HALF_TILE_SIZE, 21 * TILE_SIZE);
         }
 
         hud.render(gc);

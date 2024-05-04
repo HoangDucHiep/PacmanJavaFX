@@ -73,6 +73,13 @@ public class AnimatorLib {
     };
 
 
+    /* For Map*/
+    private static final Animator.AnimatorPos[] MAP_ANIM_POS = new Animator.AnimatorPos[] {
+            new Animator.AnimatorPos(0, 0),
+            new Animator.AnimatorPos(224, 0),
+    };
+
+
     /* For GHOST */
         /* for RED one */
     private static final Animator.AnimatorPos[] RED_RIGHT = new Animator.AnimatorPos[] {
@@ -195,47 +202,53 @@ public class AnimatorLib {
     /**
      * Animator for Pacman
      */
-    public static final Animator PACMAN_ANIMATOR = Animator.getDirAnimator(ImageLib.SPRITE_SHEET, GameModel.PACMAN_ANIMATION_RATE, PACMAN_SIZE, 2, PACMAN_LEFT, PACMAN_RIGHT, PACMAN_UP, PACMAN_DOWN);
+    public static final Animator PACMAN_ANIMATOR = Animator.getDirAnimator(ImageLib.SPRITE_SHEET, GameModel.PACMAN_ANIMATION_RATE, PACMAN_SIZE, PACMAN_SIZE,2, PACMAN_LEFT, PACMAN_RIGHT, PACMAN_UP, PACMAN_DOWN);
 
-    public static final Animator DIED_PACMAN_ANIMATOR = Animator.getDirAnimator(ImageLib.SPRITE_SHEET, GameModel.PAC_DIED_ANIMATION_RATE, PACMAN_SIZE, 2, DIED_PACMAN_POS, DIED_PACMAN_POS, DIED_PACMAN_POS, DIED_PACMAN_POS);
+    public static final Animator DIED_PACMAN_ANIMATOR = Animator.getDirAnimator(ImageLib.SPRITE_SHEET, GameModel.PAC_DIED_ANIMATION_RATE, PACMAN_SIZE, PACMAN_SIZE, 2, DIED_PACMAN_POS, DIED_PACMAN_POS, DIED_PACMAN_POS, DIED_PACMAN_POS);
 
     /**
      * Animator for Energizer
      */
-    public static final Animator ENERGIZER_ANIMATOR = Animator.getNonDirAnimator(ImageLib.ENERGIZER_SHEET, GameModel.ENERGIZER_BLINKING_RATE, ENERGIZER_SIZE, 1, ENERGIZER_ANIM_POS);
+    public static final Animator ENERGIZER_ANIMATOR = Animator.getNonDirAnimator(ImageLib.ENERGIZER_SHEET, GameModel.ENERGIZER_BLINKING_RATE, ENERGIZER_SIZE, ENERGIZER_SIZE, 2, ENERGIZER_ANIM_POS);
 
 
     /**
      * Animator for Red-Ghosts
      */
-    private static final Animator RED_ANIMATOR = Animator.getDirAnimator(ImageLib.SPRITE_SHEET, GameModel.GHOST_ANIMATION_RATE, GHOST_SIZE, 2, RED_LEFT, RED_RIGHT, RED_UP, RED_DOWN);
+    private static final Animator RED_ANIMATOR = Animator.getDirAnimator(ImageLib.SPRITE_SHEET, GameModel.GHOST_ANIMATION_RATE, GHOST_SIZE, GHOST_SIZE, 2, RED_LEFT, RED_RIGHT, RED_UP, RED_DOWN);
 
     /**
      * Animator for Pink-Ghosts
      */
-    private static final Animator PINK_ANIMATOR = Animator.getDirAnimator(ImageLib.SPRITE_SHEET, GameModel.GHOST_ANIMATION_RATE, GHOST_SIZE, 2, PINK_LEFT, PINK_RIGHT, PINK_UP, PINK_DOWN);
+    private static final Animator PINK_ANIMATOR = Animator.getDirAnimator(ImageLib.SPRITE_SHEET, GameModel.GHOST_ANIMATION_RATE, GHOST_SIZE, GHOST_SIZE, 2, PINK_LEFT, PINK_RIGHT, PINK_UP, PINK_DOWN);
 
     /**
      * Animator for Cyan-Ghosts
      */
-    private static final Animator CYAN_ANIMATOR = Animator.getDirAnimator(ImageLib.SPRITE_SHEET, GameModel.GHOST_ANIMATION_RATE, GHOST_SIZE, 2, CYAN_LEFT, CYAN_RIGHT, CYAN_UP, CYAN_DOWN);
+    private static final Animator CYAN_ANIMATOR = Animator.getDirAnimator(ImageLib.SPRITE_SHEET, GameModel.GHOST_ANIMATION_RATE, GHOST_SIZE, GHOST_SIZE, 2, CYAN_LEFT, CYAN_RIGHT, CYAN_UP, CYAN_DOWN);
 
     /**
      * Animator for Orange-Ghosts
      */
-    private static final Animator ORANGE_ANIMATOR = Animator.getDirAnimator(ImageLib.SPRITE_SHEET, GameModel.GHOST_ANIMATION_RATE, GHOST_SIZE, 2, ORANGE_LEFT, ORANGE_RIGHT, ORANGE_UP, ORANGE_DOWN);
+    private static final Animator ORANGE_ANIMATOR = Animator.getDirAnimator(ImageLib.SPRITE_SHEET, GameModel.GHOST_ANIMATION_RATE, GHOST_SIZE, GHOST_SIZE, 2, ORANGE_LEFT, ORANGE_RIGHT, ORANGE_UP, ORANGE_DOWN);
 
     /**
      * Animator for Frightened-Ghosts
      */
-    private static final Animator LATE_FRIGHTENED_ANIMATOR = Animator.getDirAnimator(ImageLib.SPRITE_SHEET, GameModel.GHOST_FRIGHTENED_ANIMATION_RATE, GHOST_SIZE, 2, LATE_FRIGHTENED, LATE_FRIGHTENED, LATE_FRIGHTENED, LATE_FRIGHTENED);
+    private static final Animator LATE_FRIGHTENED_ANIMATOR = Animator.getDirAnimator(ImageLib.SPRITE_SHEET, GameModel.GHOST_FRIGHTENED_ANIMATION_RATE, GHOST_SIZE, GHOST_SIZE, 2, LATE_FRIGHTENED, LATE_FRIGHTENED, LATE_FRIGHTENED, LATE_FRIGHTENED);
 
-    private static final Animator FRIGHTENED_ANIMATOR = Animator.getDirAnimator(ImageLib.SPRITE_SHEET, GameModel.GHOST_FRIGHTENED_ANIMATION_RATE, GHOST_SIZE, 2, FRIGHTENED, FRIGHTENED, FRIGHTENED, FRIGHTENED);
+    private static final Animator FRIGHTENED_ANIMATOR = Animator.getDirAnimator(ImageLib.SPRITE_SHEET, GameModel.GHOST_FRIGHTENED_ANIMATION_RATE, GHOST_SIZE, GHOST_SIZE, 2, FRIGHTENED, FRIGHTENED, FRIGHTENED, FRIGHTENED);
 
     /**
      * Animator for Eaten-Ghosts
      */
-    private static final Animator EATEN_ANIMATOR = Animator.getDirAnimator(ImageLib.SPRITE_SHEET, GameModel.GHOST_FRIGHTENED_ANIMATION_RATE, GHOST_SIZE, 2, EATEN_LEFT, EATEN_RIGHT, EATEN_UP, EATEN_DOWN);
+    private static final Animator EATEN_ANIMATOR = Animator.getDirAnimator(ImageLib.SPRITE_SHEET, GameModel.GHOST_FRIGHTENED_ANIMATION_RATE, GHOST_SIZE, GHOST_SIZE, 2, EATEN_LEFT, EATEN_RIGHT, EATEN_UP, EATEN_DOWN);
+
+
+    /**
+     * Animator for Map
+     */
+    public static final Animator MAP_ANIMATOR = Animator.getNonDirAnimator(ImageLib.MAP_SHEET, 30, Global.ORIGINAL_TILE_SIZE * 28, Global.ORIGINAL_TILE_SIZE * 31, 2, MAP_ANIM_POS);
 
     /**
      * Get animator for ghost, index is one of

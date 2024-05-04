@@ -20,5 +20,8 @@ public enum GameEvent {
     PAC_EAT_ENERGIZER,
     STOP_ALL_SOUNDS,
     UNSPECIFIED_CHANGE,
-    NEW_LIFE_STARTED;
+    NEW_LIFE_STARTED,
+    GAME_OVER,
+    GAME_WIN
+
 }
