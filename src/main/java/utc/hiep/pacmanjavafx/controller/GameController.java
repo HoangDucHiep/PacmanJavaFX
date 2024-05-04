@@ -7,6 +7,7 @@ import utc.hiep.pacmanjavafx.event.KeyListener;
 import utc.hiep.pacmanjavafx.event.KeyType;
 import utc.hiep.pacmanjavafx.event.MouseListener;
 import utc.hiep.pacmanjavafx.lib.Direction;
+import utc.hiep.pacmanjavafx.model.HUD;
 import utc.hiep.pacmanjavafx.model.SceneControl;
 import utc.hiep.pacmanjavafx.model.entity.Ghost;
 import utc.hiep.pacmanjavafx.model.level.GameLevel;
@@ -44,15 +45,21 @@ public class GameController {
     private MouseListener scoreBtn;
     private MouseListener exitBtn;
 
+    private HUD hud;
+
     private long totalScore;
 
+
     public GameController() {
-        this.gameView = new GameView();
+
         totalScore = 0;
 
         gameLevel = new GameLevel();
-
+        hud = new HUD(gameLevel, 0, 0);
+        this.gameView = new GameView(hud);
         gameView.setGameLevel(gameLevel);
+
+
 
         gameViewKL = new KeyListener(gameView);
         gameViewKL.setKeyAction(keyEvent -> {
@@ -67,7 +74,6 @@ public class GameController {
                 case B -> gameViewKL.getPressedKey().add(KeyType.CHANGE_BACK);
             }
         });
-
 
         startBtn = new MouseListener(welcomeScene.getStartButton());
         startBtn.setMouseAction(
@@ -146,6 +152,7 @@ public class GameController {
                 sceneControl.setScene(scoreScene);
             }
             gameLevel.update();
+            hud.update();
         }
     }
 

@@ -5,8 +5,8 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import utc.hiep.pacmanjavafx.event.GameEvent;
 import utc.hiep.pacmanjavafx.lib.*;
+import utc.hiep.pacmanjavafx.model.HUD;
 import utc.hiep.pacmanjavafx.model.entity.Ghost;
 import utc.hiep.pacmanjavafx.model.entity.Pacman;
 import utc.hiep.pacmanjavafx.model.level.GameLevel;
@@ -34,17 +34,23 @@ public class GameView extends GeneralScene {
     private Ghost[] ghosts;
     private GameLevel gameLevel;
 
+    private HUD hud;
+
 
     /**
      * Constructor
      */
-    public GameView() {
+    public GameView(HUD hud) {
         super();
         setBackGround();
 
         //Border around canvas
         Region rectangle = new Region();
-        rectangle.setStyle("-fx-background-color: white, black; -fx-background-insets: 0, 12; -fx-background-radius: 10px; -fx-min-width: 520; -fx-min-height:669; -fx-max-width:480; -fx-max-height: 669;");
+        rectangle.setMaxWidth(GAME_WIDTH * 1.15);
+        rectangle.setMaxHeight(GAME_HEIGHT * 1.15);
+        rectangle.setMinWidth(GAME_WIDTH * 1.15);
+        rectangle.setMinHeight(GAME_HEIGHT * 1.15);
+        rectangle.setStyle("-fx-background-color: white, black; -fx-background-insets: 0, 12; -fx-background-radius: 10px;");
         getRootPane().getChildren().add(rectangle);
 
         //Canvas Init
@@ -52,6 +58,7 @@ public class GameView extends GeneralScene {
         gc = canvas.getGraphicsContext2D();
         getRootPane().getChildren().add(canvas);
 
+        this.hud = hud;
     }
 
 
@@ -98,6 +105,8 @@ public class GameView extends GeneralScene {
             gc.setFont(eventTextFont);
             gc.fillText("READY!", 11 * TILE_SIZE, 21 * TILE_SIZE);
         }
+
+        hud.render(gc);
     }
 
 
@@ -152,7 +161,7 @@ public class GameView extends GeneralScene {
             if(ghosts[ORANGE_GHOST].targetTile().isEmpty()) return;
             iVector2D target = ghosts[ORANGE_GHOST].targetTile().get();
             drawTargetTile(ORANGE_GHOST, Color.ORANGE);
-            if (gameLevel.currentChasingTargetPhaseName().equals(GameLevel.CHASING)) {
+            if (gameLevel.currentChasingTargetPhaseName().equals(CHASING)) {
                 double centerX = ghosts[ORANGE_GHOST].posX();
                 double centerY = ghosts[ORANGE_GHOST].posY();
                 double radius = 8 * TILE_SIZE;
