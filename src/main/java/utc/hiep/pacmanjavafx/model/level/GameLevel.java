@@ -447,7 +447,7 @@ public class GameLevel {
 //        }
 //
 //
-//        // If pacman is not standing, it can move :)))
+//        /// If pacman is not standing, it can move :)))
 //        if(!pacman.isStanding()) {
 //            pacman.move();
 //        }
