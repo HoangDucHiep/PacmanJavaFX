@@ -3,6 +3,7 @@ package utc.hiep.pacmanjavafx;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import utc.hiep.pacmanjavafx.controller.GameController;
+import utc.hiep.pacmanjavafx.lib.ImageLib;
 import utc.hiep.pacmanjavafx.model.SceneControl;
 
 public class PacManApplication extends Application {
@@ -16,7 +17,10 @@ public class PacManApplication extends Application {
     @Override
     public void start(Stage stage) {
         stage.setTitle("Pacman");
-        stage.setMaximized(true);
+        stage.getIcons().add(ImageLib.APP_ICON);
+        stage.setMinWidth(1024);
+        stage.setMinHeight(768);
+        //stage.setMaximized(true);
         SceneControl sController = new SceneControl(stage);
         gController.setSceneControl(sController);
         sController.setScene(gController.getWelcomeScene());

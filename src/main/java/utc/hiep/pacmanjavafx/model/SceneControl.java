@@ -10,6 +10,7 @@ public class SceneControl {
     }
 
     public void setScene(GeneralScene scene) {
+        // Đặt scene mới
         stage.setScene(scene);
     }
 

@@ -54,7 +54,7 @@ public class Ghost extends MovableEntity{
         reset();
         this.id = id;
         this.name = name;
-        state = LOCKED;
+        setState(LOCKED);
         this.animator = AnimatorLib.GHOST_ANIMATOR[id];
     }
 
@@ -78,8 +78,54 @@ public class Ghost extends MovableEntity{
     }
 
 
+
+    /**
+     * Executes a single simulation step for this ghost in the current game level.
+     *
+     * @param pac Pac-Man or Ms. Pac-Man
+     */
+    public void update(Pacman pac, World world) {
+        checkNotNull(pac);
+        switch (state) {
+            case LOCKED             -> updateStateLocked();
+            case LEAVING_HOUSE      -> updateStateLeavingHouse();
+            case CHASING_TARGET     -> updateStateChasingTarget();
+            case FRIGHTENED         -> updateStateFrightened();
+            case EATEN              -> updateStateEaten(pac);
+            case RETURNING_TO_HOUSE -> updateStateReturningToHouse(world);
+            case ENTERING_HOUSE     -> updateStateEnteringHouse();
+        }
+    }
+
+
+    /**
+     * Changes the state of this ghost.
+     *
+     * @param state the new state
+     */
+    public void setState(GhostState state) {
+        checkNotNull(state);
+        this.state = state;
+        switch (state) {
+            case LOCKED, LEAVING_HOUSE -> {
+                animator = AnimatorLib.GHOST_ANIMATOR[id];
+                updateDefaultSpeed(speedInsideHouse);
+            }
+            case CHASING_TARGET, FRIGHTENED -> {
+                animator = AnimatorLib.GHOST_ANIMATOR[id];
+                updateDefaultSpeed(outOfHouseSpeed);
+            }
+            case EATEN, ENTERING_HOUSE, RETURNING_TO_HOUSE -> {
+                animator = AnimatorLib.GHOST_ANIMATOR[GameModel.EATEN_GHOST];
+                setDefaultSpeed(speedReturningToHouse);
+            }
+            default -> {}
+        }
+    }
+
+
+
     public void updateStateLocked() {
-        updateDefaultSpeed(speedInsideHouse);
         fVector2D currentTile = halfTileLeftOf(atTile().x(), atTile().y());
         if(!currentTile.equals(getRevivalPosition())) {
             setNextDir(movingDir().opposite());
@@ -132,7 +178,6 @@ public class Ghost extends MovableEntity{
             setNextDir(DOWN);
             setState(ENTERING_HOUSE);
         } else {
-            updateDefaultSpeed(speedReturningToHouse);
             setTargetTile(house.door().leftWing().plus(UP.vector()));
             EntityMovement.chaseTarget(this, world);
         }
@@ -234,7 +279,7 @@ public class Ghost extends MovableEntity{
 
 
 
-
+    //Set default speed
     public void setOutOfHouseSpeed(float pixelsPerTick) {
         outOfHouseSpeed = pixelsPerTick;
     }
@@ -249,9 +294,7 @@ public class Ghost extends MovableEntity{
 
 
 
-
-
-    // Here begins the state machine part
+    // Here begins the state part
 
     /**
      * The current state of this ghost.
@@ -273,57 +316,7 @@ public class Ghost extends MovableEntity{
     }
 
 
-    /**
-     * Changes the state of this ghost.
-     *
-     * @param state the new state
-     */
-    public void setState(GhostState state) {
-        checkNotNull(state);
-        this.state = state;
-        switch (state) {
-            case LOCKED, LEAVING_HOUSE -> {
-                animator = AnimatorLib.GHOST_ANIMATOR[id];
-                updateDefaultSpeed(speedInsideHouse);
-            }
-            case CHASING_TARGET -> {
-                animator = AnimatorLib.GHOST_ANIMATOR[id];
-                updateDefaultSpeed(outOfHouseSpeed);
-                //huntingBehavior.accept(this);
-            }
-            case ENTERING_HOUSE, RETURNING_TO_HOUSE -> {
-                animator = AnimatorLib.GHOST_ANIMATOR[GameModel.EATEN_GHOST];
-                setPercentageSpeed((byte) 100);
-            }
-            //case FRIGHTENED -> updateDefaultSpeed(f);
-            default -> {}
-        }
-    }
 
-
-    /**
-     * Executes a single simulation step for this ghost in the current game level.
-     *
-//     * @param pac Pac-Man or Ms. Pac-Man
-     */
-    public void update(Pacman pac, World world) {
-        checkNotNull(pac);
-        switch (state) {
-            case LOCKED             -> updateStateLocked();
-            case LEAVING_HOUSE      -> updateStateLeavingHouse();
-            case CHASING_TARGET     -> updateStateChasingTarget();
-            case FRIGHTENED         -> updateStateFrightened();
-            case EATEN              -> updateStateEaten(pac);
-            case RETURNING_TO_HOUSE -> updateStateReturningToHouse(world);
-            case ENTERING_HOUSE     -> updateStateEnteringHouse();
-        }
-    }
-
-
-
-    public void eaten(int index) {
-        setState(EATEN);
-    }
 
 
     @Override

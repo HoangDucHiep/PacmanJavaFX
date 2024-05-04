@@ -13,6 +13,7 @@ public class ImageLib {
     private static final String ENERGIZER_PATH = "asserts/graphics/energizer_sheet.png";
     private static final String MENU_SCENE_BG_PATH = "asserts/graphics/menuscenebg.png";
     private static final String LOGO_PATH = "asserts/graphics/game_logo.png";
+    private static final String APP_ICON_PATH = "asserts/graphics/icons/pacman.png";
 
 
     public static Image BACKGROUND_IMAGE = new Image(Objects.requireNonNull(ImageLib.class.getResourceAsStream(BACKGROUND_IMAGE_PATH)));;
@@ -23,4 +24,5 @@ public class ImageLib {
     public static Image ENERGIZER_SHEET = new Image(Objects.requireNonNull(ImageLib.class.getResourceAsStream(ENERGIZER_PATH)));
     public static Image MENU_SCENE_BG = new Image(Objects.requireNonNull(ImageLib.class.getResourceAsStream(MENU_SCENE_BG_PATH)));
     public static Image GAME_LOGO = new Image(Objects.requireNonNull(ImageLib.class.getResourceAsStream(LOGO_PATH)));
+    public static Image APP_ICON = new Image(Objects.requireNonNull(ImageLib.class.getResourceAsStream(APP_ICON_PATH)));
 }

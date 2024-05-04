@@ -107,8 +107,7 @@ public class GameController {
             final float maxDelta = 0.05f;
 
             @Override
-            public void handle(long currentTime)
-            {
+            public void handle(long currentTime) {
                 if (previousTime == 0) {
                     previousTime = currentTime;
                     return;
@@ -128,8 +127,7 @@ public class GameController {
             }
 
             @Override
-            public void stop()
-            {
+            public void stop() {
                 previousTime = 0;
                 accumulatedTime = 0;
                 super.stop();
@@ -159,6 +157,11 @@ public class GameController {
     }
 
     public void keyHandler() {
+
+        if(gameLevel.currentEvent() == LevelState.LEVEL_CREATED) {
+            return;
+        }
+
         gameViewKL.keyListening();
         for (KeyType key : gameViewKL.getPressedKey()) {
             switch (key) {
