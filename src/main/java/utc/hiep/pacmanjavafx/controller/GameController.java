@@ -124,12 +124,14 @@ public class GameController implements GameModel {
             }
             if (gameLevel.currentState() == LevelState.LEVEL_LOST) {
                 changeScene(SCORE_SCENE);
+                scoreScene.showNewScoreScene();
                 currentScene = SCORE_SCENE;
             }
 
             if(gameLevel.currentState() == LevelState.LEVEL_WON) {
                 if(gameLevel.levelNum() == GameModel.MAX_LEVEL) {          //reached max level, show score scene
                     changeScene(SCORE_SCENE);
+                    scoreScene.showNewScoreScene();
                 } else {
                     gameLevel = gameLevel.nextLevel();                      //come to next level
                 }
@@ -266,7 +268,7 @@ public class GameController implements GameModel {
 
                 scoreBtn = new MouseListener(welcomeScene.getScoreButton());
                 scoreBtn.setMouseAction(
-                        mouseEvent -> System.out.println("Hello"),//sceneControl.setScene(new ScoreScene(this, (int) window.getWidth(), (int) window.getHeight())),
+                        mouseEvent -> changeScene(SCORE_SCENE),
                         mouseEvent -> welcomeScene.getScoreButton().setTextFill(Color.color(1, 0.71, 1)),
                         mouseEvent -> welcomeScene.getScoreButton().setTextFill(Color.WHITE)
                 );

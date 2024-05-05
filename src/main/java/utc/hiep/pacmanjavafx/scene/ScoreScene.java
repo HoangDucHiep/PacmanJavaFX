@@ -19,7 +19,7 @@ import utc.hiep.pacmanjavafx.model.level.GameModel;
 
 public class ScoreScene extends GeneralScene{
 
-    GameModel game;
+    private final GameModel game;
 
     private VBox logoSide;
     private VBox scoreSide;
@@ -196,10 +196,6 @@ public class ScoreScene extends GeneralScene{
             submit.setBorder(new Border(new BorderStroke(Color.WHITE, BorderStrokeStyle.SOLID, new CornerRadii(10), new BorderWidths(1))));
             submit.setTextFill(Color.WHITE);
         });
-
-
-
-        moveSubScene(newScoreEnterScene);
     }
 
     private Pane getSpacer() {
@@ -239,6 +235,10 @@ public class ScoreScene extends GeneralScene{
         }
 
         transition.play();
+    }
+
+    public void showNewScoreScene() {
+        moveSubScene(newScoreEnterScene);
     }
 
     @Override

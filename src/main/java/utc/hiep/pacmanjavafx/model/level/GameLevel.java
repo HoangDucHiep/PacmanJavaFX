@@ -194,7 +194,7 @@ public class GameLevel {
 
     private void updateGameOverEvent() {
         gameEventTimer.updateTimer();
-        if((int) gameEventTimer.ticks() == 10 * FPS) {
+        if((int) gameEventTimer.ticks() == 5 * FPS) {
             levelState = LevelState.LEVEL_LOST;
             gameEventTimer.reset();
         }
