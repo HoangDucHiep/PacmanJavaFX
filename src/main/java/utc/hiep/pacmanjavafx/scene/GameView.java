@@ -7,10 +7,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import utc.hiep.pacmanjavafx.event.GameEvent;
 import utc.hiep.pacmanjavafx.lib.*;
-import utc.hiep.pacmanjavafx.model.HUD;
 import utc.hiep.pacmanjavafx.model.entity.Ghost;
 import utc.hiep.pacmanjavafx.model.entity.Pacman;
 import utc.hiep.pacmanjavafx.model.level.GameLevel;
+import utc.hiep.pacmanjavafx.model.level.GameModel;
 import utc.hiep.pacmanjavafx.model.level.LevelState;
 import utc.hiep.pacmanjavafx.model.world.PacmanMap;
 import utc.hiep.pacmanjavafx.model.world.World;
@@ -28,23 +28,23 @@ public class GameView extends GeneralScene {
     private Canvas canvas;
     private GraphicsContext gc;
 
+    private GameModel game;
+
 
     //Game entity
     private World world;
     private Pacman pacman;
     private Ghost[] ghosts;
-    private GameLevel gameLevel;
-
-    private HUD hud;
-
 
     /**
      * Constructor
      */
-    public GameView(HUD hud) {
+    public GameView(GameModel game) {
         super();
         setBackGround();
 
+        this.game = game;
+        intiEntity();
         //Border around canvas
         Region rectangle = new Region();
         rectangle.setMaxWidth(GAME_WIDTH * 1.15);
@@ -59,15 +59,15 @@ public class GameView extends GeneralScene {
         gc = canvas.getGraphicsContext2D();
         getRootPane().getChildren().add(canvas);
 
-        this.hud = hud;
+
+
     }
 
 
-    public void setGameLevel(GameLevel gameLevel) {
-        this.gameLevel = gameLevel;
-        this.pacman = gameLevel.pacman();
-        this.ghosts = gameLevel.ghosts();
-        this.world = gameLevel.world();
+    public void intiEntity() {
+        this.pacman = game.gameLevel().pacman();
+        this.ghosts = game.gameLevel().ghosts();
+        this.world = game.gameLevel().world();
     }
 
 
@@ -87,6 +87,7 @@ public class GameView extends GeneralScene {
     public void render() {
         gc.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT); //clear last frame rendering
         world.drawMap(gc);
+        game.hud().render(gc);
 
         if (isGridDisplayed) {
             drawTileSystem();
@@ -101,17 +102,15 @@ public class GameView extends GeneralScene {
                 ghost.render(gc);
         }
 
-        if(gameLevel.currentState() == LevelState.LEVEL_READY) {
+        if(game.gameLevel().currentState() == LevelState.LEVEL_READY) {
             gc.setFill(Color.YELLOW);
             gc.setFont(eventTextFont);
             gc.fillText("READY!", 11 * TILE_SIZE, 21 * TILE_SIZE);
-        } else if(gameLevel.currentEvent() == GameEvent.GAME_OVER) {
+        } else if(game.gameLevel().currentEvent() == GameEvent.GAME_OVER) {
             gc.setFill(Color.RED);
             gc.setFont(eventTextFont);
             gc.fillText("GAME OVER", 10 * TILE_SIZE - HALF_TILE_SIZE, 21 * TILE_SIZE);
         }
-
-        hud.render(gc);
     }
 
 
@@ -166,7 +165,7 @@ public class GameView extends GeneralScene {
             if(ghosts[ORANGE_GHOST].targetTile().isEmpty()) return;
             iVector2D target = ghosts[ORANGE_GHOST].targetTile().get();
             drawTargetTile(ORANGE_GHOST, Color.ORANGE);
-            if (gameLevel.currentChasingTargetPhaseName().equals(CHASING)) {
+            if (game.gameLevel().currentChasingTargetPhaseName().equals(CHASING)) {
                 double centerX = ghosts[ORANGE_GHOST].posX();
                 double centerY = ghosts[ORANGE_GHOST].posY();
                 double radius = 8 * TILE_SIZE;

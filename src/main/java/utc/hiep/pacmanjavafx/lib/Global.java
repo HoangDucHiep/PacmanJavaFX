@@ -8,8 +8,8 @@ import java.util.Random;
 import java.util.stream.Stream;
 
 public class Global {
-    public static final double WINDOW_WIDTH = 1024;                //window width
-    public static final double WINDOW_HEIGHT = 768;                //window height
+    public static double WINDOW_WIDTH = 1024;                //window width
+    public static double WINDOW_HEIGHT = 768;                //window height
 
     public static final int TILE_SIZE = 16;                     //tile size
     public static final int HALF_TILE_SIZE = TILE_SIZE / 2;     //half tile size

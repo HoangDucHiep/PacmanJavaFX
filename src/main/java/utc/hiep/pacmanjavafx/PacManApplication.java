@@ -4,11 +4,11 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 import utc.hiep.pacmanjavafx.controller.GameController;
 import utc.hiep.pacmanjavafx.lib.ImageLib;
-import utc.hiep.pacmanjavafx.model.SceneControl;
 
 public class PacManApplication extends Application {
 
-    private static final GameController gController = new GameController();
+
+    private static Stage stage;
 
     public static void main(String[] args) {
         launch(args);
@@ -16,14 +16,20 @@ public class PacManApplication extends Application {
 
     @Override
     public void start(Stage stage) {
+
         stage.setTitle("Pacman");
         stage.getIcons().add(ImageLib.APP_ICON);
         stage.setMinWidth(1024);
         stage.setMinHeight(768);
-        //stage.setMaximized(true);
-        SceneControl sController = new SceneControl(stage);
-        gController.setSceneControl(sController);
-        sController.setScene(gController.getWelcomeScene());
+        stage.setMaximized(true);
+
+        PacManApplication.stage = stage;
+
+        GameController gController = new GameController();
         stage.show();
+    }
+
+    public static Stage getStage() {
+        return stage;
     }
 }

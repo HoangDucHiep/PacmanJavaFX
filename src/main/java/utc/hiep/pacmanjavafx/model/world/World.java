@@ -249,7 +249,7 @@ public class World {
 
 
     public void drawMap(GraphicsContext gc) {
-        mapAnimator.render(gc, HALF_TILE_SIZE, TILE_SIZE * 3 + HALF_TILE_SIZE);
+        mapAnimator.render(gc, 0, TILE_SIZE * 3);
         tiles().filter(this::hasFoodAt).filter(Predicate.not(this::hasEatenFoodAt)).forEach(tile -> drawFoodAt(tile, gc));
     }
 
@@ -257,7 +257,7 @@ public class World {
         if (content(tile) == T_PELLET) {
             gc.drawImage(pellet, tile.x() * TILE_SIZE, tile.y() * TILE_SIZE, TILE_SIZE, TILE_SIZE);
         } else if (content(tile) == T_ENERGIZER) {
-            energizerAnimator.render(gc, tile.x() * TILE_SIZE + HALF_TILE_SIZE, tile.y() * TILE_SIZE + HALF_TILE_SIZE);
+            energizerAnimator.render(gc, tile.x() * TILE_SIZE, tile.y() * TILE_SIZE);
         }
     }
 

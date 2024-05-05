@@ -83,7 +83,7 @@ public class Pacman extends MovableEntity{
 
     @Override
     public void render(GraphicsContext gc) {
-        animator.render(gc, posX(), posY());
+        animator.render(gc, posX() - HALF_TILE_SIZE, posY() - HALF_TILE_SIZE);
     }
 
     public void setVictims(Ghost[] ghosts) {

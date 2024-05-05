@@ -5,7 +5,6 @@ import javafx.scene.image.Image;
 import utc.hiep.pacmanjavafx.lib.Direction;
 
 import static utc.hiep.pacmanjavafx.lib.Global.HALF_TILE_SIZE;
-import static utc.hiep.pacmanjavafx.lib.Global.TILE_SIZE;
 
 
 /**
@@ -13,9 +12,9 @@ import static utc.hiep.pacmanjavafx.lib.Global.TILE_SIZE;
  * @author HoangHiep
  * @version 1.0
  * @implNote This class is used for both non-direction and direction animation, use {@link Animator#getDirAnimator} or {@link Animator#getNonDirAnimator} to get an animator
- * @see #getNonDirAnimator(Image, int, int, int, int, AnimatorPos[])
+ * @see #getNonDirAnimator(Image, int, int, int, AnimatorPos[])
  * @see #update()
- * @see #getDirAnimator(Image, int, int, int, int, AnimatorPos[], AnimatorPos[], AnimatorPos[], AnimatorPos[])
+ * @see #getDirAnimator(Image, int, int, int, AnimatorPos[], AnimatorPos[], AnimatorPos[], AnimatorPos[])
  * @see #update(Direction)
  * @see #getAnimationPos()
  * @see AnimatorPos
@@ -35,14 +34,12 @@ public class Animator {
     private final Image sheet;
     private final int widthInSheet;
     private final int heightInSheet;
-    private final int ratio;
 
-    private Animator(int changeRate, Image sheet, int widthInSheet,int heightInSheet, int realSize) {
+    private Animator(int changeRate, Image sheet, int widthInSheet,int heightInSheet) {
         this.sheet = sheet;
         this.changeRate = changeRate;
         this.widthInSheet = widthInSheet;
         this.heightInSheet = heightInSheet;
-        this.ratio = realSize;
         ticksCount = 0;
     }
 
@@ -55,8 +52,8 @@ public class Animator {
      * @param animatorPos frame position in sprite sheet
      * @return a non-direction animator
      */
-    public static Animator getNonDirAnimator(Image sheet, int changeRate, int widthInSheet, int heightInSheet, int ratio, AnimatorPos[] animatorPos) {
-        Animator animator = new Animator(changeRate, sheet, widthInSheet, heightInSheet, ratio);
+    public static Animator getNonDirAnimator(Image sheet, int changeRate, int widthInSheet, int heightInSheet, AnimatorPos[] animatorPos) {
+        Animator animator = new Animator(changeRate, sheet, widthInSheet, heightInSheet);
         animator.animationDir = 0;
         setAnimatorPos(animator, animatorPos);
         animator.isDirAnimator = false;
@@ -94,8 +91,8 @@ public class Animator {
      * @param down frame position in sprite sheet for down direction
      * @return a direction animator
      */
-    public static Animator getDirAnimator(Image sheet, int changeRate, int widthInSheet, int heightInSheet, int ratio,AnimatorPos[] left, AnimatorPos[] right, AnimatorPos[] up, AnimatorPos[] down) {
-        Animator animator = new Animator(changeRate, sheet, widthInSheet, heightInSheet, ratio);
+    public static Animator getDirAnimator(Image sheet, int changeRate, int widthInSheet, int heightInSheet,AnimatorPos[] left, AnimatorPos[] right, AnimatorPos[] up, AnimatorPos[] down) {
+        Animator animator = new Animator(changeRate, sheet, widthInSheet, heightInSheet);
         setAnimatorPos(animator, left, right, up, down);
         animator.isDirAnimator = true;
         return animator;
@@ -135,7 +132,7 @@ public class Animator {
     }
 
     public void render(GraphicsContext gc, double x, double y) {
-        gc.drawImage(sheet, getAnimationPos().posX, getAnimationPos().posY(), widthInSheet, heightInSheet, x - HALF_TILE_SIZE, y - HALF_TILE_SIZE, widthInSheet * ratio, heightInSheet * ratio);
+        gc.drawImage(sheet, getAnimationPos().posX, getAnimationPos().posY(), widthInSheet, heightInSheet, x, y, widthInSheet * 2, heightInSheet * 2);
     }
 
     private void tickUpdate() {

@@ -324,7 +324,7 @@ public class Ghost extends MovableEntity{
             gc.setFill(Color.color(0, 1, 1));
             gc.fillText(String.valueOf(pointDisplay), posX() - HALF_TILE_SIZE, posY() - HALF_TILE_SIZE);
         } else {
-            animator.render(gc, posX(), posY());
+            animator.render(gc, posX() - HALF_TILE_SIZE, posY() - HALF_TILE_SIZE);
             pointDisplay = 0;
         }
     }

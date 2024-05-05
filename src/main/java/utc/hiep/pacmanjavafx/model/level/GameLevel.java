@@ -47,6 +47,8 @@ public class GameLevel {
         }
     }
 
+    GameModel game;
+
     //LevelNum and data of this level
     private final int levelNum;
     private final Data data;
@@ -73,19 +75,16 @@ public class GameLevel {
 //    private byte cruiseElroyState; //haven't implemented yet
 //    private byte cruiseElroyState; //haven't implemented yet
     private final GhostHouseControl houseControl;
-    private long score;
-    private int lives;
 
 
 
-    public GameLevel() {
-        this(1);
-        score = 0;
-        lives = 3;
+    public GameLevel(GameModel game) {
+        this(game, 1);
     }
 
 
-    public GameLevel(int levelNum) {
+    public GameLevel(GameModel game, int levelNum) {
+        this.game = game;
         this.levelNum = levelNum;
         data = new Data(levelNum, RAW_LEVEL_DATA[levelNum - 1]);
 
@@ -224,7 +223,6 @@ public class GameLevel {
      * When the level started, pacman and ghosts will be updated, pacman can eat food, ghosts can chase pacman,...
      * */
     private void updateLevelStartedState() {
-        houseControl.unlockGhost(this);
 
         if(gameEvent == GameEvent.GAME_OVER) {
             updateGameOverEvent();
@@ -249,7 +247,7 @@ public class GameLevel {
             } else if (gameEventTimer.ticks() > ((PAC_DIED_ANIMATION_LENGTH + 3) * FPS)) {
                 return;
             }else {
-                if(lives == 0) {
+                if(game.lives() == 0) {
                     gameEvent = GameEvent.GAME_OVER;
                     pacman.hide();
                     Arrays.stream(ghosts).forEach(Entity::hide);
@@ -287,6 +285,8 @@ public class GameLevel {
         }
 
 
+        houseControl.unlockGhost(this);
+
         if(gameEvent == GameEvent.PAC_EAT_ENERGIZER) {
             updateEventPacEatEnergizer();
         }
@@ -297,8 +297,10 @@ public class GameLevel {
 
         movePacman();
         handlePacmanEatFoot();
-        //handlePacAndGhostCollision();
+        handlePacAndGhostCollision();
     }
+
+
 
     private void updateGameWinEvent() {
         gameEventTimer.updateTimer();
@@ -470,12 +472,12 @@ public class GameLevel {
             if(pacman.sameTile(ghost) && (pacman.isNewTileEntered() || ghost.isNewTileEntered())) {
                 if(ghost.state().equals(GhostState.CHASING_TARGET)) {
                     gameEvent = GameEvent.PAC_DIED;
-                    lives--;
+                    game.removeLife();
                 }
                 else if(ghost.state().equals(GhostState.FRIGHTENED)) {
                     gameEvent = GameEvent.GHOST_EATEN;
                     pacman.victims().remove(ghost);
-                    score += 200L * (int) Math.pow(2, 4 - pacman.victims().size() - 1);
+                    game.addScore(200 * (int) Math.pow(2, 4 - pacman.victims().size() - 1));
 
                     ghost.setState(EATEN);
                     ghost.setPercentageSpeed(ghostSpeedPercentage(ghost));
@@ -552,17 +554,16 @@ public class GameLevel {
         if(world.hasFoodAt(currentTile) && !world.hasEatenFoodAt(currentTile)) {
             houseControl().updateDotCount(this);
 
+
             if(world.isEnergizerTile(currentTile)) {
-                score += POINTS_ENERGIZER;
+                scoreProcess(POINTS_ENERGIZER);
                 gameEvent = GameEvent.PAC_EAT_ENERGIZER;
                 updateEventPacEatEnergizer();
                 pacman.setVictims(ghosts);
                 frightenedTimer.reset();
             } else {
-                score += POINTS_NORMAL_PELLET;
+                scoreProcess(POINTS_NORMAL_PELLET);
             }
-
-            System.out.println("Points: " + score);
 
             world.removeFood(currentTile);
             pacman.endStarving();
@@ -573,6 +574,14 @@ public class GameLevel {
 
         if(world.uneatenFoodCount() == 0) {
             gameEvent = GameEvent.GAME_WIN;
+        }
+    }
+
+    private void scoreProcess(int earnPoint) {
+        long oldScore = game.score();
+        game.addScore(earnPoint);
+        if(oldScore < EXTRA_LIFE_SCORE && game.score() >= EXTRA_LIFE_SCORE) {
+            game.addLife();
         }
     }
 
@@ -682,11 +691,9 @@ public class GameLevel {
         return gameEvent;
     }
 
-//    public GameLevel nextLevel() {
-//        GameLevel nextLevel = new GameLevel(this.levelNum + 1);
-//        nextLevel.points = this.points;
-//        return nextLevel;
-//    }
+    public GameLevel nextLevel() {
+        return new GameLevel(game, this.levelNum + 1);
+    }
 
     public void switchPause() {
         if(levelState == LevelState.LEVEL_PAUSED) {
@@ -698,11 +705,4 @@ public class GameLevel {
         levelStateTimer.switchPause();
     }
 
-    public long score() {
-        return score;
-    }
-
-    public int lives() {
-        return lives;
-    }
 }

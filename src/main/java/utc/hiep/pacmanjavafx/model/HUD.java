@@ -2,13 +2,15 @@ package utc.hiep.pacmanjavafx.model;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import utc.hiep.pacmanjavafx.controller.GameController;
 import utc.hiep.pacmanjavafx.lib.FontLib;
 import utc.hiep.pacmanjavafx.lib.Global;
 import utc.hiep.pacmanjavafx.lib.ImageLib;
 import utc.hiep.pacmanjavafx.model.level.GameLevel;
+import utc.hiep.pacmanjavafx.model.level.GameModel;
 
 public class HUD {
-    private GameLevel level;
+    private final GameModel game;
 
     private long currentScore;
     private int lives;
@@ -17,16 +19,16 @@ public class HUD {
     private long highScore;
     private int highLevel;
 
-    public HUD(GameLevel level, long highScore, int highLevel) {
-        this.level = level;
-        this.highScore = highScore;
-        this.highLevel = highLevel;
+    public HUD(GameModel game) {
+        this.game = game;
+        this.highScore = game.highScore();
+        this.highLevel = game.highLevel();
     }
 
     public void update() {
-        currentScore = level.score();
-        lives = level.lives();
-        currentLevel = level.levelNum();
+        currentScore = game.score();
+        lives = game.lives();
+        currentLevel = game.gameLevel().levelNum();
 
         if(currentScore > highScore) {
             highScore = currentScore;
@@ -46,9 +48,9 @@ public class HUD {
         gc.fillText("L" + currentLevel, Global.TILE_SIZE * 9, 2 * Global.TILE_SIZE);
 
 
-        gc.fillText("HIGH SCORE", Global.TILE_SIZE * 15, Global.TILE_SIZE);
-        gc.fillText(String.valueOf(highScore), Global.TILE_SIZE * 15, 2 * Global.TILE_SIZE);
-        gc.fillText("L" + highLevel, Global.TILE_SIZE * 22 + Global.HALF_TILE_SIZE, 2 * Global.TILE_SIZE);
+        gc.fillText("HIGH SCORE", Global.TILE_SIZE * 17, Global.TILE_SIZE);
+        gc.fillText(String.valueOf(highScore), Global.TILE_SIZE * 17, 2 * Global.TILE_SIZE);
+        gc.fillText("L" + highLevel, Global.TILE_SIZE * 24 + Global.HALF_TILE_SIZE, 2 * Global.TILE_SIZE);
 
 
         int i = 0;
@@ -58,9 +60,5 @@ public class HUD {
         }
 
     }
-
-
-
-
 
 }

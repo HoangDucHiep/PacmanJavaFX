@@ -45,6 +45,7 @@ public class WelcomeScene extends GeneralScene {
         startButton.setTextFill(Color.WHITE);
         startButton.setPrefSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
 
+
         scoreButton.setFont(textFont);
         scoreButton.setBackground(new Background(new BackgroundFill(javafx.scene.paint.Color.TRANSPARENT, CornerRadii.EMPTY, Insets.EMPTY)));
         scoreButton.setTextFill(Color.WHITE);
