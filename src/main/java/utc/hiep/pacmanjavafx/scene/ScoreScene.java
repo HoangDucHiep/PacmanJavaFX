@@ -12,43 +12,50 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Box;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import utc.hiep.pacmanjavafx.DatabaseControl;
+import utc.hiep.pacmanjavafx.controller.GameController;
 import utc.hiep.pacmanjavafx.lib.FontLib;
 import utc.hiep.pacmanjavafx.lib.Global;
 import utc.hiep.pacmanjavafx.lib.ImageLib;
 import utc.hiep.pacmanjavafx.model.level.GameModel;
+import utc.hiep.pacmanjavafx.model.level.LevelState;
 
 import java.util.List;
 
 public class ScoreScene extends GeneralScene{
 
-    private final GameModel game;
-
-    private VBox logoSide;
-    private VBox scoreSide;
-
-    private SubScene newScoreEnterScene;
-
+    private final GameController game;
     AnchorPane rootPane;
 
+
+    private final VBox logoSide;
+    private final VBox scoreSide;
+
+    private SubScene newScoreEnterScene;
     boolean isSubSceneHidden;
 
-    public ScoreScene(GameModel game) {
+    VBox scoreList;
+    ScrollPane scoreboard;
+
+    public ScoreScene(GameController game) {
         super();
         this.game = game;
 
+        //change root to AnchorPane
         rootPane = new AnchorPane();
-        scoreSide = new VBox();
-        logoSide = new VBox();
         setRootPane(rootPane);
         rootPane.autosize();
-        setBackGround();
+        setBackGround(ImageLib.BACKGROUND_IMAGE);
+
+        //Two side
+        scoreSide = new VBox();
+        logoSide = new VBox();
+
         createLogoSide();
         createScoreSide();
-        createNewScoreSubScene();
+
     }
 
 
@@ -70,34 +77,37 @@ public class ScoreScene extends GeneralScene{
 
         rootPane.getChildren().add(logoSide);
 
+        logoSide.getChildren().add(getVSpacer());
 
-        logoSide.getChildren().add(getSpacer());
-
+        //Logo
         Image logo = ImageLib.SCORE_SCENE_LOGO;
         ImageView logoView = new ImageView(logo);
         logoView.setFitWidth(logo.getWidth());
         logoView.setFitHeight(logo.getHeight());
         logoSide.getChildren().add(logoView);
 
-        ///
-        Font textFont = FontLib.EMULOGIC((int) (Global.TILE_SIZE * 0.8));
+        /// Button back to menu
+        Button backButton = newButton("Back to menu", Global.TILE_SIZE, Color.WHITE);
+        setButtonAction(backButton, e -> {
+            game.changeScene(GameController.WELCOME_SCENE);
+        }, e -> {
+            backButton.setText("> Back to menu <");
+            backButton.setTextFill(Color.color(0.0, 1, 0.88));
+        }, e -> {
+            backButton.setText("Back to menu");
+            backButton.setTextFill(Color.WHITE);
+        });
 
 
-        Button backButton = new Button("<< Back to menu and play again!!! >>");
-        backButton.setFont(textFont);
-        backButton.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, CornerRadii.EMPTY, Insets.EMPTY)));
-        backButton.setTextFill(Color.WHITE);
-        backButton.setPrefSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
-
-        logoSide.getChildren().add(getSpacer());
+        logoSide.getChildren().add(getVSpacer());
 
         logoSide.getChildren().add(backButton);
 
-        logoSide.getChildren().add(getSpacer());
+        logoSide.getChildren().add(getVSpacer());
     }
 
 
-    VBox scoreList;
+
     private void createScoreSide() {
         //scoreSide.setBackground(new Background(new BackgroundFill(Color.YELLOW, CornerRadii.EMPTY, Insets.EMPTY)));
         scoreSide.setAlignment(javafx.geometry.Pos.CENTER);
@@ -121,7 +131,7 @@ public class ScoreScene extends GeneralScene{
         scoreSide.getChildren().add(scoreText);
         VBox.setMargin(scoreText, new Insets(0, 0, Global.TILE_SIZE * 4, 0));
 
-        ScrollPane scoreboard = new ScrollPane();
+        scoreboard = new ScrollPane();
         scoreboard.setStyle("-fx-background: transparent; -fx-background-color: transparent;");
         scoreboard.setMinHeight(Global.WINDOW_HEIGHT * 0.6);
         scoreboard.setMaxHeight(Global.WINDOW_HEIGHT * 0.6);
@@ -130,7 +140,6 @@ public class ScoreScene extends GeneralScene{
         scoreboard.setFitToWidth(true);
         scoreboard.setMinWidth(Global.WINDOW_WIDTH * 0.3);
         scoreboard.setMaxWidth(Global.WINDOW_WIDTH * 0.3);
-
 
 
         scoreList = new VBox();
@@ -149,13 +158,24 @@ public class ScoreScene extends GeneralScene{
         // Display the scoreboard
         scoreList.getChildren().clear();
 
+        Color[] colors = new Color[] {
+                Color.color(0.9, 0.0, 0.07),    //red
+                Color.color(0, 0.8, 1),         //cyan
+                Color.color(1, 0.66, 0.88),
+                Color.color(1, 0.66, 0.01),
+                Color.color(1, 1, 0)
+        };
+
         List<DatabaseControl.HighScore> scoreboard = game.db().scoreboard();
+        int counter = 0;
+
         for(var highscore : scoreboard) {
-            Text score = new Text(highscore.playerName() + " : " + highscore.score());
+            Text score = new Text((counter + 1) + ".\t" + highscore.playerName() + " : " + highscore.score());
             score.setFont(FontLib.EMULOGIC((int) (Global.TILE_SIZE * 0.8)));
-            score.setFill(Color.WHITE);
+            score.setFill(colors[counter % 5]);
             scoreList.getChildren().add(score);
             VBox.setMargin(score, new Insets(Global.TILE_SIZE, 0, 0, 0));
+            counter++;
         }
     }
 
@@ -186,7 +206,13 @@ public class ScoreScene extends GeneralScene{
         StackPane.setAlignment(gp, javafx.geometry.Pos.CENTER);
         newScoreEnterPane.getChildren().add(gp);
 
-        Label newScoreLabel = new Label("GAME OVER");
+
+        Label newScoreLabel;
+        if(game.gameLevel().currentState() == LevelState.LEVEL_WON)
+            newScoreLabel = new Label("YOU WON THE GAME!!!");
+        else
+            newScoreLabel = new Label("GAME OVER");
+
         newScoreLabel.setTextFill(Color.WHITE);
         newScoreLabel.setFont(FontLib.EMULOGIC((int) (Global.TILE_SIZE * 1.5)));
         GridPane.setHalignment(newScoreLabel, javafx.geometry.HPos.CENTER);
@@ -246,18 +272,7 @@ public class ScoreScene extends GeneralScene{
         });
     }
 
-    private Pane getSpacer() {
-        Pane spacer = new Pane();
-        spacer.setMinSize(0, 0);
-        spacer.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-        VBox.setVgrow(spacer, Priority.ALWAYS);
-        return spacer;
-    }
 
-    private void setBackGround() {
-        BackgroundImage background = new BackgroundImage(ImageLib.BACKGROUND_IMAGE, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT);
-        getRootPane().setBackground(new Background(background));
-    }
 
     public void moveSubScene(SubScene sc) {
         ScaleTransition transition = new ScaleTransition();
@@ -286,11 +301,8 @@ public class ScoreScene extends GeneralScene{
     }
 
     public void showNewScoreScene() {
+        createNewScoreSubScene();
         moveSubScene(newScoreEnterScene);
     }
 
-    @Override
-    public void render() {
-
-    }
 }

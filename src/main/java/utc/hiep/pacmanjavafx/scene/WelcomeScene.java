@@ -1,20 +1,21 @@
 package utc.hiep.pacmanjavafx.scene;
 
-import javafx.geometry.HPos;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
+import utc.hiep.pacmanjavafx.controller.GameController;
 import utc.hiep.pacmanjavafx.lib.FontLib;
 import utc.hiep.pacmanjavafx.lib.Global;
 import utc.hiep.pacmanjavafx.lib.ImageLib;
+import utc.hiep.pacmanjavafx.model.level.GameModel;
 
 public class WelcomeScene extends GeneralScene {
+    private GameModel game;
+
     private Button startButton;
     private Button scoreButton;
     private Button exitButton;
@@ -22,9 +23,10 @@ public class WelcomeScene extends GeneralScene {
 
     private VBox container;
 
-    public WelcomeScene() {
+    public WelcomeScene(GameController game) {
         super();
-        setBackGround();
+        this.game = game;
+        setBackGround(ImageLib.MENU_SCENE_BG);
         container = new VBox();
         container.setMaxWidth(Global.WINDOW_WIDTH);
         container.setAlignment(javafx.geometry.Pos.CENTER);
@@ -40,25 +42,46 @@ public class WelcomeScene extends GeneralScene {
         VBox.setMargin(pacAndGhostsGif, new Insets(Global.TILE_SIZE * 3, 0, 0, 0));
 
 
-        startButton = new Button("Start");
-        scoreButton = new Button("Scoreboard");
-        exitButton = new Button("Exit");
+        startButton = newButton("Start", Global.TILE_SIZE * 1.3, Color.WHITE);
+        scoreButton = newButton("Scoreboard", Global.TILE_SIZE * 1.3, Color.WHITE);
+        exitButton = newButton("Exit", Global.TILE_SIZE * 1.3, Color.WHITE);
 
-        startButton.setFont(textFont);
-        startButton.setBackground(new Background(new BackgroundFill(javafx.scene.paint.Color.TRANSPARENT, CornerRadii.EMPTY, Insets.EMPTY)));
-        startButton.setTextFill(Color.WHITE);
-        startButton.setPrefSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
+        setButtonAction(startButton,
+                e -> game.initNewGame(),
+                e -> {
+                    startButton.setTextFill(Color.color(0.98, 0.81, 0.02));
+                    startButton.setText("> Start <");
+                },
+                e -> {
+                    startButton.setTextFill(Color.WHITE);
+                    startButton.setText("Start");
+                }
+        );
 
+        setButtonAction(scoreButton,
+                e -> game.changeScene(GameController.SCORE_SCENE),
+                e -> {
+                    scoreButton.setTextFill(Color.color(0.98, 0.81, 0.02));
+                    scoreButton.setText("> Scoreboard <");
+                },
+                e -> {
+                    scoreButton.setTextFill(Color.WHITE);
+                    scoreButton.setText("Scoreboard");
+                }
+        );
 
-        scoreButton.setFont(textFont);
-        scoreButton.setBackground(new Background(new BackgroundFill(javafx.scene.paint.Color.TRANSPARENT, CornerRadii.EMPTY, Insets.EMPTY)));
-        scoreButton.setTextFill(Color.WHITE);
-        scoreButton.setPrefSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
+        setButtonAction(exitButton,
+                e -> System.exit(0),
+                e -> {
+                    exitButton.setTextFill(Color.color(0.98, 0.81, 0.02));
+                    exitButton.setText("> Exit <");
+                },
+                e -> {
+                    exitButton.setTextFill(Color.WHITE);
+                    exitButton.setText("Exit");
+                }
+        );
 
-        exitButton.setFont(textFont);
-        exitButton.setBackground(new Background(new BackgroundFill(javafx.scene.paint.Color.TRANSPARENT, CornerRadii.EMPTY, Insets.EMPTY)));
-        exitButton.setTextFill(Color.WHITE);
-        exitButton.setPrefSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
 
         addSpacer();
 
@@ -70,19 +93,9 @@ public class WelcomeScene extends GeneralScene {
 
     }
 
-    @Override
-    public void render() {
-    }
 
 
 
-    /**
-     * Set background for main pane
-     */
-    private void setBackGround() {
-        BackgroundImage background = new BackgroundImage(ImageLib.MENU_SCENE_BG, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT);
-        getRootPane().setBackground(new Background(background));
-    }
 
     private void drawLogo() {
         Image logo = ImageLib.GAME_LOGO;
@@ -108,20 +121,9 @@ public class WelcomeScene extends GeneralScene {
     }
 
 
-
-    private Pane getSpacer() {
-        Pane spacer = new Pane();
-        spacer.setMinSize(0, 0);
-        spacer.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-        VBox.setVgrow(spacer, Priority.ALWAYS);
-        return spacer;
-    }
-
     private void addSpacer() {
-        container.getChildren().add(getSpacer());
+        container.getChildren().add(getVSpacer());
     }
-
-
 }
 
 

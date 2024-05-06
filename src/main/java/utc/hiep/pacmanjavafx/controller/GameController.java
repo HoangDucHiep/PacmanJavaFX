@@ -1,29 +1,25 @@
 package utc.hiep.pacmanjavafx.controller;
 
 import javafx.animation.AnimationTimer;
-import javafx.scene.paint.Color;
+import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 import utc.hiep.pacmanjavafx.DatabaseControl;
 import utc.hiep.pacmanjavafx.PacManApplication;
 import utc.hiep.pacmanjavafx.event.GameEvent;
-import utc.hiep.pacmanjavafx.event.KeyListener;
-import utc.hiep.pacmanjavafx.event.KeyType;
-import utc.hiep.pacmanjavafx.event.MouseListener;
 import utc.hiep.pacmanjavafx.lib.Direction;
 import utc.hiep.pacmanjavafx.lib.Global;
-import utc.hiep.pacmanjavafx.lib.iVector2D;
 import utc.hiep.pacmanjavafx.model.HUD;
 import utc.hiep.pacmanjavafx.model.entity.Ghost;
 import utc.hiep.pacmanjavafx.model.level.GameLevel;
 import utc.hiep.pacmanjavafx.model.level.GameModel;
 import utc.hiep.pacmanjavafx.model.level.LevelState;
-import utc.hiep.pacmanjavafx.model.world.PacmanMap;
 import utc.hiep.pacmanjavafx.scene.GameView;
 import utc.hiep.pacmanjavafx.scene.ScoreScene;
 import utc.hiep.pacmanjavafx.scene.WelcomeScene;
 
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.HashSet;
 
 public class GameController implements GameModel {
     public static final byte GAME_VIEW = 0;
@@ -41,13 +37,7 @@ public class GameController implements GameModel {
     private GameLevel gameLevel;
 
     /*Event listener*/
-    //GameView event listener
-    private KeyListener gameViewKL;
 
-    //MenuScene event listener
-    private MouseListener startBtn;
-    private MouseListener scoreBtn;
-    private MouseListener exitBtn;
 
     private HUD hud;
 
@@ -75,7 +65,7 @@ public class GameController implements GameModel {
         changeScene(WELCOME_SCENE);
     }
 
-    private void initNewGame() {
+    public void initNewGame() {
         score = 0;
         life = 3;
 
@@ -165,23 +155,20 @@ public class GameController implements GameModel {
     }
 
     public void keyHandler() {
-
         if(gameLevel.currentState() == LevelState.LEVEL_READY) {
             return;
         }
-
-        gameViewKL.keyListening();
-        for (KeyType key : gameViewKL.getPressedKey()) {
+        HashSet<KeyCode> pressedKey =  gameView.getPressedKeys();
+        for (KeyCode key : pressedKey) {
             switch (key) {
-                    case PAUSE -> gameLevel.switchPause();
-                    case GRID_SWITCH -> gameView.switchGridDisplay();
-                    case TURN_UP -> gameLevel.applyPacDirKey(Direction.UP);
-                    case TURN_DOWN -> gameLevel.applyPacDirKey(Direction.DOWN);
-                    case TURN_LEFT -> gameLevel.applyPacDirKey(Direction.LEFT);
-                    case TURN_RIGHT -> gameLevel.applyPacDirKey(Direction.RIGHT);
-                }
+                case P -> gameLevel.switchPause();
+                case G -> gameView.switchGridDisplay();
+                case W, UP -> gameLevel.applyPacDirKey(Direction.UP);
+                case S, DOWN -> gameLevel.applyPacDirKey(Direction.DOWN);
+                case A, LEFT -> gameLevel.applyPacDirKey(Direction.LEFT);
+                case D, RIGHT -> gameLevel.applyPacDirKey(Direction.RIGHT);
             }
-        gameViewKL.clearKey();
+        }
     }
 
 
@@ -228,20 +215,6 @@ public class GameController implements GameModel {
                 Global.WINDOW_WIDTH = (int) window.getWidth();
                 Global.WINDOW_HEIGHT = (int) window.getHeight();
                 gameView = new GameView(this);
-
-                gameViewKL = new KeyListener(gameView);
-                gameViewKL.setKeyAction(keyEvent -> {
-                    switch (keyEvent.getCode()) {
-                        case UP -> gameViewKL.getPressedKey().add(KeyType.TURN_UP);
-                        case DOWN -> gameViewKL.getPressedKey().add(KeyType.TURN_DOWN);
-                        case LEFT -> gameViewKL.getPressedKey().add(KeyType.TURN_LEFT);
-                        case RIGHT -> gameViewKL.getPressedKey().add(KeyType.TURN_RIGHT);
-                        case P -> gameViewKL.getPressedKey().add(KeyType.PAUSE);
-                        case G -> gameViewKL.getPressedKey().add(KeyType.GRID_SWITCH);
-                        case C -> gameViewKL.getPressedKey().add(KeyType.CHANGE_SCENE);
-                        case B -> gameViewKL.getPressedKey().add(KeyType.CHANGE_BACK);
-                    }
-                });
             }
             currentScene = GAME_VIEW;
             window.setScene(gameView);
@@ -261,51 +234,7 @@ public class GameController implements GameModel {
             if (welcomeScene == null || Global.WINDOW_WIDTH != window.getWidth() || Global.WINDOW_HEIGHT != window.getHeight()) {
                 Global.WINDOW_WIDTH = (int) window.getWidth();
                 Global.WINDOW_HEIGHT = (int) window.getHeight();
-                welcomeScene = new WelcomeScene();
-
-
-                startBtn = new MouseListener(welcomeScene.getStartButton());
-                startBtn.setMouseAction(
-                        mouseEvent -> {
-                            initNewGame();
-                        },
-                        mouseEvent -> {
-                            welcomeScene.getStartButton().setTextFill(Color.color(1, 0.71, 1));
-                            welcomeScene.getStartButton().setText("<< Start >>");
-                        },
-                        mouseEvent -> {
-                            welcomeScene.getStartButton().setTextFill(Color.WHITE);
-                            welcomeScene.getStartButton().setText("Start");
-                        }
-                );
-
-
-
-                exitBtn = new MouseListener(welcomeScene.getExitButton());
-                exitBtn.setMouseAction(
-                        mouseEvent -> { System.exit(0); db.closeConnection();} ,
-                        mouseEvent -> {
-                            welcomeScene.getExitButton().setTextFill(Color.color(1, 0.71, 1));
-                            welcomeScene.getExitButton().setText("<< Exit >>");
-                        },
-                        mouseEvent -> {
-                            welcomeScene.getExitButton().setTextFill(Color.WHITE);
-                            welcomeScene.getExitButton().setText("Exit");
-                        }
-                );
-
-                scoreBtn = new MouseListener(welcomeScene.getScoreButton());
-                scoreBtn.setMouseAction(
-                        mouseEvent -> changeScene(SCORE_SCENE),
-                        mouseEvent -> {
-                            welcomeScene.getScoreButton().setTextFill(Color.color(1, 0.71, 1));
-                            welcomeScene.getScoreButton().setText("<< Scoreboard >>");
-                        },
-                        mouseEvent -> {
-                            welcomeScene.getScoreButton().setTextFill(Color.WHITE);
-                            welcomeScene.getScoreButton().setText("Scoreboard");
-                        }
-                );
+                welcomeScene = new WelcomeScene(this);
             }
 
             currentScene = WELCOME_SCENE;

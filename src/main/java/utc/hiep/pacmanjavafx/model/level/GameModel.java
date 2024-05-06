@@ -91,6 +91,7 @@ public interface GameModel {
         }
 
 
+        public void initNewGame();
 
         long score();
 

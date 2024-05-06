@@ -28,6 +28,6 @@ public class ImageLib {
     public static Image GAME_LOGO = new Image(Objects.requireNonNull(ImageLib.class.getResourceAsStream(LOGO_PATH)), Global.TILE_SIZE * 40, Double.MIN_NORMAL, true, true);
     public static Image APP_ICON = new Image(Objects.requireNonNull(ImageLib.class.getResourceAsStream(APP_ICON_PATH)));
     public static Image MAP_SHEET = new Image(Objects.requireNonNull(ImageLib.class.getResourceAsStream(MAP_SHEET_PATH)));
-    public static Image SCORE_SCENE_LOGO = new Image(Objects.requireNonNull(ImageLib.class.getResourceAsStream(SCORE_SCENE_LOGO_PATH)));
+    public static Image SCORE_SCENE_LOGO = new Image(Objects.requireNonNull(ImageLib.class.getResourceAsStream(SCORE_SCENE_LOGO_PATH)), Global.TILE_SIZE * 40, Double.MIN_NORMAL, true, true);
     public static Image PAC_AND_GHOST = new Image(Objects.requireNonNull(ImageLib.class.getResourceAsStream(PAC_AND_GHOST_PATH)),Global.TILE_SIZE * 20, Double.MIN_NORMAL, true, true);
 }
