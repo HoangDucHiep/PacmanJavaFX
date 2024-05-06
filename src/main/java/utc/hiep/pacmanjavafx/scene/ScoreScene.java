@@ -53,7 +53,7 @@ public class ScoreScene extends GeneralScene{
 
 
     private void createLogoSide() {
-        logoSide.setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY, Insets.EMPTY)));
+        //logoSide.setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY, Insets.EMPTY)));
         logoSide.setAlignment(javafx.geometry.Pos.CENTER);
         logoSide.setFillWidth(true);
         HBox.setHgrow(logoSide, Priority.ALWAYS);
@@ -99,7 +99,7 @@ public class ScoreScene extends GeneralScene{
 
     VBox scoreList;
     private void createScoreSide() {
-        scoreSide.setBackground(new Background(new BackgroundFill(Color.YELLOW, CornerRadii.EMPTY, Insets.EMPTY)));
+        //scoreSide.setBackground(new Background(new BackgroundFill(Color.YELLOW, CornerRadii.EMPTY, Insets.EMPTY)));
         scoreSide.setAlignment(javafx.geometry.Pos.CENTER);
         scoreSide.setFillWidth(true);
         HBox.setHgrow(scoreSide, Priority.ALWAYS);
@@ -114,29 +114,33 @@ public class ScoreScene extends GeneralScene{
 
         rootPane.getChildren().add(scoreSide);
 
-        Font textFont = FontLib.EMULOGIC((int) (Global.TILE_SIZE * 0.8));
-        Text scoreText = new Text("The best 10 highest score played!!!!");
+        Font textFont = FontLib.EMULOGIC((int) (Global.TILE_SIZE * 1.2));
+        Text scoreText = new Text("High score played!!!!");
         scoreText.setFont(textFont);
         scoreText.setFill(Color.WHITE);
         scoreSide.getChildren().add(scoreText);
-        VBox.setMargin(scoreText, new Insets(0, 0, Global.TILE_SIZE, 0));
+        VBox.setMargin(scoreText, new Insets(0, 0, Global.TILE_SIZE * 4, 0));
 
         ScrollPane scoreboard = new ScrollPane();
-        scoreboard.setBackground(new Background(new BackgroundFill(Color.GREEN, CornerRadii.EMPTY, Insets.EMPTY)));
+        scoreboard.setStyle("-fx-background: transparent; -fx-background-color: transparent;");
+        scoreboard.setMinHeight(Global.WINDOW_HEIGHT * 0.6);
+        scoreboard.setMaxHeight(Global.WINDOW_HEIGHT * 0.6);
+
+        //Make child nodes fit to its width
         scoreboard.setFitToWidth(true);
-        scoreboard.setMinHeight(500);
-        scoreboard.setMaxHeight(500);
+        scoreboard.setMinWidth(Global.WINDOW_WIDTH * 0.3);
+        scoreboard.setMaxWidth(Global.WINDOW_WIDTH * 0.3);
+
+
 
         scoreList = new VBox();
         scoreboard.setContent(scoreList);
 
-
-        scoreList.setAlignment(Pos.TOP_CENTER);
-        scoreList.setBackground(new Background(new BackgroundFill(Color.PINK, CornerRadii.EMPTY, Insets.EMPTY)));
+        scoreList.setAlignment(Pos.TOP_LEFT);
+        //scoreList.setBackground(new Background(new BackgroundFill(Color.PINK, CornerRadii.EMPTY, Insets.EMPTY)));
         loadScoreboard();
 
         scoreSide.getChildren().add(scoreboard);
-
     }
 
 
@@ -147,10 +151,11 @@ public class ScoreScene extends GeneralScene{
 
         List<DatabaseControl.HighScore> scoreboard = game.db().scoreboard();
         for(var highscore : scoreboard) {
-            Label score = new Label(highscore.playerName() + " : " + highscore.score());
+            Text score = new Text(highscore.playerName() + " : " + highscore.score());
             score.setFont(FontLib.EMULOGIC((int) (Global.TILE_SIZE * 0.8)));
-            score.setTextFill(Color.WHITE);
+            score.setFill(Color.WHITE);
             scoreList.getChildren().add(score);
+            VBox.setMargin(score, new Insets(Global.TILE_SIZE, 0, 0, 0));
         }
     }
 

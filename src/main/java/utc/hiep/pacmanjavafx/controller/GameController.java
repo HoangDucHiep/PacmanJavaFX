@@ -269,8 +269,14 @@ public class GameController implements GameModel {
                         mouseEvent -> {
                             initNewGame();
                         },
-                        mouseEvent -> welcomeScene.getStartButton().setTextFill(Color.color(1, 0.71, 1)),
-                        mouseEvent -> welcomeScene.getStartButton().setTextFill(Color.WHITE)
+                        mouseEvent -> {
+                            welcomeScene.getStartButton().setTextFill(Color.color(1, 0.71, 1));
+                            welcomeScene.getStartButton().setText("<< Start >>");
+                        },
+                        mouseEvent -> {
+                            welcomeScene.getStartButton().setTextFill(Color.WHITE);
+                            welcomeScene.getStartButton().setText("Start");
+                        }
                 );
 
 
@@ -278,15 +284,27 @@ public class GameController implements GameModel {
                 exitBtn = new MouseListener(welcomeScene.getExitButton());
                 exitBtn.setMouseAction(
                         mouseEvent -> { System.exit(0); db.closeConnection();} ,
-                        mouseEvent -> welcomeScene.getExitButton().setTextFill(Color.color(1, 0.71, 1)),
-                        mouseEvent -> welcomeScene.getExitButton().setTextFill(Color.WHITE)
+                        mouseEvent -> {
+                            welcomeScene.getExitButton().setTextFill(Color.color(1, 0.71, 1));
+                            welcomeScene.getExitButton().setText("<< Exit >>");
+                        },
+                        mouseEvent -> {
+                            welcomeScene.getExitButton().setTextFill(Color.WHITE);
+                            welcomeScene.getExitButton().setText("Exit");
+                        }
                 );
 
                 scoreBtn = new MouseListener(welcomeScene.getScoreButton());
                 scoreBtn.setMouseAction(
                         mouseEvent -> changeScene(SCORE_SCENE),
-                        mouseEvent -> welcomeScene.getScoreButton().setTextFill(Color.color(1, 0.71, 1)),
-                        mouseEvent -> welcomeScene.getScoreButton().setTextFill(Color.WHITE)
+                        mouseEvent -> {
+                            welcomeScene.getScoreButton().setTextFill(Color.color(1, 0.71, 1));
+                            welcomeScene.getScoreButton().setText("<< Scoreboard >>");
+                        },
+                        mouseEvent -> {
+                            welcomeScene.getScoreButton().setTextFill(Color.WHITE);
+                            welcomeScene.getScoreButton().setText("Scoreboard");
+                        }
                 );
             }
 

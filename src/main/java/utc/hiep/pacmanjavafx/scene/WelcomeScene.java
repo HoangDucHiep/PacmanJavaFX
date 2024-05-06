@@ -15,7 +15,6 @@ import utc.hiep.pacmanjavafx.lib.Global;
 import utc.hiep.pacmanjavafx.lib.ImageLib;
 
 public class WelcomeScene extends GeneralScene {
-
     private Button startButton;
     private Button scoreButton;
     private Button exitButton;
@@ -35,6 +34,11 @@ public class WelcomeScene extends GeneralScene {
         addSpacer();
 
         drawLogo();
+
+        ImageView pacAndGhostsGif = new ImageView(ImageLib.PAC_AND_GHOST);
+        container.getChildren().add(pacAndGhostsGif);
+        VBox.setMargin(pacAndGhostsGif, new Insets(Global.TILE_SIZE * 3, 0, 0, 0));
+
 
         startButton = new Button("Start");
         scoreButton = new Button("Scoreboard");
@@ -88,7 +92,6 @@ public class WelcomeScene extends GeneralScene {
 
 
     private void drawButton(Button btn) {
-        VBox.setMargin(btn, new Insets(5, 0, 5, 0));
         container.getChildren().add(btn);
     }
 
