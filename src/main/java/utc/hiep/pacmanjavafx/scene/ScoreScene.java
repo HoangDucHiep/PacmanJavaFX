@@ -2,20 +2,26 @@ package utc.hiep.pacmanjavafx.scene;
 
 import javafx.animation.ScaleTransition;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.SubScene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Box;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import utc.hiep.pacmanjavafx.DatabaseControl;
 import utc.hiep.pacmanjavafx.lib.FontLib;
 import utc.hiep.pacmanjavafx.lib.Global;
 import utc.hiep.pacmanjavafx.lib.ImageLib;
 import utc.hiep.pacmanjavafx.model.level.GameModel;
+
+import java.util.List;
 
 public class ScoreScene extends GeneralScene{
 
@@ -47,7 +53,7 @@ public class ScoreScene extends GeneralScene{
 
 
     private void createLogoSide() {
-        //logoSide.setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY, Insets.EMPTY)));
+        logoSide.setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY, Insets.EMPTY)));
         logoSide.setAlignment(javafx.geometry.Pos.CENTER);
         logoSide.setFillWidth(true);
         HBox.setHgrow(logoSide, Priority.ALWAYS);
@@ -90,8 +96,10 @@ public class ScoreScene extends GeneralScene{
         logoSide.getChildren().add(getSpacer());
     }
 
+
+    VBox scoreList;
     private void createScoreSide() {
-        //logoSide.setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY, Insets.EMPTY)));
+        scoreSide.setBackground(new Background(new BackgroundFill(Color.YELLOW, CornerRadii.EMPTY, Insets.EMPTY)));
         scoreSide.setAlignment(javafx.geometry.Pos.CENTER);
         scoreSide.setFillWidth(true);
         HBox.setHgrow(scoreSide, Priority.ALWAYS);
@@ -111,6 +119,39 @@ public class ScoreScene extends GeneralScene{
         scoreText.setFont(textFont);
         scoreText.setFill(Color.WHITE);
         scoreSide.getChildren().add(scoreText);
+        VBox.setMargin(scoreText, new Insets(0, 0, Global.TILE_SIZE, 0));
+
+        ScrollPane scoreboard = new ScrollPane();
+        scoreboard.setBackground(new Background(new BackgroundFill(Color.GREEN, CornerRadii.EMPTY, Insets.EMPTY)));
+        scoreboard.setFitToWidth(true);
+        scoreboard.setMinHeight(500);
+        scoreboard.setMaxHeight(500);
+
+        scoreList = new VBox();
+        scoreboard.setContent(scoreList);
+
+
+        scoreList.setAlignment(Pos.TOP_CENTER);
+        scoreList.setBackground(new Background(new BackgroundFill(Color.PINK, CornerRadii.EMPTY, Insets.EMPTY)));
+        loadScoreboard();
+
+        scoreSide.getChildren().add(scoreboard);
+
+    }
+
+
+    private void loadScoreboard() {
+        // Load the scoreboard from the database
+        // Display the scoreboard
+        scoreList.getChildren().clear();
+
+        List<DatabaseControl.HighScore> scoreboard = game.db().scoreboard();
+        for(var highscore : scoreboard) {
+            Label score = new Label(highscore.playerName() + " : " + highscore.score());
+            score.setFont(FontLib.EMULOGIC((int) (Global.TILE_SIZE * 0.8)));
+            score.setTextFill(Color.WHITE);
+            scoreList.getChildren().add(score);
+        }
     }
 
     private void createNewScoreSubScene() {
@@ -184,6 +225,8 @@ public class ScoreScene extends GeneralScene{
             System.out.println("Clicked");
             isSubSceneHidden = false;
             moveSubScene(newScoreEnterScene);
+            game.db().addScore(new DatabaseControl.HighScore(null, nameField.getText(), game.score(), game.gameLevel().levelNum()));
+            loadScoreboard();
         });
 
         submit.setOnMouseEntered(e -> {

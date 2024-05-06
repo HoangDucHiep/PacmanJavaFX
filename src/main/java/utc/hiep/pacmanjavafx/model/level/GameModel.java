@@ -1,5 +1,6 @@
 package utc.hiep.pacmanjavafx.model.level;
 
+import utc.hiep.pacmanjavafx.DatabaseControl;
 import utc.hiep.pacmanjavafx.lib.AnimatorLib;
 import utc.hiep.pacmanjavafx.model.HUD;
 
@@ -108,5 +109,7 @@ public interface GameModel {
         int highLevel();
 
         HUD hud();
+
+        DatabaseControl db();
 
 }

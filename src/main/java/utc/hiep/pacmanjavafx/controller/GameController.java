@@ -3,6 +3,7 @@ package utc.hiep.pacmanjavafx.controller;
 import javafx.animation.AnimationTimer;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import utc.hiep.pacmanjavafx.DatabaseControl;
 import utc.hiep.pacmanjavafx.PacManApplication;
 import utc.hiep.pacmanjavafx.event.GameEvent;
 import utc.hiep.pacmanjavafx.event.KeyListener;
@@ -21,6 +22,7 @@ import utc.hiep.pacmanjavafx.scene.GameView;
 import utc.hiep.pacmanjavafx.scene.ScoreScene;
 import utc.hiep.pacmanjavafx.scene.WelcomeScene;
 
+import java.sql.SQLException;
 import java.util.Arrays;
 
 public class GameController implements GameModel {
@@ -49,6 +51,9 @@ public class GameController implements GameModel {
 
     private HUD hud;
 
+
+    private DatabaseControl db;
+
     private long score;
     private int life;
 
@@ -57,6 +62,15 @@ public class GameController implements GameModel {
 
 
     public GameController() {
+        try {
+            db = new DatabaseControl();
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+        DatabaseControl.HighScore bestScore = db.scoreboard().get(0);
+        highScore = bestScore.score();
+        highLevel = bestScore.level();
 
         changeScene(WELCOME_SCENE);
     }
@@ -117,15 +131,16 @@ public class GameController implements GameModel {
 
 
     private void updateGame() {
+        System.out.println("Current scene: " + currentScene);
         if(currentScene == GAME_VIEW) {
             keyHandler();
             if((gameLevel.currentState() == LevelState.LEVEL_STARTED && (gameLevel.currentEvent() != GameEvent.PAC_DIED && gameLevel.currentEvent() != GameEvent.GAME_WIN) || gameLevel.currentState() == LevelState.LEVEL_PAUSED)) {
                 updateAnimator();
             }
             if (gameLevel.currentState() == LevelState.LEVEL_LOST) {
+                System.out.println("There");
                 changeScene(SCORE_SCENE);
                 scoreScene.showNewScoreScene();
-                currentScene = SCORE_SCENE;
             }
 
             if(gameLevel.currentState() == LevelState.LEVEL_WON) {
@@ -228,19 +243,20 @@ public class GameController implements GameModel {
                     }
                 });
             }
-            window.setScene(gameView);
             currentScene = GAME_VIEW;
-
-
+            window.setScene(gameView);
 
         } else if(scene == SCORE_SCENE) {
             if (scoreScene == null || Global.WINDOW_WIDTH != window.getWidth() || Global.WINDOW_HEIGHT != window.getHeight()) {
+                System.out.println("Creat new score scene");
                 Global.WINDOW_WIDTH = (int) window.getWidth();
                 Global.WINDOW_HEIGHT = (int) window.getHeight();
                 scoreScene = new ScoreScene(this);
             }
-            window.setScene(scoreScene);
             currentScene = SCORE_SCENE;
+            window.setScene(scoreScene);
+
+
         } else if(scene == WELCOME_SCENE) {
             if (welcomeScene == null || Global.WINDOW_WIDTH != window.getWidth() || Global.WINDOW_HEIGHT != window.getHeight()) {
                 Global.WINDOW_WIDTH = (int) window.getWidth();
@@ -261,7 +277,7 @@ public class GameController implements GameModel {
 
                 exitBtn = new MouseListener(welcomeScene.getExitButton());
                 exitBtn.setMouseAction(
-                        mouseEvent -> System.exit(0),
+                        mouseEvent -> { System.exit(0); db.closeConnection();} ,
                         mouseEvent -> welcomeScene.getExitButton().setTextFill(Color.color(1, 0.71, 1)),
                         mouseEvent -> welcomeScene.getExitButton().setTextFill(Color.WHITE)
                 );
@@ -273,12 +289,15 @@ public class GameController implements GameModel {
                         mouseEvent -> welcomeScene.getScoreButton().setTextFill(Color.WHITE)
                 );
             }
-            window.setScene(welcomeScene);
+
             currentScene = WELCOME_SCENE;
-
-
+            window.setScene(welcomeScene);
         }
     }
 
+
+    public DatabaseControl db() {
+        return db;
+    }
 
 }
