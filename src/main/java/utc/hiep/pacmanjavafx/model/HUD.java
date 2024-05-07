@@ -5,12 +5,9 @@ import javafx.scene.paint.Color;
 import utc.hiep.pacmanjavafx.controller.GameController;
 import utc.hiep.pacmanjavafx.lib.FontLib;
 import utc.hiep.pacmanjavafx.lib.Global;
-import utc.hiep.pacmanjavafx.lib.ImageLib;
-import utc.hiep.pacmanjavafx.model.level.GameLevel;
-import utc.hiep.pacmanjavafx.model.level.GameModel;
 
 public class HUD {
-    private final GameModel game;
+    private final GameController game;
 
     private long currentScore;
     private int lives;
@@ -19,7 +16,7 @@ public class HUD {
     private long highScore;
     private int highLevel;
 
-    public HUD(GameModel game) {
+    public HUD(GameController game) {
         this.game = game;
         this.highScore = game.highScore();
         this.highLevel = game.highLevel();
@@ -55,7 +52,7 @@ public class HUD {
 
         int i = 0;
         while(i < lives) {
-            gc.drawImage(ImageLib.SPRITE_SHEET, 130, 17, 13, 13, Global.TILE_SIZE * (i * 2 + 2) + Global.HALF_TILE_SIZE, (Global.TILES_Y - 2) * Global.TILE_SIZE + (double) Global.HALF_TILE_SIZE / 2, Global.GAME_SCALE * 13, Global.GAME_SCALE * 13);
+            gc.drawImage(GameController.rm().getImage("sprite_sheet"), 130, 17, 13, 13, Global.TILE_SIZE * (i * 2 + 2) + Global.HALF_TILE_SIZE, (Global.TILES_Y - 2) * Global.TILE_SIZE + (double) Global.HALF_TILE_SIZE / 2, Global.GAME_SCALE * 13, Global.GAME_SCALE * 13);
             i++;
         }
 

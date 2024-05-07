@@ -2,8 +2,7 @@ package utc.hiep.pacmanjavafx.model.world;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import utc.hiep.pacmanjavafx.lib.AnimatorLib;
-import utc.hiep.pacmanjavafx.lib.ImageLib;
+import utc.hiep.pacmanjavafx.controller.GameController;
 import utc.hiep.pacmanjavafx.lib.iVector2D;
 import utc.hiep.pacmanjavafx.model.Animator;
 
@@ -14,11 +13,13 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static utc.hiep.pacmanjavafx.lib.Global.*;
+import static utc.hiep.pacmanjavafx.model.level.GameModel.ENERGIZEER;
+import static utc.hiep.pacmanjavafx.model.level.GameModel.MAP;
 
 
 public class World {
 
-    private static final Image pellet = ImageLib.PELLET;
+    private static final Image pellet = GameController.rm().getImage("pellet");
 
     int MAP_WIDTH = TILES_X * TILE_SIZE;
     int MAP_HEIGHT = (TILES_Y - 5) * TILE_SIZE;
@@ -64,8 +65,8 @@ public class World {
 
 
         //Energizer animator
-        energizerAnimator = AnimatorLib.ENERGIZER_ANIMATOR;
-        mapAnimator = AnimatorLib.MAP_ANIMATOR;
+        energizerAnimator = GameController.rm().getAnimator(ENERGIZEER);
+        mapAnimator = GameController.rm().getAnimator(MAP);
     }
 
 
@@ -88,7 +89,7 @@ public class World {
      * @param tile some tile
      * @return type of the given tile
      */
-    private byte content(iVector2D tile) {
+    public byte content(iVector2D tile) {
         return insideBounds(tile) ? tileMap[tile.y()][tile.x()] : T_SPACE;
     }
 

@@ -1,11 +1,10 @@
 package utc.hiep.pacmanjavafx.model.entity;
 
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
-import utc.hiep.pacmanjavafx.lib.AnimatorLib;
-import utc.hiep.pacmanjavafx.lib.ImageLib;
+import utc.hiep.pacmanjavafx.controller.GameController;
 import utc.hiep.pacmanjavafx.lib.iVector2D;
 import utc.hiep.pacmanjavafx.model.Animator;
+import utc.hiep.pacmanjavafx.model.level.GameModel;
 import utc.hiep.pacmanjavafx.model.world.World;
 
 import java.util.ArrayList;
@@ -13,8 +12,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static utc.hiep.pacmanjavafx.lib.Global.*;
-import static utc.hiep.pacmanjavafx.model.level.GameModel.FPS;
-import static utc.hiep.pacmanjavafx.model.level.GameModel.PPS_AT_100_PERCENT;
 
 public class Pacman extends MovableEntity{
 
@@ -25,7 +22,7 @@ public class Pacman extends MovableEntity{
     private List<Ghost> victims;
 
     //UI part
-    private Animator animator = AnimatorLib.PACMAN_ANIMATOR;
+    private Animator animator = GameController.rm().getAnimator(GameModel.PAC);;
 
     public Pacman(String name) {
         super();

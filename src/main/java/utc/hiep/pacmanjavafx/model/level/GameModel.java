@@ -14,6 +14,10 @@ public interface GameModel {
         byte FRIGHTENED_GHOST = 4;  //use only for animation
         byte LATE_FRIGTHENED_GHOST = 5;  //use only for animation
         byte EATEN_GHOST = 6;       //use only for animation
+        byte PAC = 7;
+        byte DIED_PAC = 8;
+        byte MAP = 9;
+        byte ENERGIZEER = 10;
 
         String[] GHOST_NAME = {"Blinky", "Pinky", "Inky", "Clyde"};
 

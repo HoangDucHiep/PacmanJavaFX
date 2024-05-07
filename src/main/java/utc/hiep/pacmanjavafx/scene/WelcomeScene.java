@@ -10,7 +10,6 @@ import javafx.scene.text.Font;
 import utc.hiep.pacmanjavafx.controller.GameController;
 import utc.hiep.pacmanjavafx.lib.FontLib;
 import utc.hiep.pacmanjavafx.lib.Global;
-import utc.hiep.pacmanjavafx.lib.ImageLib;
 import utc.hiep.pacmanjavafx.model.level.GameModel;
 
 public class WelcomeScene extends GeneralScene {
@@ -26,7 +25,7 @@ public class WelcomeScene extends GeneralScene {
     public WelcomeScene(GameController game) {
         super();
         this.game = game;
-        setBackGround(ImageLib.MENU_SCENE_BG);
+        setBackGround(GameController.rm().getImage("menubg"));
         container = new VBox();
         container.setMaxWidth(Global.WINDOW_WIDTH);
         container.setAlignment(javafx.geometry.Pos.CENTER);
@@ -37,7 +36,7 @@ public class WelcomeScene extends GeneralScene {
 
         drawLogo();
 
-        ImageView pacAndGhostsGif = new ImageView(ImageLib.PAC_AND_GHOST);
+        ImageView pacAndGhostsGif = new ImageView(GameController.rm().getImage("pac_and_ghost"));
         container.getChildren().add(pacAndGhostsGif);
         VBox.setMargin(pacAndGhostsGif, new Insets(Global.TILE_SIZE * 3, 0, 0, 0));
 
@@ -98,7 +97,7 @@ public class WelcomeScene extends GeneralScene {
 
 
     private void drawLogo() {
-        Image logo = ImageLib.GAME_LOGO;
+        Image logo = GameController.rm().getImage("game_logo");
         ImageView logoView = new ImageView(logo);
         container.getChildren().add(logoView);
     }

@@ -148,7 +148,6 @@ public class GameLevel {
         pacman.setDefaultSpeed((float) PPS_AT_100_PERCENT / FPS);
         pacman.setPercentageSpeed(data.pacSpeedPercentage);
         pacman.placeAtTile(PacmanMap.PAC_POSITION);
-        pacman.setAnimator(AnimatorLib.PACMAN_ANIMATOR);
         pacman.animatorUpdate();
         pacman.hide();
     }
@@ -240,7 +239,7 @@ public class GameLevel {
 
             if(gameEventTimer.ticks() == FPS * 0.5) {
                 Arrays.stream(ghosts).forEach(Entity::hide);
-                pacman.setAnimator(AnimatorLib.DIED_PACMAN_ANIMATOR);
+                pacman.setAnimator(GameController.rm().getAnimator(DIED_PAC));
                 return;
             } else if (gameEventTimer.ticks()  < (PAC_DIED_ANIMATION_LENGTH + FPS * 0.5)) {
                 pacman.animatorUpdate();
@@ -592,7 +591,7 @@ public class GameLevel {
         if(world.hasFoodAt(currentTile) && !world.hasEatenFoodAt(currentTile)) {
 
             new Thread(() -> {
-                game.playSound(GameController.MUNCH);
+                GameController.rm().getSound("munch").play();
             }).start();
 
             houseControl().updateDotCount(this);
@@ -611,9 +610,8 @@ public class GameLevel {
         }
         else {
             pacman.starve();
-            if(game.playedSec(GameController.MUNCH) >= 0.3) {
-                System.out.println("played Time = " + game.playedSec(GameController.MUNCH));
-                game.stopSound(GameController.MUNCH);
+            if(GameController.rm().getSound("munch").playedSec() >= 0.3) {
+                GameController.rm().getSound("munch").stop();
             }
         }
 
@@ -644,13 +642,13 @@ public class GameLevel {
                 ghost.setPercentageSpeed(ghostSpeedPercentage(ghost));
                 ghost.turnBackInstantly();
             }
-            ghost.setAnimator(AnimatorLib.GHOST_ANIMATOR[FRIGHTENED_GHOST]);
+            ghost.setAnimator(GameController.rm().getAnimator(GameModel.FRIGHTENED_GHOST));
         }
 
         //In late frightened phase, change ghost animator, ghosts blink blue and white, meaning it will be back to chasing phase soon
         if(frightenedTimer.ticks() >= GameModel.frightenedDuration(levelNum) * 0.6) {
             for(var ghost : pacman.victims()) {
-                ghost.setAnimator(AnimatorLib.GHOST_ANIMATOR[LATE_FRIGTHENED_GHOST]);
+                ghost.setAnimator(GameController.rm().getAnimator(GameModel.LATE_FRIGTHENED_GHOST));
             }
         }
 

@@ -3,6 +3,7 @@ package utc.hiep.pacmanjavafx.model.entity;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import utc.hiep.pacmanjavafx.controller.GameController;
 import utc.hiep.pacmanjavafx.lib.*;
 import utc.hiep.pacmanjavafx.model.Animator;
 import utc.hiep.pacmanjavafx.model.level.GameModel;
@@ -53,7 +54,7 @@ public class Ghost extends MovableEntity{
         this.id = id;
         this.name = name;
         setState(LOCKED);
-        this.animator = AnimatorLib.GHOST_ANIMATOR[id];
+        this.animator = GameController.rm().getAnimator(id);
     }
 
     public void setHouse(House house) {
@@ -106,15 +107,15 @@ public class Ghost extends MovableEntity{
         this.state = state;
         switch (state) {
             case LOCKED, LEAVING_HOUSE -> {
-                animator = AnimatorLib.GHOST_ANIMATOR[id];
+                animator = GameController.rm().getAnimator(id);;
                 updateDefaultSpeed(speedInsideHouse);
             }
             case CHASING_TARGET, FRIGHTENED -> {
-                animator = AnimatorLib.GHOST_ANIMATOR[id];
+                animator = GameController.rm().getAnimator(id);;
                 updateDefaultSpeed(outOfHouseSpeed);
             }
             case EATEN, ENTERING_HOUSE, RETURNING_TO_HOUSE -> {
-                animator = AnimatorLib.GHOST_ANIMATOR[GameModel.EATEN_GHOST];
+                animator = GameController.rm().getAnimator(GameModel.EATEN_GHOST);
                 setDefaultSpeed(speedReturningToHouse);
             }
             default -> {}

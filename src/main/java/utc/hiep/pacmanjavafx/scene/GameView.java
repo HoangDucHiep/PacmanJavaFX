@@ -6,8 +6,10 @@ import javafx.scene.image.PixelBuffer;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import utc.hiep.pacmanjavafx.controller.GameController;
 import utc.hiep.pacmanjavafx.event.GameEvent;
 import utc.hiep.pacmanjavafx.lib.*;
+import utc.hiep.pacmanjavafx.model.Animator;
 import utc.hiep.pacmanjavafx.model.entity.Ghost;
 import utc.hiep.pacmanjavafx.model.entity.Pacman;
 import utc.hiep.pacmanjavafx.model.level.GameModel;
@@ -15,8 +17,12 @@ import utc.hiep.pacmanjavafx.model.level.LevelState;
 import utc.hiep.pacmanjavafx.model.world.PacmanMap;
 import utc.hiep.pacmanjavafx.model.world.World;
 
+import java.util.function.Predicate;
+
 import static utc.hiep.pacmanjavafx.lib.Global.*;
 import static utc.hiep.pacmanjavafx.model.level.GameModel.*;
+import static utc.hiep.pacmanjavafx.model.world.World.T_ENERGIZER;
+import static utc.hiep.pacmanjavafx.model.world.World.T_PELLET;
 
 public class GameView extends GeneralScene {
     public static final int GAME_WIDTH = TILE_SIZE * TILES_X;   //all size is pixel
@@ -28,7 +34,7 @@ public class GameView extends GeneralScene {
     private Canvas canvas;
     private GraphicsContext gc;
 
-    private GameModel game;
+    private GameController game;
 
 
     //Game entity
@@ -36,10 +42,12 @@ public class GameView extends GeneralScene {
     private Pacman pacman;
     private Ghost[] ghosts;
 
+    private Animator energizerAnimator;
+
     /**
      * Constructor
      */
-    public GameView(GameModel game) {
+    public GameView(GameController game) {
         super();
         setBackGround();
 
@@ -59,6 +67,8 @@ public class GameView extends GeneralScene {
         gc = canvas.getGraphicsContext2D();
         getRootPane().getChildren().add(canvas);
 
+        energizerAnimator = GameController.rm().getAnimator(ENERGIZEER);
+
 
     }
 
@@ -74,7 +84,7 @@ public class GameView extends GeneralScene {
      * Set background for main pane
      */
     private void setBackGround() {
-        BackgroundImage background = new BackgroundImage(ImageLib.BACKGROUND_IMAGE, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT);
+        BackgroundImage background = new BackgroundImage(GameController.rm().getImage("back_ground"), BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT);
         getRootPane().setBackground(new Background(background));
     }
 
@@ -85,6 +95,8 @@ public class GameView extends GeneralScene {
     public void render() {
         gc.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT); //clear last frame rendering
         world.drawMap(gc);
+
+
         game.hud().render(gc);
 
         if (isGridDisplayed) {

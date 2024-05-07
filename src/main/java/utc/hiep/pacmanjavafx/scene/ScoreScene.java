@@ -18,7 +18,6 @@ import utc.hiep.pacmanjavafx.model.DatabaseControl;
 import utc.hiep.pacmanjavafx.controller.GameController;
 import utc.hiep.pacmanjavafx.lib.FontLib;
 import utc.hiep.pacmanjavafx.lib.Global;
-import utc.hiep.pacmanjavafx.lib.ImageLib;
 import utc.hiep.pacmanjavafx.model.level.LevelState;
 
 import java.util.List;
@@ -46,7 +45,7 @@ public class ScoreScene extends GeneralScene{
         rootPane = new AnchorPane();
         setRootPane(rootPane);
         rootPane.autosize();
-        setBackGround(ImageLib.BACKGROUND_IMAGE);
+        setBackGround(GameController.rm().getImage("back_ground"));
 
         //Two side
         scoreSide = new VBox();
@@ -79,7 +78,7 @@ public class ScoreScene extends GeneralScene{
         logoSide.getChildren().add(getVSpacer());
 
         //Logo
-        Image logo = ImageLib.SCORE_SCENE_LOGO;
+        Image logo = GameController.rm().getImage("score_logo");
         ImageView logoView = new ImageView(logo);
         logoView.setFitWidth(logo.getWidth());
         logoView.setFitHeight(logo.getHeight());
