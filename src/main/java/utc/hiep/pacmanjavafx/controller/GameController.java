@@ -2,8 +2,11 @@ package utc.hiep.pacmanjavafx.controller;
 
 import javafx.animation.AnimationTimer;
 import javafx.scene.input.KeyCode;
+import javafx.scene.media.AudioClip;
 import javafx.stage.Stage;
-import utc.hiep.pacmanjavafx.DatabaseControl;
+import utc.hiep.pacmanjavafx.lib.AudioLib;
+import utc.hiep.pacmanjavafx.model.AudioPlayer;
+import utc.hiep.pacmanjavafx.model.DatabaseControl;
 import utc.hiep.pacmanjavafx.PacManApplication;
 import utc.hiep.pacmanjavafx.event.GameEvent;
 import utc.hiep.pacmanjavafx.lib.Direction;
@@ -19,12 +22,25 @@ import utc.hiep.pacmanjavafx.scene.WelcomeScene;
 
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 public class GameController implements GameModel {
     public static final byte GAME_VIEW = 0;
     public static final byte SCORE_SCENE = 1;
     public static final byte WELCOME_SCENE = 2;
+
+    public static final String MUNCH = "doublemunch.wav";
+    public static final String EAT_GHOST = "eat_ghost.wav";
+    public static final String EXTEND = "extend.wav";
+    public static final String GAME_OVER = "game_over.wav";
+    public static final String GAME_START = "game_start.wav";
+    public static final String GHOST_TURN_BLUE = "ghost_turn_to_blue.wav";
+    public static final String LEVEL_COMPLETE = "level_complete.wav";
+    public static final String PACMAN_DIE = "pacman_death.wav";
+    public static final String SIREN = "siren_1.wav";
+    public static final String RETREAT = "retreating.wav";
 
     private int currentScene = WELCOME_SCENE;
 
@@ -36,13 +52,9 @@ public class GameController implements GameModel {
 
     private GameLevel gameLevel;
 
-    /*Event listener*/
-
-
     private HUD hud;
 
-
-    private DatabaseControl db;
+    //private DatabaseControl db;
 
     private long score;
     private int life;
@@ -50,17 +62,30 @@ public class GameController implements GameModel {
     private long highScore;
     private int highLevel;
 
+    private Map<String, AudioLib> audioMap = new HashMap<>();
+
 
     public GameController() {
-        try {
-            db = new DatabaseControl();
-        } catch (SQLException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+//            db = new DatabaseControl();
+//        } catch (SQLException | ClassNotFoundException e) {
+//            throw new RuntimeException(e);
+//        }
 
-        DatabaseControl.HighScore bestScore = db.scoreboard().get(0);
-        highScore = bestScore.score();
-        highLevel = bestScore.level();
+        //DatabaseControl.HighScore bestScore = db.scoreboard().get(0);
+//        highScore = bestScore.score();
+//        highLevel = bestScore.level();
+
+        audioMap.put(MUNCH, new AudioLib(MUNCH));
+        audioMap.put(EAT_GHOST, new AudioLib(EAT_GHOST));
+        audioMap.put(EXTEND, new AudioLib(EXTEND));
+        audioMap.put(GAME_OVER, new AudioLib(GAME_OVER));
+        audioMap.put(GAME_START, new AudioLib(GAME_START));
+        audioMap.put(GHOST_TURN_BLUE, new AudioLib(GHOST_TURN_BLUE));
+        audioMap.put(LEVEL_COMPLETE, new AudioLib(LEVEL_COMPLETE));
+        audioMap.put(PACMAN_DIE, new AudioLib(PACMAN_DIE));
+        audioMap.put(SIREN, new AudioLib(SIREN));
+        audioMap.put(RETREAT, new AudioLib(RETREAT));
 
         changeScene(WELCOME_SCENE);
     }
@@ -91,7 +116,6 @@ public class GameController implements GameModel {
 
             @Override
             public void handle(long currentTime) {
-                System.out.println(accumulatedTime);
                 if (previousTime == 0) {
                     previousTime = currentTime;
                     return;
@@ -121,14 +145,12 @@ public class GameController implements GameModel {
 
 
     private void updateGame() {
-        System.out.println("Current scene: " + currentScene);
         if(currentScene == GAME_VIEW) {
             keyHandler();
             if((gameLevel.currentState() == LevelState.LEVEL_STARTED && (gameLevel.currentEvent() != GameEvent.PAC_DIED && gameLevel.currentEvent() != GameEvent.GAME_WIN) || gameLevel.currentState() == LevelState.LEVEL_PAUSED)) {
                 updateAnimator();
             }
             if (gameLevel.currentState() == LevelState.LEVEL_LOST) {
-                System.out.println("There");
                 changeScene(SCORE_SCENE);
                 scoreScene.showNewScoreScene();
             }
@@ -221,7 +243,6 @@ public class GameController implements GameModel {
 
         } else if(scene == SCORE_SCENE) {
             if (scoreScene == null || Global.WINDOW_WIDTH != window.getWidth() || Global.WINDOW_HEIGHT != window.getHeight()) {
-                System.out.println("Creat new score scene");
                 Global.WINDOW_WIDTH = (int) window.getWidth();
                 Global.WINDOW_HEIGHT = (int) window.getHeight();
                 scoreScene = new ScoreScene(this);
@@ -244,7 +265,28 @@ public class GameController implements GameModel {
 
 
     public DatabaseControl db() {
-        return db;
+        //return db;
+        return null;
+    }
+
+
+
+
+    public void playSound(String sound) {
+        if(!audioMap.get(sound).isPLaying()) {
+            audioMap.get(sound).getAudioClip().setCycleCount(AudioClip.INDEFINITE);
+            audioMap.get(sound).play();
+        }
+    }
+
+    public double playedSec(String sound) {
+        return audioMap.get(sound).playedSec();
+    }
+
+    public void stopSound(String sound) {
+        if(audioMap.get(sound).isPLaying()) {
+            audioMap.get(sound).stop();
+        }
     }
 
 }

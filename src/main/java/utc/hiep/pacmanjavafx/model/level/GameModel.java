@@ -1,7 +1,7 @@
 package utc.hiep.pacmanjavafx.model.level;
 
-import utc.hiep.pacmanjavafx.DatabaseControl;
-import utc.hiep.pacmanjavafx.lib.AnimatorLib;
+import utc.hiep.pacmanjavafx.model.AudioPlayer;
+import utc.hiep.pacmanjavafx.model.DatabaseControl;
 import utc.hiep.pacmanjavafx.model.HUD;
 
 import static utc.hiep.pacmanjavafx.lib.Global.GAME_SCALE;

@@ -14,12 +14,11 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import utc.hiep.pacmanjavafx.DatabaseControl;
+import utc.hiep.pacmanjavafx.model.DatabaseControl;
 import utc.hiep.pacmanjavafx.controller.GameController;
 import utc.hiep.pacmanjavafx.lib.FontLib;
 import utc.hiep.pacmanjavafx.lib.Global;
 import utc.hiep.pacmanjavafx.lib.ImageLib;
-import utc.hiep.pacmanjavafx.model.level.GameModel;
 import utc.hiep.pacmanjavafx.model.level.LevelState;
 
 import java.util.List;

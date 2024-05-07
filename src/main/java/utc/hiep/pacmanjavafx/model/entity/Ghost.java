@@ -82,7 +82,7 @@ public class Ghost extends MovableEntity{
      *
      * @param pac Pac-Man or Ms. Pac-Man
      */
-    public void update(Pacman pac, World world) {
+    public synchronized void update(Pacman pac, World world) {
         checkNotNull(pac);
         switch (state) {
             case LOCKED             -> updateStateLocked();

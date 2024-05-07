@@ -1,5 +1,6 @@
 package utc.hiep.pacmanjavafx.model.level;
 
+import utc.hiep.pacmanjavafx.controller.GameController;
 import utc.hiep.pacmanjavafx.event.GameEvent;
 import utc.hiep.pacmanjavafx.lib.*;
 import utc.hiep.pacmanjavafx.model.Timer;
@@ -47,7 +48,7 @@ public class GameLevel {
         }
     }
 
-    GameModel game;
+    GameController game;
 
     //LevelNum and data of this level
     private final int levelNum;
@@ -78,12 +79,12 @@ public class GameLevel {
 
 
 
-    public GameLevel(GameModel game) {
+    public GameLevel(GameController game) {
         this(game, 1);
     }
 
 
-    public GameLevel(GameModel game, int levelNum) {
+    public GameLevel(GameController game, int levelNum) {
         this.game = game;
         this.levelNum = levelNum;
         data = new Data(levelNum, RAW_LEVEL_DATA[levelNum - 1]);
@@ -246,7 +247,7 @@ public class GameLevel {
                 return;
             } else if (gameEventTimer.ticks() > ((PAC_DIED_ANIMATION_LENGTH + 3) * FPS)) {
                 return;
-            }else {
+            } else {
                 if(game.lives() == 0) {
                     gameEvent = GameEvent.GAME_OVER;
                     pacman.hide();
@@ -293,7 +294,37 @@ public class GameLevel {
 
         huntingTimer.updateTimer();
         updateChasingTargetPhase();
-        Arrays.stream(ghosts()).forEach(ghost -> ghost.update(pacman, world));
+
+        Thread redThread = new Thread(() -> {
+            ghosts[RED_GHOST].update(pacman, world);
+        });
+
+        Thread pinkThread = new Thread(() -> {
+            ghosts[PINK_GHOST].update(pacman, world);
+        });
+
+        Thread cyanThread = new Thread(() -> {
+            ghosts[CYAN_GHOST].update(pacman, world);
+        });
+
+        Thread orangeThread = new Thread(() -> {
+            ghosts[ORANGE_GHOST].update(pacman, world);
+        });
+
+
+        redThread.start();
+        pinkThread.start();
+        cyanThread.start();
+        orangeThread.start();
+
+        try {
+            redThread.join();
+            pinkThread.join();
+            cyanThread.join();
+            orangeThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         movePacman();
         handlePacmanEatFoot();
@@ -471,7 +502,9 @@ public class GameLevel {
         for(var ghost : ghosts) {
             if(pacman.sameTile(ghost) && (pacman.isNewTileEntered() || ghost.isNewTileEntered())) {
                 if(ghost.state().equals(GhostState.CHASING_TARGET)) {
+                    System.out.println("Here!!!");
                     gameEvent = GameEvent.PAC_DIED;
+                    System.out.println("Game event: " + gameEvent);
                     game.removeLife();
                 }
                 else if(ghost.state().equals(GhostState.FRIGHTENED)) {
@@ -551,9 +584,18 @@ public class GameLevel {
      * */
     private void handlePacmanEatFoot() {
         iVector2D currentTile = pacman.atTile();
-        if(world.hasFoodAt(currentTile) && !world.hasEatenFoodAt(currentTile)) {
-            houseControl().updateDotCount(this);
 
+        if(!pacman.isNewTileEntered()) {
+            return;
+        }
+
+        if(world.hasFoodAt(currentTile) && !world.hasEatenFoodAt(currentTile)) {
+
+            new Thread(() -> {
+                game.playSound(GameController.MUNCH);
+            }).start();
+
+            houseControl().updateDotCount(this);
 
             if(world.isEnergizerTile(currentTile)) {
                 scoreProcess(POINTS_ENERGIZER);
@@ -564,12 +606,15 @@ public class GameLevel {
             } else {
                 scoreProcess(POINTS_NORMAL_PELLET);
             }
-
             world.removeFood(currentTile);
             pacman.endStarving();
         }
         else {
             pacman.starve();
+            if(game.playedSec(GameController.MUNCH) >= 0.3) {
+                System.out.println("played Time = " + game.playedSec(GameController.MUNCH));
+                game.stopSound(GameController.MUNCH);
+            }
         }
 
         if(world.uneatenFoodCount() == 0) {

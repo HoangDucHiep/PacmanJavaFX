@@ -2,6 +2,7 @@ package utc.hiep.pacmanjavafx.scene;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.PixelBuffer;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -9,7 +10,6 @@ import utc.hiep.pacmanjavafx.event.GameEvent;
 import utc.hiep.pacmanjavafx.lib.*;
 import utc.hiep.pacmanjavafx.model.entity.Ghost;
 import utc.hiep.pacmanjavafx.model.entity.Pacman;
-import utc.hiep.pacmanjavafx.model.level.GameLevel;
 import utc.hiep.pacmanjavafx.model.level.GameModel;
 import utc.hiep.pacmanjavafx.model.level.LevelState;
 import utc.hiep.pacmanjavafx.model.world.PacmanMap;
@@ -58,7 +58,6 @@ public class GameView extends GeneralScene {
         canvas = new Canvas(GAME_WIDTH, GAME_HEIGHT);
         gc = canvas.getGraphicsContext2D();
         getRootPane().getChildren().add(canvas);
-
 
 
     }
