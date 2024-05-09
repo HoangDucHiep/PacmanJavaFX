@@ -418,8 +418,7 @@ public class GameController implements GameModel {
             }
 
             if(gameLevel.currentEvent() == GameEvent.PAC_DIED) {
-                stopALlSound();
-
+                stopAllSoundExcept(PACMAN_DIE_SOUND);
                 if(!rm.getSound(PACMAN_DIE_SOUND).isPLaying())
                     rm.getSound(PACMAN_DIE_SOUND).play();
             }
@@ -446,13 +445,13 @@ public class GameController implements GameModel {
             }
 
             if(gameLevel.currentEvent() == GameEvent.GAME_OVER) {
-                stopALlSound();
+                stopAllSoundExcept(GAME_OVER_SOUND);
                 if(!rm.getSound(GAME_OVER_SOUND).isPLaying())
                     rm.getSound(GAME_OVER_SOUND).play();
             }
 
             if(gameLevel.currentEvent() == GameEvent.GAME_WIN) {
-                stopALlSound();
+                stopAllSoundExcept(LEVEL_COMPLETE_SOUND);
                 if(!rm.getSound(LEVEL_COMPLETE_SOUND).isPLaying())
                     rm.getSound(LEVEL_COMPLETE_SOUND).play();
             }
@@ -471,6 +470,14 @@ public class GameController implements GameModel {
 
     public void stopALlSound() {
         rm.getAllSound().forEach(AudioPlayer::stop);
+    }
+
+    public void stopAllSoundExcept(String sound) {
+        rm.getAllSound().forEach(audioPlayer -> {
+            if(!audioPlayer.equals(rm.getSound(sound))) {
+                audioPlayer.stop();
+            }
+        });
     }
 
     private void updateAnimator() {
