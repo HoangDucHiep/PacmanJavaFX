@@ -75,6 +75,11 @@ public class GameScene extends GeneralScene {
             drawGhostTarget();
         }
 
+        if(game.gameLevel().bonus() != null) {
+            System.out.println("Rendered");
+            game.gameLevel().bonus().render(gc);
+        }
+
         if(game.gameLevel().pacman().isVisible())
             game.gameLevel().pacman().render(gc);
 
@@ -95,9 +100,7 @@ public class GameScene extends GeneralScene {
     }
 
 
-
-
-    //Use only for testing things
+    //Use for testing things
     public void switchGridDisplay() {
         isGridDisplayed = !isGridDisplayed;
     }

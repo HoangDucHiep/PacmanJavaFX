@@ -4,10 +4,7 @@ import utc.hiep.pacmanjavafx.controller.GameController;
 import utc.hiep.pacmanjavafx.event.GameEvent;
 import utc.hiep.pacmanjavafx.lib.*;
 import utc.hiep.pacmanjavafx.model.Timer;
-import utc.hiep.pacmanjavafx.model.entity.Entity;
-import utc.hiep.pacmanjavafx.model.entity.Ghost;
-import utc.hiep.pacmanjavafx.model.entity.GhostState;
-import utc.hiep.pacmanjavafx.model.entity.Pacman;
+import utc.hiep.pacmanjavafx.model.entity.*;
 import utc.hiep.pacmanjavafx.model.world.GhostHouseControl;
 import utc.hiep.pacmanjavafx.model.world.PacmanMap;
 import utc.hiep.pacmanjavafx.model.world.World;
@@ -28,6 +25,7 @@ import static utc.hiep.pacmanjavafx.lib.Direction.*;
 import static utc.hiep.pacmanjavafx.model.entity.GhostState.*;
 import static utc.hiep.pacmanjavafx.model.level.GameModel.*;
 import static utc.hiep.pacmanjavafx.lib.Global.*;
+import static utc.hiep.pacmanjavafx.model.world.PacmanMap.BONUS_POSITION;
 
 public class GameLevel {
     public record Data(
@@ -40,12 +38,13 @@ public class GameLevel {
             byte elroy2DotsLeft, // Number of pellets left when Blinky becomes "Cruise Elroy" grade 2. - haven't implemented yet
             byte elroy2SpeedPercentage, //The Relative speed of Blinky being "Cruise Elroy" grade 2. - haven't implemented yet
             byte pacSpeedPoweredPercentage, // Relative speed of Pac-Man in power mode.
-            byte ghostSpeedFrightenedPercentage // Relative speed of frightened ghost.
+            byte ghostSpeedFrightenedPercentage, // Relative speed of frightened ghost.
+            int bonusPoint // Bonus point for eating all pellets.
     )
 
     {
         public Data(int number, byte[] data) {
-            this(number, data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8]);
+            this(number, data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9]);
         }
     }
 
@@ -64,12 +63,14 @@ public class GameLevel {
     private final Pacman pacman;
     private final World world;
     private final Ghost[] ghosts;
+    private Bonus bonus;
 
     //Timer
     private final Timer huntingTimer;
     private final Timer levelStateTimer;
     private final Timer frightenedTimer;
     private final Timer gameEventTimer;
+    private final Timer bonusTimer;
 
     //Game logic things
     private byte huntingPhaseIndex;
@@ -95,6 +96,7 @@ public class GameLevel {
         frightenedTimer = new Timer();
         gameEventTimer = new Timer();
         huntingTimer = new Timer();
+        bonusTimer = new Timer();
 
         this.pacman = new Pacman("PACMAN");
         this.world = PacmanMap.createPacManWorld();
@@ -283,6 +285,30 @@ public class GameLevel {
                 gameEventTimer.reset();
             }
         }
+
+        System.out.println("Eaten food count: " + world.eatenFoodCount());
+        //create bonus
+        if(world.eatenFoodCount() == 70 || world.eatenFoodCount() == 170){
+            System.out.println("Create bonus");
+            bonus = new Bonus(data.bonusPoint);
+            bonus.setPosition(BONUS_POSITION.scaled(TILE_SIZE));
+        }
+
+
+        if(bonus != null) {
+            if(pacman.atTile().equals(bonus.atTile())) {
+                game.addScore(bonus.getPointWorth());
+                bonus = null;
+                bonusTimer.reset();
+                return;
+            }
+            bonusTimer.updateTimer();
+            if(bonusTimer.ticks() >= 10 * FPS) {
+                bonus = null;
+                bonusTimer.reset();
+            }
+        }
+
 
 
         houseControl.unlockGhost(this);
@@ -698,6 +724,10 @@ public class GameLevel {
 
     public Ghost[] ghosts() {
         return ghosts;
+    }
+
+    public Bonus bonus() {
+        return bonus;
     }
 
 

@@ -61,7 +61,7 @@ public interface PacmanMap {
     iVector2D SCATTER_TARGET_RIGHT_LOWER_CORNER = new iVector2D(27, 34);
 
 
-    fVector2D BONUS_POSITION = halfTileRightOf(13, 20);
+    fVector2D BONUS_POSITION = new fVector2D(13.5F, 19.5F);
     fVector2D PAC_POSITION   = halfTileRightOf(13, 26);
 
 

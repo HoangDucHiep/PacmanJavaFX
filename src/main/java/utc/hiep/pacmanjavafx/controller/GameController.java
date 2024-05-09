@@ -383,12 +383,14 @@ public class GameController implements GameModel {
                 updateAnimator();
             }
             if (gameLevel.currentState() == LevelState.LEVEL_LOST) {
+                stopALlSound();
                 changeScene(SCORE_SCENE);
                 gameLoop.stop();
                 scoreScene.showNewScoreScene();
             }
 
             if(gameLevel.currentState() == LevelState.LEVEL_WON) {
+                stopALlSound();
                 if(gameLevel.levelNum() == GameModel.MAX_LEVEL) {          //reached max level, show score scene
                     changeScene(SCORE_SCENE);
                     gameLoop.stop();
