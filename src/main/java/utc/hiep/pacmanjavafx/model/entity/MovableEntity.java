@@ -119,6 +119,8 @@ public abstract class MovableEntity extends Entity {
         checkNotNull(acceleration, "Acceleration of entity must not be null");
         accX = acceleration.x();
         accY = acceleration.y();
+        velX += accX;
+        velY += accY;
     }
 
 
@@ -130,14 +132,15 @@ public abstract class MovableEntity extends Entity {
     public void setAcceleration(float ax, float ay) {
         accX = ax;
         accY = ay;
+        velX += accX;
+        velY += accY;
     }
 
 
     /**
      * Move entity to next pos in current direction with velocity in one frame
      */
-    public void
-    move() {
+    public void move() {
         iVector2D prevTile = atTile();
         setPosition(posX() + velX, posY() + velY);
         velX += accX;

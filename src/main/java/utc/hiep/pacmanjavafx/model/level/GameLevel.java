@@ -333,10 +333,13 @@ public class GameLevel {
             System.out.println("Ghost thread problem");
         }
 
+
+        //if(gameEvent != PAC_FOUND_FOOD) //pac stop 1 tick after eat food
+        //   movePacman();
+
         movePacman();
 
         handlePacmanEatFoot();
-
         if(gameEvent == GameEvent.PAC_EAT_ENERGIZER) {
             updateEventPacEatEnergizer();
         }
@@ -612,10 +615,14 @@ public class GameLevel {
             world.removeFood(currentTile);
             lastEvent = gameEvent;
             gameEvent = PAC_FOUND_FOOD;
+            float accX = pacman.velocity().x() == 0 ? 0 : -pacman.velocity().x() * 0.11f;
+            float accY = pacman.velocity().y() == 0 ? 0 : -pacman.velocity().y() * 0.11f;
+            pacman.setAcceleration(accX, accY);
             pacman.endStarving();
         }
         else {
             pacman.starve();
+            pacman.updateDefaultSpeed((float) PPS_AT_100_PERCENT / FPS);
             if(lastEvent == PAC_EAT_ENERGIZER && huntingTimer.ticks() != 0) {
                 gameEvent = PAC_EAT_ENERGIZER;
             } else
