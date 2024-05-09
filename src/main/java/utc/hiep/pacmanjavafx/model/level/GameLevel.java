@@ -286,7 +286,6 @@ public class GameLevel {
             }
         }
 
-        System.out.println("Eaten food count: " + world.eatenFoodCount());
         //create bonus
         if(world.eatenFoodCount() == 70 || world.eatenFoodCount() == 170){
             System.out.println("Create bonus");
@@ -296,7 +295,7 @@ public class GameLevel {
 
 
         if(bonus != null) {
-            if(pacman.atTile().equals(bonus.atTile())) {
+            if(pacman.atTile().equals(bonus.atTile()) && pacman.isNewTileEntered()) {
                 game.addScore(bonus.getPointWorth());
                 bonus = null;
                 bonusTimer.reset();

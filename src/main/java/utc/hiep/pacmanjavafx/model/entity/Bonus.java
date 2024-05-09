@@ -5,7 +5,7 @@ import utc.hiep.pacmanjavafx.controller.GameController;
 import utc.hiep.pacmanjavafx.lib.Global;
 
 public class Bonus extends Entity{
-    private int pointWorth;
+    private final int pointWorth;
     public Bonus(int pointWorth) {
         this.pointWorth = 100 * pointWorth;
     }
