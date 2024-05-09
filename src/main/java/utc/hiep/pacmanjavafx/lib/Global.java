@@ -1,18 +1,20 @@
 package utc.hiep.pacmanjavafx.lib;
 
-import javafx.stage.Screen;
 
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Random;
-import java.util.stream.Stream;
 
+
+/**
+ * Global constants and utility methods.
+ */
 public class Global {
     public static double WINDOW_WIDTH = 1024;                //window width
     public static double WINDOW_HEIGHT = 768;                //window height
 
     public static final int TILE_SIZE = 16;                     //tile size
-    public static final int HALF_TILE_SIZE = TILE_SIZE / 2;     //half tile size
+    public static final int HALF_TILE_SIZE = TILE_SIZE / 2;     //half-tile size
 
     public static final int ORIGINAL_TILE_SIZE = 8;             //unscaled tile size
 
@@ -21,7 +23,6 @@ public class Global {
 
     public static final int GAME_SCALE = TILE_SIZE / ORIGINAL_TILE_SIZE;
 
-    public static final int SPRITE_SHEET_WIDTH = 224;
 
 
     public static void checkNotNull(Object value) {
@@ -29,12 +30,6 @@ public class Global {
     }
 
     public static final Random RND = new Random();
-
-    private static final String MSG_GAME_NULL = "Game model must not be null";
-    private static final String MSG_LEVEL_NULL = "Game level must not be null";
-    private static final String MSG_TILE_NULL = "Tile must not be null";
-    private static final String MSG_DIR_NULL = "Direction must not be null";
-
 
     /**
      * @param position a position
@@ -59,7 +54,7 @@ public class Global {
     /**
      * @param tileX tile x Index
      * @param tileY tile y Index
-     * @return position half tile right of tile origin
+     * @return position half-tile right of tile origin
      */
     public static fVector2D halfTileRightOf(int tileX, int tileY) {
         return new fVector2D((float) (TILE_SIZE * tileX + HALF_TILE_SIZE) / TILE_SIZE, tileY);
@@ -68,7 +63,7 @@ public class Global {
     /**
      * @param tileX tile x Index
      * @param tileY tile y Index
-     * @return position half tile right of tile origin
+     * @return position half-tile right of tile origin
      */
     public static fVector2D halfTileLeftOf(int tileX, int tileY) {
         return new fVector2D((float) (TILE_SIZE * tileX - HALF_TILE_SIZE) / TILE_SIZE, tileY);
@@ -106,40 +101,10 @@ public class Global {
         Objects.requireNonNull(value, message);
     }
 
-//    public static void checkGameNotNull(GameModel game) {
-//        checkNotNull(game, MSG_GAME_NULL);
-//    }
-//
     public static void checkGhostID(byte id) {
         if (id < 0 || id > 3) {
             throw new IllegalArgumentException("Illegal ghost ID: " + id);
         }
-    }
-//
-//    public static void checkLevelNumber(int number) {
-//        if (number < 1) {
-//            throw new IllegalLevelNumberException(number);
-//        }
-//    }
-
-
-//    public static void checkLevelNotNull(GameLevel level) {
-//        checkNotNull(level, MSG_LEVEL_NULL);
-//    }
-//
-//    public static void checkDirectionNotNull(Direction dir) {
-//        checkNotNull(dir, MSG_DIR_NULL);
-//    }
-
-    public static double requirePositive(double value, String messageFormat) {
-        if (value < 0) {
-            throw new IllegalArgumentException(String.format(messageFormat, value));
-        }
-        return value;
-    }
-
-    public static double requirePositive(double value) {
-        return requirePositive(value, "%f must be positive");
     }
 
     /**
@@ -189,31 +154,12 @@ public class Global {
 
 
     /**
-     * @param percent percentage value
-     * @return {@code true} with the given probability
-     */
-    public static boolean inPercentOfCases(int percent) {
-        if (percent < 0 || percent > 100) {
-            throw new IllegalArgumentException(String.format("Percent value must be in range [0, 100] but is %d", percent));
-        }
-        if (percent == 0) {
-            return false;
-        }
-        if (percent == 100) {
-            return true;
-        }
-        return randomInt(0, 100) < percent;
-    }
-
-
-    /**
      * @param n some integer
      * @return {@code true} if the given number is even
      */
     public static boolean isEven(int n) {
         return n % 2 == 0;
     }
-
 
     /**
      * @param n some integer
@@ -223,56 +169,6 @@ public class Global {
         return n % 2 != 0;
     }
 
-
-    /**
-     * @param value some integer
-     * @return value divided by 100
-     */
-    public static float percent(int value) {
-        return value / 100f;
-    }
-
-    public static float positive(float value) {
-        return value < 0 ? -value : value;
-    }
-
-    /**
-     * @param value1 value1
-     * @param value2 value2
-     * @param t      "time" between 0 and 1
-     * @return linear interpolation between {@code value1} and {@code value2} values
-     */
-    public static double lerp(double value1, double value2, double t) {
-        return (1 - t) * value1 + t * value2;
-    }
-
-    /**
-     * @param value some value
-     * @param min   lower bound of interval
-     * @param max   upper bound of interval
-     * @return the value if inside the interval, the lower bound if the value is smaller, the upper bound if the value is
-     * larger
-     */
-    public static float clamp(float value, float min, float max) {
-        return (value < min) ? min : Math.min(value, max);
-    }
-
-    /**
-     * @param value some value
-     * @param min   lower bound of interval
-     * @param max   upper bound of interval
-     * @return the value if inside the interval, the lower bound if the value is smaller, the upper bound if the value is
-     * larger
-     */
-    public static int clamp(int value, int min, int max) {
-        if (value < min) {
-            return min;
-        }
-        if (value > max) {
-            return max;
-        }
-        return value;
-    }
 
     /**
      * @param delta  maximum allowed deviation (non-negative number)
@@ -287,19 +183,12 @@ public class Global {
         return value >= (target - delta) && value <= (target + delta);
     }
 
-    public static byte[][] copyByteArray2D(byte[][] array) {
-        return Arrays.stream(array).map(byte[]::clone).toArray(byte[][]::new);
-    }
-
     @SafeVarargs
     public static <T> boolean oneOf(T value, T... alternatives) {
-        switch (alternatives.length) {
-            case 0:
-                return false;
-            case 1:
-                return value.equals(alternatives[0]);
-            default:
-                return Stream.of(alternatives).anyMatch(value::equals);
-        }
+        return switch (alternatives.length) {
+            case 0 -> false;
+            case 1 -> value.equals(alternatives[0]);
+            default -> Arrays.asList(alternatives).contains(value);
+        };
     }
 }

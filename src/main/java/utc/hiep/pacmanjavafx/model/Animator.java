@@ -4,7 +4,6 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import utc.hiep.pacmanjavafx.lib.Direction;
 
-import static utc.hiep.pacmanjavafx.lib.Global.HALF_TILE_SIZE;
 
 
 /**
@@ -143,40 +142,44 @@ public class Animator {
         }
     }
 
+    public void reset() {
+        animationCount = 0;
+        ticksCount = 0;
+    }
+
 
     /**
      * Position of a frame in sprite sheet, have x and y position
-    * */
-    public static class AnimatorPos {
-        private int posX;
-        private int posY;
-
-
+     */
+        public record AnimatorPos(int posX, int posY) {
         /**
-         * Create a frame position in sprite sheet
-         * @param posX
-         * @param posY
+         * Create a frame position in a sprite sheet
+         *
+         * @param posX the x position
+         * @param posY the y position
          */
-        public AnimatorPos(int posX, int posY) {
-            this.posX = posX;
-            this.posY = posY;
+        public AnimatorPos {
         }
 
-        /**
-         * Get the x position
-         * @return the x
-         */
-        public int posX() {
-            return posX;
-        }
+            /**
+             * Get the x position
+             *
+             * @return the x
+             */
+            @Override
+            public int posX() {
+                return posX;
+            }
 
 
-        /**
-         * Get the y position
-         * @return the y
-         */
-        public int posY() {
-            return posY;
+            /**
+             * Get the y position
+             *
+             * @return the y
+             */
+            @Override
+            public int posY() {
+                return posY;
+            }
         }
-    }
 }

@@ -2,22 +2,19 @@ package utc.hiep.pacmanjavafx.lib;
 
 import javafx.scene.image.Image;
 import javafx.scene.media.AudioClip;
-import javafx.scene.text.Font;
 import utc.hiep.pacmanjavafx.model.Animator;
 import utc.hiep.pacmanjavafx.model.AudioPlayer;
-import utc.hiep.pacmanjavafx.model.level.GameModel;
 
-import java.io.File;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
 public class ResourcesManeger {
 
-    private Map<String, Image> images;
-    private Map<String, AudioPlayer> sounds;
-    private Map<Byte, Animator> animators;
-
+    private final Map<String, Image> images;
+    private final Map<String, AudioPlayer> sounds;
+    private final Map<Integer, Animator> animators;
     public ResourcesManeger() {
         images = new HashMap<>();
         sounds = new HashMap<>();
@@ -25,7 +22,7 @@ public class ResourcesManeger {
     }
 
     /**
-     * Add all images in original size, if you want to resize the image, use {@link ResourcesManeger#addImage(String, String, int, int)},
+     * Add all images in original size, if you want to resize the image, use ,
      * @param name name of the image
      * @param fileName file name of the image
      */
@@ -57,12 +54,16 @@ public class ResourcesManeger {
     public AudioPlayer getSound(String name) {
         return sounds.get(name);
     }
+
+    public Collection<AudioPlayer> getAllSound() {
+        return sounds.values();
+    }
     
-    public void addAnimator(byte id, Animator animator) {
+    public void addAnimator(int id, Animator animator) {
         animators.put(id, animator);
     }
     
-    public void addAllAnimators(Map<Byte, Animator> animators) {
+    public void addAllAnimators(Map<Integer, Animator> animators) {
         this.animators.putAll(animators);
     }
     

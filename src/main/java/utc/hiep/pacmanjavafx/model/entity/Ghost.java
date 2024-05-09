@@ -20,10 +20,6 @@ import static utc.hiep.pacmanjavafx.lib.Global.*;
 import static utc.hiep.pacmanjavafx.model.entity.GhostState.*;
 
 public class Ghost extends MovableEntity{
-
-    private Animator animator;
-
-
     private final byte id;
     private final String name;
     private GhostState state;
@@ -330,11 +326,4 @@ public class Ghost extends MovableEntity{
         }
     }
 
-    public void animatorUpdate() {
-        animator.update(movingDir());
-    }
-
-    public void setAnimator(Animator animator) {
-        this.animator = animator;
-    }
 }

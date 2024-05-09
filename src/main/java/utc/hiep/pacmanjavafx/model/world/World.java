@@ -8,7 +8,6 @@ import utc.hiep.pacmanjavafx.model.Animator;
 
 import java.util.*;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -20,10 +19,6 @@ import static utc.hiep.pacmanjavafx.model.level.GameModel.MAP;
 public class World {
 
     private static final Image pellet = GameController.rm().getImage("pellet");
-
-    int MAP_WIDTH = TILES_X * TILE_SIZE;
-    int MAP_HEIGHT = (TILES_Y - 5) * TILE_SIZE;
-
     public static final byte T_SPACE = 0;
     public static final byte T_WALL = 1;
     public static final byte T_TUNNEL = 2;
@@ -32,7 +27,6 @@ public class World {
 
 
     private final byte[][] tileMap;                             //tile map data
-    private final List<iVector2D> energizerTiles;                //positions of energizer tiles
     private final BitSet eaten;                                 //eaten food
     private Portal portals;                                     //positions of portals
     private final int totalFoodCount;                           //total number of food tiles
@@ -61,7 +55,6 @@ public class World {
         eaten = new BitSet(numCols() * numRows());
         totalFoodCount = (int) tiles().filter(this::isFoodTile).count();
         uneatenFoodCount = totalFoodCount;
-        energizerTiles = tiles().filter(this::isEnergizerTile).collect(Collectors.toList());
 
 
         //Energizer animator
@@ -80,11 +73,6 @@ public class World {
         this.house = house;
     }
 
-    public Stream<iVector2D> energizerTiles() {
-        return energizerTiles.stream();
-    }
-
-
     /**
      * @param tile some tile
      * @return type of the given tile
@@ -99,9 +87,6 @@ public class World {
     }
 
 
-    public boolean insideBounds(double x, double y) {
-        return 0 <= x && x < numCols() * TILE_SIZE && 0 <= y && y < numRows() * TILE_SIZE;
-    }
 
 
     private int index(iVector2D tile) {
@@ -272,4 +257,8 @@ public class World {
         energizerAnimator.update();
     }
 
+    public void resetAnimator() {
+        energizerAnimator.reset();
+        mapAnimator.reset();
+    }
 }

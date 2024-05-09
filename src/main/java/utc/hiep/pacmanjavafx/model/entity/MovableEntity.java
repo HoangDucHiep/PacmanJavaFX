@@ -3,6 +3,7 @@ package utc.hiep.pacmanjavafx.model.entity;
 import utc.hiep.pacmanjavafx.lib.Direction;
 import utc.hiep.pacmanjavafx.lib.fVector2D;
 import utc.hiep.pacmanjavafx.lib.iVector2D;
+import utc.hiep.pacmanjavafx.model.Animator;
 import utc.hiep.pacmanjavafx.model.world.World;
 
 import java.util.Optional;
@@ -12,7 +13,7 @@ import static utc.hiep.pacmanjavafx.lib.Global.*;
 public abstract class MovableEntity extends Entity {
 
     private Direction movingDir;                //current moving direction
-    private Direction nextDir;                  //next (wish) moving direction
+    private Direction nextDir;                  //next (wish) moving a direction
     private iVector2D targetTile;               //target tile to move to
 
     private float defaultSpeed;                 //Base speed (per tick)
@@ -22,7 +23,6 @@ public abstract class MovableEntity extends Entity {
     public boolean newTileEntered;
     protected boolean gotTurnBackCommand;
     protected boolean canTeleport;
-    public float corneringSpeedUp;
 
 
     private float velX;                 //velocity
@@ -30,6 +30,8 @@ public abstract class MovableEntity extends Entity {
     private float accX;                 //acceleration
     private float accY;
 
+    //UI part
+    protected Animator animator;
 
     public MovableEntity() {
         super();
@@ -62,7 +64,7 @@ public abstract class MovableEntity extends Entity {
 
     /**
      * Set base speed for entity
-     * @param pixelsPerTick
+     * @param pixelsPerTick speed in pixel per tick
      */
     public void setDefaultSpeed(float pixelsPerTick) {
         defaultSpeed = pixelsPerTick;
@@ -80,7 +82,7 @@ public abstract class MovableEntity extends Entity {
 
     /**
      * Set velocity
-     * @param velocity
+     * @param velocity a Velocity in Vector
      */
     public void setVelocity(fVector2D velocity) {
         checkNotNull(velocity);
@@ -89,22 +91,42 @@ public abstract class MovableEntity extends Entity {
     }
 
 
+    /**
+     * Set velocity
+     * @param x velocity in X
+     * @param y velocity in Y
+     */
     public void setVelocity(float x, float y) {
         velX = x;
         velY = y;
     }
 
 
+    /**
+     * Get acceleration
+     * @return an Acceleration in Vector
+     */
     public fVector2D acceleration() {
         return new fVector2D(accX, accY);
     }
 
+
+    /**
+     * Set acceleration
+     * @param acceleration an Acceleration in Vector
+     */
     public void setAcceleration(fVector2D acceleration) {
         checkNotNull(acceleration, "Acceleration of entity must not be null");
         accX = acceleration.x();
         accY = acceleration.y();
     }
 
+
+    /**
+     * Set acceleration
+     * @param ax acceleration in X
+     * @param ay acceleration in Y
+     */
     public void setAcceleration(float ax, float ay) {
         accX = ax;
         accY = ay;
@@ -128,12 +150,12 @@ public abstract class MovableEntity extends Entity {
 
     /**
      * Get entity name
-     * @return
+     * @return name of entity
      */
     public abstract String name();
 
     /**
-     * Check if entity can reverse direction
+     * Check if an entity can reverse a direction
      * @return true if it can turn back, false otherwise
      */
     public abstract boolean canTurnBack();
@@ -148,7 +170,7 @@ public abstract class MovableEntity extends Entity {
 
     /**
      * Set tile to move to
-     * @param tile
+     * @param tile tile to move to
      */
     public void setTargetTile(iVector2D tile) {
         targetTile = tile;
@@ -262,7 +284,7 @@ public abstract class MovableEntity extends Entity {
 
 
     /**
-     * Turn back instantly -  no need to be at intersection  or to be blocked to turn back
+     * Turn back instantly - no need to be at intersection or to be blocked to turn back
      */
     public void turnBackInstantly() {
        gotTurnBackCommand = true;
@@ -272,7 +294,7 @@ public abstract class MovableEntity extends Entity {
 
     /**
      * Set speed percentage
-     * @param percentage
+     * @param percentage speed percentage
      */
     public void setPercentageSpeed(byte percentage) {
         if (percentage < 0) {
@@ -290,7 +312,7 @@ public abstract class MovableEntity extends Entity {
 
     /**
      * Calculate speed with base speed and percentage speed
-     * @param pixelSpeed
+     * @param pixelSpeed speed in pixel per tick
      */
     protected void setSpeed(float pixelSpeed) {
         if (pixelSpeed < 0) {
@@ -321,5 +343,19 @@ public abstract class MovableEntity extends Entity {
 
     public void setGotTurnBackCommand(boolean gotTurnBackCommand) {
         this.gotTurnBackCommand = gotTurnBackCommand;
+    }
+
+    public void animatorUpdate() {
+        animator.update(movingDir());
+    }
+
+    public void setAnimator(Animator animator) {
+        System.out.println(animator);
+        this.animator = animator;
+    }
+
+
+    public void resetAnimator() {
+        animator.reset();
     }
 }

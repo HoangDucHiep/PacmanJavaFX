@@ -5,8 +5,6 @@ import utc.hiep.pacmanjavafx.model.level.GameLevel;
 import utc.hiep.pacmanjavafx.model.level.GameModel;
 
 import java.util.Arrays;
-import java.util.Optional;
-import java.util.stream.Stream;
 
 import static utc.hiep.pacmanjavafx.model.entity.GhostState.LEAVING_HOUSE;
 import static utc.hiep.pacmanjavafx.model.entity.GhostState.LOCKED;
@@ -24,6 +22,12 @@ public class GhostHouseControl {
         pacStarvingLimitTicks = levelNumber < 5 ? 240 : 180; // 4 sec : 3 sec
     }
 
+    /**
+     * Get private dot limit for the given ghost
+     * @param levelNumber current level
+     * @param ghost ghost
+     * @return private dot limit
+     */
     private byte privateDotLimit(int levelNumber, Ghost ghost) {
         if (levelNumber == 1 && ghost.id() == GameModel.CYAN_GHOST)   return 30;
         if (levelNumber == 1 && ghost.id() == GameModel.ORANGE_GHOST) return 60;
@@ -31,11 +35,20 @@ public class GhostHouseControl {
         return 0;
     }
 
+    /**
+     * Reset global dot counter and set enabled
+     * @param enabled true if enabled, false otherwise
+     */
     public void resetGlobalCounterAndSetEnabled(boolean enabled) {
         globalCounter = 0;
         globalCounterEnabled = enabled;
     }
 
+
+    /**
+     * Update dot counters - both global and private
+     * @param level current level
+     */
     public void updateDotCount(GameLevel level) {
         if (globalCounterEnabled) {
             if (level.ghost(GameModel.ORANGE_GHOST).is(LOCKED) && globalCounter == 32) {
@@ -46,12 +59,15 @@ public class GhostHouseControl {
         } else {
             Arrays.stream(level.ghosts()).filter(ghost -> ghost.is(LOCKED))
                     .filter(Ghost::insideHouse)
-                    .findFirst().ifPresent(ghost -> {
-                        counters[ghost.id()]++;
-                    });
+                    .findFirst().ifPresent(ghost -> counters[ghost.id()]++);
         }
     }
 
+
+    /**
+     * Unlock ghosts if conditions are met
+     * @param level current level
+     */
     public void unlockGhost(GameLevel level) {
         if (level.ghost(GameModel.RED_GHOST).is(LOCKED)) {
             level.ghost(GameModel.RED_GHOST).setState(LEAVING_HOUSE);

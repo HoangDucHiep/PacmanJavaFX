@@ -45,9 +45,9 @@ public class ScoreScene extends GeneralScene{
         rootPane = new AnchorPane();
         setRootPane(rootPane);
         rootPane.autosize();
-        setBackGround(GameController.rm().getImage("back_ground"));
+        setBackGround(GameController.rm().getImage(GameController.BACK_GROUND));
 
-        //Two side
+        //Two sides
         scoreSide = new VBox();
         logoSide = new VBox();
 
@@ -58,7 +58,7 @@ public class ScoreScene extends GeneralScene{
 
 
     private void createLogoSide() {
-        //logoSide.setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY, Insets.EMPTY)));
+        //logoSide.setBackground(new Background (new BackgroundFill(Color.RED, CornerRadii.EMPTY, Insets.EMPTY)));
         logoSide.setAlignment(javafx.geometry.Pos.CENTER);
         logoSide.setFillWidth(true);
         HBox.setHgrow(logoSide, Priority.ALWAYS);
@@ -86,14 +86,14 @@ public class ScoreScene extends GeneralScene{
 
         /// Button back to menu
         Button backButton = newButton("Back to menu", Global.TILE_SIZE, Color.WHITE);
-        setButtonAction(backButton, e -> {
-            game.changeScene(GameController.WELCOME_SCENE);
-        }, e -> {
-            backButton.setText("> Back to menu <");
-            backButton.setTextFill(Color.color(0.0, 1, 0.88));
-        }, e -> {
-            backButton.setText("Back to menu");
-            backButton.setTextFill(Color.WHITE);
+        setButtonAction(backButton,
+                e -> game.changeScene(GameController.WELCOME_SCENE),
+                e -> {
+                    backButton.setText("> Back to menu <");
+                    backButton.setTextFill(Color.color(0.0, 1, 0.88));},
+                e -> {
+                    backButton.setText("Back to menu");
+                    backButton.setTextFill(Color.WHITE);
         });
 
 
@@ -107,7 +107,7 @@ public class ScoreScene extends GeneralScene{
 
 
     private void createScoreSide() {
-        //scoreSide.setBackground(new Background(new BackgroundFill(Color.YELLOW, CornerRadii.EMPTY, Insets.EMPTY)));
+        //scoreSide.setBackground(new Background (new BackgroundFill(Color.YELLOW, CornerRadii.EMPTY, Insets.EMPTY)));
         scoreSide.setAlignment(javafx.geometry.Pos.CENTER);
         scoreSide.setFillWidth(true);
         HBox.setHgrow(scoreSide, Priority.ALWAYS);
@@ -164,7 +164,10 @@ public class ScoreScene extends GeneralScene{
                 Color.color(1, 1, 0)
         };
 
+        System.out.println("Im here");
+
         List<DatabaseControl.HighScore> scoreboard = game.db().scoreboard();
+        System.out.println("There");
         int counter = 0;
 
         for(var highscore : scoreboard) {
@@ -192,7 +195,7 @@ public class ScoreScene extends GeneralScene{
         newScoreEnterScene.widthProperty().bind(rootPane.widthProperty());
         newScoreEnterScene.heightProperty().bind(rootPane.heightProperty());
 
-        // Bind the translate properties of newScoreEnterScene to the dimensions of rootPane
+        // Bind the translation properties of newScoreEnterScene to the dimensions of rootPane
         newScoreEnterScene.translateXProperty().bind(rootPane.widthProperty().subtract(newScoreEnterScene.widthProperty()).divide(2));
         getRootPane().getChildren().add(newScoreEnterScene);
 
@@ -254,7 +257,7 @@ public class ScoreScene extends GeneralScene{
             System.out.println("Clicked");
             isSubSceneHidden = false;
             moveSubScene(newScoreEnterScene);
-            game.db().addScore(new DatabaseControl.HighScore(null, nameField.getText(), game.score(), game.gameLevel().levelNum()));
+            game.db().addScore(new DatabaseControl.HighScore(nameField.getText(), game.score(), game.gameLevel().levelNum()));
             loadScoreboard();
         });
 

@@ -16,16 +16,12 @@ public class Timer {
         isPaused = false;
     }
 
-    /**
-     * @param now current time in nanoseconds
-     * update tick to increase by 1 second each time
-     */
     public void updateTimer() {
 
         long now = System.nanoTime();
 
         if(isPaused) {return;}
-        if(lastUpdate == 0) {lastUpdate = now; return;}
+        if(lastUpdate == 0) {lastUpdate = now; delta += 1; return;}
 
         delta += now - lastUpdate;
         while (delta >= (10 * ONE_MILISECOND)) {

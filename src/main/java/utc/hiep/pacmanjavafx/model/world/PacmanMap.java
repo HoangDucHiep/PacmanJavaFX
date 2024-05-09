@@ -81,7 +81,7 @@ public interface PacmanMap {
     }
 
 
-    //Position for ghost to stand in house
+    //Position for ghost to stand in a house
     fVector2D HOUSE_LEFT_SEAT   = halfTileRightOf(11, 17);
     fVector2D HOUSE_MIDDLE_SEAT = halfTileRightOf(13, 17);
     fVector2D HOUSE_RIGHT_SEAT  = halfTileRightOf(15, 17);

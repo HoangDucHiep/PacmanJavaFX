@@ -1,6 +1,5 @@
 package utc.hiep.pacmanjavafx.lib;
 
-import utc.hiep.pacmanjavafx.model.entity.Entity;
 import utc.hiep.pacmanjavafx.model.entity.MovableEntity;
 import utc.hiep.pacmanjavafx.model.world.Portal;
 import utc.hiep.pacmanjavafx.model.world.World;
@@ -9,11 +8,27 @@ import static utc.hiep.pacmanjavafx.lib.Direction.*;
 import static utc.hiep.pacmanjavafx.lib.Direction.LEFT;
 import static utc.hiep.pacmanjavafx.lib.Global.*;
 
-public interface EntityMovement {
 
+/**
+ * Interface for moving entities in the game world.
+ * <p>
+ * This interface provides methods for moving entities in the game world. It provides methods for moving entities towards a target
+ * tile, moving entities randomly, and moving entities through the game world.
+ */
+public interface EntityMovement {
     Direction[] DIRECTION_PRIORITY = {Direction.UP, Direction.LEFT, Direction.DOWN, Direction.RIGHT};
 
 
+    /**
+     * Moves a MovableEntity towards a target tile.
+     * <p>
+     * This method moves a MovableEntity towards a target tile. It first checks if the MovableEntity is at an intersection or if it
+     * cannot access the tile in front of it. If this is the case, it computes the next direction to move in. If the MovableEntity
+     * can access the tile in front of it, it moves towards the target tile.
+     *
+     * @param entity a MovableEntity (ghost, moving bonus)
+     * @param world the world/maze
+     */
     static void chaseTarget(MovableEntity entity, World world) {
         var currentTile = entity.atTile();
         if((world.isIntersection(currentTile) || !entity.canAccessTile(currentTile.plus(entity.movingDir().vector()), world)) && entity.newTileEntered) {
@@ -22,6 +37,17 @@ public interface EntityMovement {
         move(entity, world);
     }
 
+
+    /**
+     * Moves a MovableEntity towards a target tile.
+     * <p>
+     * This method moves a MovableEntity towards a target tile. It first checks if the MovableEntity is at an intersection or if it
+     * cannot access the tile in front of it. If this is the case, it computes the next direction to move in. If the MovableEntity
+     * can access the tile in front of it, it moves towards the target tile.
+     *
+     * @param entity a MovableEntity (ghost, moving bonus)
+     * @param world the world/maze
+     */
     static Direction computeTargetDir(MovableEntity entity, World world) {
         final var currentTile = entity.atTile();
 
@@ -49,16 +75,26 @@ public interface EntityMovement {
             }
         }
         return targetDir;
-
     }
 
+
+    /**
+     * Moves a MovableEntity randomly.
+     * <p>
+     * This method moves a MovableEntity randomly. It first checks if the MovableEntity is at an intersection or if it cannot access
+     * the tile in front of it. If this is the case, it computes a random direction to move in. If the MovableEntity can access the
+     * tile in front of it, it moves randomly.
+     *
+     * @param entity a MovableEntity (ghost, moving bonus)
+     * @param world the world/maze
+     */
     static Direction computeRandomDir(MovableEntity entity, World world) {
         final var currentTile = entity.atTile();
         //if ghost about to teleport, kinda dummy way, will try to fix it later
         if(world.isTunnel(currentTile) || world.belongsToPortal(currentTile))
             return entity.movingDir();
 
-        Direction randomDir = null;
+        Direction randomDir;
 
         randomDir = pseudoRandomDirection();
 
@@ -69,6 +105,17 @@ public interface EntityMovement {
         return randomDir;
     }
 
+
+    /**
+     * Moves a MovableEntity randomly.
+     * <p>
+     * This method moves a MovableEntity randomly. It first checks if the MovableEntity is at an intersection or if it cannot access
+     * the tile in front of it. If this is the case, it computes a random direction to move in. If the MovableEntity can access the
+     * tile in front of it, it moves randomly.
+     *
+     * @param entity a MovableEntity (ghost, moving bonus)
+     * @param world the world/maze
+     */
     static void randomMove(MovableEntity entity, World world) {
         iVector2D currentTile = entity.atTile();
         if((world.isIntersection(currentTile) || !entity.canAccessTile(currentTile.plus(entity.movingDir().vector()), world)) && entity.newTileEntered) {
@@ -82,7 +129,7 @@ public interface EntityMovement {
     /**
      * Tries moving through the game world.
      * <p>
-     * First checks if the MovableEntity can teleport, then if the MovableEntity can move to its wish direction. If this is not
+     * First check if the MovableEntity can teleport, then if the MovableEntity can move to its wish direction. If this is not
      * possible, it keeps moving to its current move direction.
      *
      * @param entity a MovableEntity (ghost, moving bonus)
@@ -91,7 +138,6 @@ public interface EntityMovement {
     static void move(MovableEntity entity, World world) {
         if(!tryTeleport(entity, world))
             return;
-
 
         if (entity.gotTurnBackCommand() && entity.canTurnBack()) {
             entity.setMovingDir(entity.nextDir());
@@ -142,7 +188,6 @@ public interface EntityMovement {
      * @param world the world/maze
      * @param dir the direction to move
      */
-
     static boolean move(MovableEntity entity, World world, Direction dir) {
         final iVector2D tileBeforeMove = entity.atTile();
         final iVector2D nextTile = entity.tilesAhead(1, dir);
@@ -173,7 +218,9 @@ public interface EntityMovement {
     }
 
 
-
+    /**
+     * Returns a random integer between min and max.
+     */
     private static Direction pseudoRandomDirection() {
         int rnd = randomInt(0, 4);
         if (rnd == 0) return UP;

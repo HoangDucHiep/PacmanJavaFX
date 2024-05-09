@@ -3,13 +3,10 @@ package utc.hiep.pacmanjavafx.lib;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-import static utc.hiep.pacmanjavafx.lib.Global.centerOfTile;
-
 
 /**
- * A 2D vector use interger x and y.
+ * Integer 2D vector. Usually used for positions in the game world, by tiles;
  */
-
 public final class iVector2D {
 
     public static final iVector2D ZERO = new iVector2D(0, 0);             //Vector zero
@@ -56,8 +53,8 @@ public final class iVector2D {
 
 
     /**
-     * @param v other vector
-     * @return new vector with x and y added by other vector
+     * @param v another vector
+     * @return new vector with x and y added by another vector
      */
     public iVector2D plus(iVector2D v) {
         return new iVector2D(x + v.x, y + v.y);
@@ -75,8 +72,8 @@ public final class iVector2D {
 
 
     /**
-     * @param v other vector
-     * @return new vector with x and y subtracted by other vector
+     * @param v another vector
+     * @return new vector with x and y subtracted by another vector
      */
     public iVector2D minus(iVector2D v) {
         return new iVector2D(x - v.x, y - v.y);
@@ -99,18 +96,6 @@ public final class iVector2D {
     public float sqrEuclideanDistance(iVector2D v) {
         return (v.x() - x()) * (v.x() - x()) + (v.y() - y()) * (v.y() - y());
     }
-
-
-    /**
-     * @param dx difference x
-     * @param x1 x coordinate 1
-     * @param x2 x coordinate 2
-     * @return true if x1 and x2 are different at most dx
-     */
-    public float manhattanDistance(iVector2D v) {
-        return Math.abs(x - v.x) + Math.abs(y - v.y);
-    }
-
 
     /**
      * @return Stream of 4 neighbors of this vector (up, right, down, left)

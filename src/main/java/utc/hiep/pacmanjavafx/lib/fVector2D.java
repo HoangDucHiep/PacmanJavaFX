@@ -2,8 +2,10 @@ package utc.hiep.pacmanjavafx.lib;
 
 import java.util.Objects;
 
-import static utc.hiep.pacmanjavafx.lib.Global.centerOfTile;
 
+/**
+ * Class float vector 2D, usually used for position in screen - by pixels
+ */
 public final class fVector2D {
 
     public static final fVector2D ZERO = new fVector2D(0, 0);             //Vector zero
@@ -42,8 +44,8 @@ public final class fVector2D {
 
 
     /**
-     * @param v other vector
-     * @return new vector with x and y added by other vector
+     * @param v another vector
+     * @return new vector with x and y added by another vector
      */
     public fVector2D plus(fVector2D v) {
         return new fVector2D(x + v.x, y + v.y);
@@ -61,8 +63,8 @@ public final class fVector2D {
 
 
     /**
-     * @param v other vector
-     * @return new vector with x and y subtracted by other vector
+     * @param v another vector
+     * @return new vector with x and y subtracted by another vector
      */
     public fVector2D minus(fVector2D v) {
         return new fVector2D(x - v.x, y - v.y);
@@ -114,17 +116,7 @@ public final class fVector2D {
 
 
     /**
-     * @param v other vector
-     * @return dot product of 2 vectors
-     */
-    public float sqrEuclideanDistance(iVector2D v) {
-        return (v.x() - x()) * (v.x() - x()) + (v.y() - y()) * (v.y() - y());
-    }
-
-
-
-    /**
-     * @param v other vector
+     * @param v another vector
      * @param dx x coordinate
      * @param dy y coordinate
      * @return true if 2 vectors are almost equal

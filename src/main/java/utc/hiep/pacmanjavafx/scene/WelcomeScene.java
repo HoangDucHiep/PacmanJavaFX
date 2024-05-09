@@ -6,30 +6,23 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import utc.hiep.pacmanjavafx.controller.GameController;
-import utc.hiep.pacmanjavafx.lib.FontLib;
 import utc.hiep.pacmanjavafx.lib.Global;
-import utc.hiep.pacmanjavafx.model.level.GameModel;
 
 public class WelcomeScene extends GeneralScene {
-    private GameModel game;
 
-    private Button startButton;
-    private Button scoreButton;
-    private Button exitButton;
-    private static Font textFont = FontLib.EMULOGIC(20);
+    private final Button startButton;
+    private final Button scoreButton;
+    private final Button exitButton;
 
-    private VBox container;
+    private final VBox container;
 
     public WelcomeScene(GameController game) {
         super();
-        this.game = game;
-        setBackGround(GameController.rm().getImage("menubg"));
+        setBackGround(GameController.rm().getImage(GameController.MENUBG));
         container = new VBox();
         container.setMaxWidth(Global.WINDOW_WIDTH);
         container.setAlignment(javafx.geometry.Pos.CENTER);
-
         getRootPane().getChildren().add(container);
 
         addSpacer();
@@ -70,7 +63,7 @@ public class WelcomeScene extends GeneralScene {
         );
 
         setButtonAction(exitButton,
-                e -> System.exit(0),
+                e -> game.closeProgram(),
                 e -> {
                     exitButton.setTextFill(Color.color(0.98, 0.81, 0.02));
                     exitButton.setText("> Exit <");
@@ -93,37 +86,21 @@ public class WelcomeScene extends GeneralScene {
     }
 
 
-
-
-
     private void drawLogo() {
-        Image logo = GameController.rm().getImage("game_logo");
+        Image logo = GameController.rm().getImage(GameController.GAME_LOGO);
         ImageView logoView = new ImageView(logo);
         container.getChildren().add(logoView);
     }
-
 
     private void drawButton(Button btn) {
         container.getChildren().add(btn);
     }
 
-    public Button getStartButton() {
-        return startButton;
-    }
-
-    public Button getScoreButton() {
-        return scoreButton;
-    }
-
-    public Button getExitButton() {
-        return exitButton;
-    }
-
-
     private void addSpacer() {
         container.getChildren().add(getVSpacer());
     }
 }
+
 
 
 

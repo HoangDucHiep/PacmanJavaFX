@@ -1,14 +1,7 @@
 package utc.hiep.pacmanjavafx.lib;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Stream;
-
-
 /**
  * Moving directions
- * Use for entity movement, velocity, etc.
+ * Use it for entity movement, velocity, etc.
  */
 public enum Direction {
 
@@ -16,30 +9,20 @@ public enum Direction {
 
     private static final Direction[] OPPOSITE = {DOWN, RIGHT, UP, LEFT};        //opposite direction
 
-    public static Stream<Direction> stream() {
-        return Stream.of(values());
-    }
-
-    public static List<Direction> shuffled() {
-        List<Direction> dirs = Arrays.asList(values());
-        Collections.shuffle(dirs);
-        return dirs;
-    }
-
     private final iVector2D vector;
-
     Direction(int x, int y) {
         vector = new iVector2D(x, y);
     }
-
     public iVector2D vector() {
         return vector;
     }
-
     public Direction opposite() {
         return OPPOSITE[ordinal()];
     }
 
+    /**
+     * @return Next direction in anti-clockwise order
+     */
     public Direction nextAntiClockwise() {
         return switch (this) {
             case UP -> LEFT;
@@ -48,7 +31,6 @@ public enum Direction {
             case RIGHT -> UP;
         };
     }
-
     public Direction nextClockwise() {
         return switch (this) {
             case UP -> RIGHT;
@@ -57,30 +39,14 @@ public enum Direction {
             case LEFT -> UP;
         };
     }
-
     public boolean isVertical() {
         return this == UP || this == DOWN;
     }
-
     public boolean isHorizontal() {
         return this == LEFT || this == RIGHT;
     }
-
     public boolean sameOrientation(Direction other) {
         return isHorizontal() && other.isHorizontal() || isVertical() && other.isVertical();
-    }
-
-    public static Direction randomDirection(Direction currentDir) {
-        List<Direction> dirs = shuffled();
-        int nextDir = Global.RND.nextInt(4);
-//        while (dirs.get(nextDir) == currentDir.opposite()) {
-//            nextDir = Global.RND.nextInt(4);
-//        }
-        return dirs.get(nextDir);
-    }
-
-    public boolean isHigherPriority(Direction other) {
-        return this.ordinal() >= other.ordinal();
     }
 
 }

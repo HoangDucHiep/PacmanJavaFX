@@ -3,7 +3,6 @@ package utc.hiep.pacmanjavafx.model.entity;
 import javafx.scene.canvas.GraphicsContext;
 import utc.hiep.pacmanjavafx.controller.GameController;
 import utc.hiep.pacmanjavafx.lib.iVector2D;
-import utc.hiep.pacmanjavafx.model.Animator;
 import utc.hiep.pacmanjavafx.model.level.GameModel;
 import utc.hiep.pacmanjavafx.model.world.World;
 
@@ -14,24 +13,21 @@ import java.util.List;
 import static utc.hiep.pacmanjavafx.lib.Global.*;
 
 public class Pacman extends MovableEntity{
-
     private final String name;
-
     private long starvingTicks;
+    private final List<Ghost> victims;      //list of ghosts that pacman can eat at the moment
 
-    private List<Ghost> victims;
-
-    //UI part
-    private Animator animator = GameController.rm().getAnimator(GameModel.PAC);;
 
     public Pacman(String name) {
         super();
-        //set animation sprite ui
         checkNotNull(name);
         reset();
         this.name = name;
         this.starvingTicks = 0;
         this.victims = new ArrayList<>();
+
+        //set animation sprite ui
+        animator = GameController.rm().getAnimator(GameModel.PAC);
     }
 
 
@@ -69,15 +65,6 @@ public class Pacman extends MovableEntity{
     }
 
 
-
-    public void animatorUpdate() {
-        animator.update(movingDir());
-    }
-
-    public void setAnimator(Animator animator) {
-        this.animator = animator;
-    }
-
     @Override
     public void render(GraphicsContext gc) {
         animator.render(gc, posX() - HALF_TILE_SIZE, posY() - HALF_TILE_SIZE);
@@ -95,5 +82,4 @@ public class Pacman extends MovableEntity{
         }
         return victims;
     }
-
 }
