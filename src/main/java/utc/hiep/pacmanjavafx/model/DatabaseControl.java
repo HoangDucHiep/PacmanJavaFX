@@ -17,7 +17,7 @@ public class DatabaseControl {
     static final String USER = "root";
     static final String PASS = "";
 
-    static final String SELECT_QUERY = "SELECT GamePlayID, PlayerName, Score, Level FROM scoreboard";
+    static final String SELECT_QUERY = "SELECT PlayerName, Score, Level FROM scoreboard";
     static final String INSERT_QUERY = "INSERT INTO scoreboard (PlayerName, Score, Level) VALUES (?, ?, ?)";
 
     private List<HighScore> scoreboard = new ArrayList<>();
@@ -32,16 +32,6 @@ public class DatabaseControl {
     File file;
 
     public DatabaseControl(){
-
-        if (!directory.exists()) {
-            boolean result = directory.mkdirs();
-            if (!result) {
-                System.out.println("Failed to create directory");
-                return;
-            }
-        }
-
-
 
         List<HighScore> temp = new ArrayList<>();
 
@@ -81,12 +71,10 @@ public class DatabaseControl {
 
 
             while (rs.next()) {
-                int id = rs.getInt("GamePlayID");
                 String name = rs.getString("PlayerName");
                 int score = rs.getInt("Score");
                 int level = rs.getInt("Level");
                 scoreboard.add(new HighScore(name, score, level));
-                System.out.println("Name: " + name + " Score: " + score + " Level: " + level);
             }
 
             rs.close();
@@ -132,6 +120,13 @@ public class DatabaseControl {
     }
 
     private void writeScoreToBackup(HighScore score) {
+        if (!directory.exists()) {
+            boolean result = directory.mkdirs();
+            if (!result) {
+                System.out.println("Failed to create directory");
+                return;
+            }
+        }
         System.out.println(file.getAbsolutePath());
         System.out.println("Writing to backup.txt");
         try (PrintWriter out = new PrintWriter(new FileWriter(file, true))) {

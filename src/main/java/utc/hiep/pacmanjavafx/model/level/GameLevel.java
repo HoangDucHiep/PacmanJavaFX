@@ -292,8 +292,6 @@ public class GameLevel {
             bonus = new Bonus(data.bonusPoint);
             bonus.setPosition(BONUS_POSITION.scaled(TILE_SIZE));
         }
-
-
         if(bonus != null) {
             if(pacman.atTile().equals(bonus.atTile()) && pacman.isNewTileEntered()) {
                 game.addScore(bonus.getPointWorth());
@@ -308,10 +306,7 @@ public class GameLevel {
             }
         }
 
-
-
         houseControl.unlockGhost(this);
-
         huntingTimer.updateTimer();
         updateChasingTargetPhase();
 
