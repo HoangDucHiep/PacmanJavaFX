@@ -9,7 +9,7 @@ import utc.hiep.pacmanjavafx.model.Animator;
 import utc.hiep.pacmanjavafx.model.AudioPlayer;
 import utc.hiep.pacmanjavafx.model.DatabaseControl;
 import utc.hiep.pacmanjavafx.PacManApplication;
-import utc.hiep.pacmanjavafx.event.GameEvent;
+import utc.hiep.pacmanjavafx.model.level.GameEvent;
 import utc.hiep.pacmanjavafx.model.HUD;
 import utc.hiep.pacmanjavafx.model.entity.Ghost;
 import utc.hiep.pacmanjavafx.model.entity.GhostState;
@@ -386,7 +386,9 @@ public class GameController implements GameModel {
                 stopALlSound();
                 changeScene(SCORE_SCENE);
                 gameLoop.stop();
-                scoreScene.showNewScoreScene();
+                if(db.scoreboard().get(9).score() < score) {
+                    scoreScene.showNewScoreScene();
+                }
             }
 
             if(gameLevel.currentState() == LevelState.LEVEL_WON) {

@@ -1,4 +1,4 @@
-package utc.hiep.pacmanjavafx.event;
+package utc.hiep.pacmanjavafx.model.level;
 
 public enum GameEvent {
     NONE,
