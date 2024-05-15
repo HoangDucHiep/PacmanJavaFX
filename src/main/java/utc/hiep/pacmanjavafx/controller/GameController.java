@@ -376,9 +376,6 @@ public class GameController implements GameModel {
     private void updateGame() {
         if(currentScene == GAME_VIEW) {
             keyHandler();
-
-
-
             if((gameLevel.currentState() == LevelState.LEVEL_STARTED && (gameLevel.currentEvent() != GameEvent.PAC_DIED && gameLevel.currentEvent() != GameEvent.GAME_WIN) || gameLevel.currentState() == LevelState.LEVEL_PAUSED)) {
                 updateAnimator();
             }
@@ -386,7 +383,10 @@ public class GameController implements GameModel {
                 stopALlSound();
                 changeScene(SCORE_SCENE);
                 gameLoop.stop();
-                scoreScene.showNewScoreScene();
+
+                if(db.scoreboard().size() < 20 || db.scoreboard().get(19).score() < score) {
+                    scoreScene.showNewScoreScene();
+                }
             }
 
             if(gameLevel.currentState() == LevelState.LEVEL_WON) {

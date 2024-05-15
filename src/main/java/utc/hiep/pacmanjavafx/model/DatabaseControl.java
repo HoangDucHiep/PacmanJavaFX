@@ -19,6 +19,7 @@ public class DatabaseControl {
 
     static final String SELECT_QUERY = "SELECT PlayerName, Score, Level FROM scoreboard";
     static final String INSERT_QUERY = "INSERT INTO scoreboard (PlayerName, Score, Level) VALUES (?, ?, ?)";
+    static final String DELETE_QUERY = "DELETE FROM scoreboard WHERE PlayerName = ? AND Score = ? AND Level = ?";
 
     private List<HighScore> scoreboard = new ArrayList<>();
 
@@ -99,27 +100,40 @@ public class DatabaseControl {
         return scoreboard;
     }
 
-    public void addScore(HighScore score)  {
-        executor.submit(() -> {
+    public void addScore(HighScore score) {
+        if (scoreboard.size() < 20 || score.score() > scoreboard.get(19).score()) {
             if (conn != null) {
-                try {
-                    PreparedStatement pstmt = conn.prepareStatement(INSERT_QUERY);
-                    pstmt.setString(1, score.playerName());
-                    pstmt.setLong(2, score.score());
-                    pstmt.setInt(3, score.level());
-                    pstmt.executeUpdate();
-                } catch (SQLException e) {
-                    writeScoreToBackup(score);
-                }
-            } else {
-                writeScoreToBackup(score);
-            }
-        });
+                executor.submit(() -> {
+                    try {
+                        if (scoreboard.size() == 20) {
+                            HighScore lowestScore = scoreboard.get(99);
+                            PreparedStatement pstmt = conn.prepareStatement(DELETE_QUERY);
+                            pstmt.setString(1, lowestScore.playerName());
+                            pstmt.setLong(2, lowestScore.score());
+                            pstmt.setInt(3, lowestScore.level());
+                            pstmt.executeUpdate();
+                        }
 
-        scoreboard.add(score);
+                        PreparedStatement pstmt = conn.prepareStatement(INSERT_QUERY);
+                        pstmt.setString(1, score.playerName());
+                        pstmt.setLong(2, score.score());
+                        pstmt.setInt(3, score.level());
+                        pstmt.executeUpdate();
+
+                    } catch (SQLException e) {
+                        System.out.println("Unable to write to database");
+                    }
+                });
+            }
+
+            if (scoreboard.size() == 20)
+                scoreboard.remove(19);
+            scoreboard.add(score);
+        }
     }
 
-    private void writeScoreToBackup(HighScore score) {
+
+    private void writeScoreToBackup() {
         if (!directory.exists()) {
             boolean result = directory.mkdirs();
             if (!result) {
@@ -129,9 +143,10 @@ public class DatabaseControl {
         }
         System.out.println(file.getAbsolutePath());
         System.out.println("Writing to backup.txt");
-        try (PrintWriter out = new PrintWriter(new FileWriter(file, true))) {
-            System.out.println("Im here");
-            out.println(score.playerName() + "," + score.score() + "," + score.level());
+        try (PrintWriter out = new PrintWriter(new FileWriter(file, false))) {
+            for (HighScore score : scoreboard) {
+                out.println(score.playerName() + "," + score.score() + "," + score.level());
+            }
         } catch (IOException ioException) {
             System.out.println("Unable to write to backup.txt");
         }
@@ -147,8 +162,10 @@ public class DatabaseControl {
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
+        } else {
+            // If there is no database connection, write scores to back up
+            writeScoreToBackup();
         }
-
         executor.shutdown();
         try {
             // Wait for existing tasks to complete
