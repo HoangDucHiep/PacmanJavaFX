@@ -386,7 +386,7 @@ public class GameController implements GameModel {
                 stopALlSound();
                 changeScene(SCORE_SCENE);
                 gameLoop.stop();
-                if(db.scoreboard().get(9).score() < score) {
+                if(db.scoreboard().size() < 20 || db.scoreboard().get(19).score() < score) {
                     scoreScene.showNewScoreScene();
                 }
             }
