@@ -6,7 +6,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import utc.hiep.pacmanjavafx.controller.GameController;
-import utc.hiep.pacmanjavafx.model.level.GameEvent;
+import utc.hiep.pacmanjavafx.event.GameEvent;
 import utc.hiep.pacmanjavafx.lib.*;
 import utc.hiep.pacmanjavafx.model.entity.Ghost;
 import utc.hiep.pacmanjavafx.model.level.GameModel;
@@ -96,10 +96,6 @@ public class GameScene extends GeneralScene {
             gc.setFill(Color.RED);
             gc.setFont(eventTextFont);
             gc.fillText("GAME OVER", 10 * TILE_SIZE - HALF_TILE_SIZE, 21 * TILE_SIZE);
-        } else if(game.gameLevel().currentState() == LevelState.LEVEL_PAUSED) {
-            gc.setFill(Color.WHITE);
-            gc.setFont(eventTextFont);
-            gc.fillText("PAUSED!", 11 * TILE_SIZE, 21 * TILE_SIZE);
         }
     }
 

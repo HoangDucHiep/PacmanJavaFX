@@ -20,8 +20,6 @@ public class DatabaseControl {
     static final String SELECT_QUERY = "SELECT PlayerName, Score, Level FROM scoreboard";
     static final String INSERT_QUERY = "INSERT INTO scoreboard (PlayerName, Score, Level) VALUES (?, ?, ?)";
 
-
-
     private List<HighScore> scoreboard = new ArrayList<>();
 
     ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -101,7 +99,7 @@ public class DatabaseControl {
         return scoreboard;
     }
 
-    /*public void addScore(HighScore score)  {
+    public void addScore(HighScore score)  {
         executor.submit(() -> {
             if (conn != null) {
                 try {
@@ -119,41 +117,6 @@ public class DatabaseControl {
         });
 
         scoreboard.add(score);
-    }*/
-
-    public void addScore(HighScore score)  {
-        if (scoreboard.size() < 10 || score.score() > scoreboard.get(9).score()) {
-            executor.submit(() -> {
-                if (conn != null) {
-                    try {
-                        {
-                            if (scoreboard.size() == 10) {
-                                HighScore lowestScore = scoreboard.get(9);
-                                String deleteQuery = "DELETE FROM scoreboard WHERE PlayerName = ? AND Score = ? AND Level = ?";
-                                PreparedStatement pstmt = conn.prepareStatement(deleteQuery);
-                                pstmt.setString(1, lowestScore.playerName());
-                                pstmt.setLong(2, lowestScore.score());
-                                pstmt.setInt(3, lowestScore.level());
-                                pstmt.executeUpdate();
-                            }
-
-                            PreparedStatement pstmt = conn.prepareStatement(INSERT_QUERY);
-                            pstmt.setString(1, score.playerName());
-                            pstmt.setLong(2, score.score());
-                            pstmt.setInt(3, score.level());
-                            pstmt.executeUpdate();
-                        }
-                    } catch (SQLException e) {
-                        writeScoreToBackup(score);
-                    }
-                } else {
-                    writeScoreToBackup(score);
-                }
-            });
-            scoreboard.remove(9);
-            scoreboard.add(score);
-        }
-
     }
 
     private void writeScoreToBackup(HighScore score) {

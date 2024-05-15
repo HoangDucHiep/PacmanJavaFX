@@ -1,6 +1,7 @@
 package utc.hiep.pacmanjavafx.model.level;
 
 import utc.hiep.pacmanjavafx.controller.GameController;
+import utc.hiep.pacmanjavafx.event.GameEvent;
 import utc.hiep.pacmanjavafx.lib.*;
 import utc.hiep.pacmanjavafx.model.Timer;
 import utc.hiep.pacmanjavafx.model.entity.*;
@@ -9,6 +10,7 @@ import utc.hiep.pacmanjavafx.model.world.PacmanMap;
 import utc.hiep.pacmanjavafx.model.world.World;
 
 
+import javax.xml.transform.Source;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +20,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
-import static utc.hiep.pacmanjavafx.model.level.GameEvent.*;
+import static utc.hiep.pacmanjavafx.event.GameEvent.*;
 import static utc.hiep.pacmanjavafx.lib.Direction.*;
 import static utc.hiep.pacmanjavafx.model.entity.GhostState.*;
 import static utc.hiep.pacmanjavafx.model.level.GameModel.*;
@@ -415,6 +417,12 @@ public class GameLevel {
         if (world.isTunnel(ghost.atTile())) {
             return data.ghostSpeedTunnelPercentage();
         }
+//        if (ghost.id() == GameModel.RED_GHOST && cruiseElroyState == 1) {
+//            return data.elroy1SpeedPercentage();
+//        }
+//        if (ghost.id() == GameModel.RED_GHOST && cruiseElroyState == 2) {
+//            return data.elroy2SpeedPercentage();
+//        }
 
         if(ghost.state().equals(FRIGHTENED)) {
             return data.ghostSpeedFrightenedPercentage();
