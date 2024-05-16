@@ -1,11 +1,9 @@
 package utc.hiep.pacmanjavafx.model.entity;
 
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import utc.hiep.pacmanjavafx.controller.GameController;
 import utc.hiep.pacmanjavafx.lib.*;
-import utc.hiep.pacmanjavafx.model.Animator;
 import utc.hiep.pacmanjavafx.model.level.GameModel;
 import utc.hiep.pacmanjavafx.model.world.House;
 import utc.hiep.pacmanjavafx.model.world.World;
@@ -317,7 +315,7 @@ public class Ghost extends MovableEntity{
     @Override
     public void render(GraphicsContext gc) {
         if(state == EATEN) {
-            gc.setFont(FontLib.EMULOGIC(10));
+            gc.setFont(ResourcesManager.getFont(10));
             gc.setFill(Color.color(0, 1, 1));
             gc.fillText(String.valueOf(pointDisplay), posX() - HALF_TILE_SIZE, posY() - HALF_TILE_SIZE);
         } else {

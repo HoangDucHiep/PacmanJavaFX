@@ -9,11 +9,10 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import utc.hiep.pacmanjavafx.lib.FontLib;
+import javafx.scene.text.Font;
 import utc.hiep.pacmanjavafx.lib.Global;
 
 import java.util.HashSet;
-import java.util.Set;
 import java.util.function.Consumer;
 
 
@@ -67,14 +66,14 @@ public abstract class GeneralScene extends Scene {
     }
 
 
-    public static Button newButton(String text, double fontSize, Color fill) {
-        return newButton(text, fontSize, fill, Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
+    public static Button newButton(String text, Font font, Color fill) {
+        return newButton(text, font, fill, Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
     }
 
-    public static Button newButton(String text, double fontSize, Color fill, double width, double height) {
+    public static Button newButton(String text, Font font, Color fill, double width, double height) {
         Button button = new Button(text);
-        button.setFont(FontLib.EMULOGIC(fontSize));
         button.setTextFill(fill);
+        button.setFont(font);
         button.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, CornerRadii.EMPTY, Insets.EMPTY)));
         button.setTextFill(Color.WHITE);
         button.setPrefSize(width, height);

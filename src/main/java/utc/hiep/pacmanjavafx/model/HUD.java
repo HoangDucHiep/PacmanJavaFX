@@ -3,8 +3,8 @@ package utc.hiep.pacmanjavafx.model;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import utc.hiep.pacmanjavafx.controller.GameController;
-import utc.hiep.pacmanjavafx.lib.FontLib;
 import utc.hiep.pacmanjavafx.lib.Global;
+import utc.hiep.pacmanjavafx.lib.ResourcesManager;
 import utc.hiep.pacmanjavafx.model.level.GameModel;
 
 public class HUD {
@@ -37,7 +37,7 @@ public class HUD {
 
     public void render(GraphicsContext gc) {
         gc.setFill(Color.WHITE);
-        gc.setFont(FontLib.EMULOGIC(Global.TILE_SIZE - 1));
+        gc.setFont(ResourcesManager.getFont(Global.TILE_SIZE - 1));
 
         gc.fillText("SCORE", Global.TILE_SIZE,  Global.TILE_SIZE);
         gc.fillText(String.valueOf(currentScore), Global.TILE_SIZE, 2 * Global.TILE_SIZE);

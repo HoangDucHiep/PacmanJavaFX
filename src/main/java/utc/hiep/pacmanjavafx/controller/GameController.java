@@ -9,7 +9,7 @@ import utc.hiep.pacmanjavafx.model.Animator;
 import utc.hiep.pacmanjavafx.model.AudioPlayer;
 import utc.hiep.pacmanjavafx.model.DatabaseControl;
 import utc.hiep.pacmanjavafx.PacManApplication;
-import utc.hiep.pacmanjavafx.event.GameEvent;
+import utc.hiep.pacmanjavafx.model.level.GameEvent;
 import utc.hiep.pacmanjavafx.model.HUD;
 import utc.hiep.pacmanjavafx.model.entity.Ghost;
 import utc.hiep.pacmanjavafx.model.entity.GhostState;
@@ -71,7 +71,7 @@ public class GameController implements GameModel {
     public static String PAC_AND_GHOST = "pac_and_ghost";
 
 
-    public static ResourcesManeger rm = new ResourcesManeger();
+    public static ResourcesManager rm = new ResourcesManager();
     static {
         loadRS();
     }
@@ -408,6 +408,7 @@ public class GameController implements GameModel {
                 if(!rm.getSound(GAME_START_SOUND).isPLaying())
                     rm.getSound(GAME_START_SOUND).play();
             }else if(gameLevel.currentState() == LevelState.LEVEL_STARTED && !gameLevel().activesEvents()[GameEvent.PAC_EAT_ENERGIZER.ordinal()]) {
+                rm.getSound(GAME_START_SOUND).stop();
                 rm.getSound(GHOST_TURN_TO_BLUE_SOUND).stop();
                 if(!rm.getSound(SIREN_SOUND).isPLaying())
                     rm.getSound(SIREN_SOUND).play(true);
@@ -585,7 +586,7 @@ public class GameController implements GameModel {
     }
 
 
-    public static ResourcesManeger rm() {
+    public static ResourcesManager rm() {
         return rm;
     }
 

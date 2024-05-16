@@ -1,7 +1,5 @@
 package utc.hiep.pacmanjavafx.model.level;
 
-import utc.hiep.pacmanjavafx.lib.ResourcesManeger;
-import utc.hiep.pacmanjavafx.model.AudioPlayer;
 import utc.hiep.pacmanjavafx.model.DatabaseControl;
 import utc.hiep.pacmanjavafx.model.HUD;
 

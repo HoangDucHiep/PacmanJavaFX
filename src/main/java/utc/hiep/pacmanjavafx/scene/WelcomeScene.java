@@ -6,8 +6,10 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import utc.hiep.pacmanjavafx.controller.GameController;
 import utc.hiep.pacmanjavafx.lib.Global;
+import utc.hiep.pacmanjavafx.lib.ResourcesManager;
 
 public class WelcomeScene extends GeneralScene {
 
@@ -33,10 +35,10 @@ public class WelcomeScene extends GeneralScene {
         container.getChildren().add(pacAndGhostsGif);
         VBox.setMargin(pacAndGhostsGif, new Insets(Global.TILE_SIZE * 3, 0, 0, 0));
 
-
-        startButton = newButton("Start", Global.TILE_SIZE * 1.3, Color.WHITE);
-        scoreButton = newButton("Scoreboard", Global.TILE_SIZE * 1.3, Color.WHITE);
-        exitButton = newButton("Exit", Global.TILE_SIZE * 1.3, Color.WHITE);
+        Font buttonFont = ResourcesManager.getFont(Global.TILE_SIZE * 1.3);
+        startButton = newButton("Start", buttonFont, Color.WHITE);
+        scoreButton = newButton("Scoreboard", buttonFont, Color.WHITE);
+        exitButton = newButton("Exit", buttonFont, Color.WHITE);
 
         setButtonAction(startButton,
                 e -> game.initNewGame(),

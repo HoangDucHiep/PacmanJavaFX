@@ -14,13 +14,15 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import utc.hiep.pacmanjavafx.lib.ResourcesManager;
 import utc.hiep.pacmanjavafx.model.DatabaseControl;
 import utc.hiep.pacmanjavafx.controller.GameController;
-import utc.hiep.pacmanjavafx.lib.FontLib;
 import utc.hiep.pacmanjavafx.lib.Global;
 import utc.hiep.pacmanjavafx.model.level.LevelState;
 
 import java.util.List;
+
+import static utc.hiep.pacmanjavafx.lib.Global.TILE_SIZE;
 
 public class ScoreScene extends GeneralScene{
 
@@ -85,7 +87,7 @@ public class ScoreScene extends GeneralScene{
         logoSide.getChildren().add(logoView);
 
         /// Button back to menu
-        Button backButton = newButton("Back to menu", Global.TILE_SIZE, Color.WHITE);
+        Button backButton = newButton("Back to menu", ResourcesManager.getFont(TILE_SIZE), Color.WHITE);
         setButtonAction(backButton,
                 e -> game.changeScene(GameController.WELCOME_SCENE),
                 e -> {
@@ -122,7 +124,7 @@ public class ScoreScene extends GeneralScene{
 
         rootPane.getChildren().add(scoreSide);
 
-        Font textFont = FontLib.EMULOGIC((int) (Global.TILE_SIZE * 1.2));
+        Font textFont = ResourcesManager.getFont(Global.TILE_SIZE * 1.2);
         Text scoreText = new Text("High score played!!!!");
         scoreText.setFont(textFont);
         scoreText.setFill(Color.WHITE);
@@ -172,7 +174,7 @@ public class ScoreScene extends GeneralScene{
 
         for(var highscore : scoreboard) {
             Text score = new Text((counter + 1) + ".\t" + highscore.playerName() + " : " + highscore.score());
-            score.setFont(FontLib.EMULOGIC((int) (Global.TILE_SIZE * 0.8)));
+            score.setFont(ResourcesManager.getFont(Global.TILE_SIZE * 0.8));
             score.setFill(colors[counter % 5]);
             scoreList.getChildren().add(score);
             VBox.setMargin(score, new Insets(Global.TILE_SIZE, 0, 0, 0));
@@ -215,7 +217,7 @@ public class ScoreScene extends GeneralScene{
             newScoreLabel = new Label("GAME OVER");
 
         newScoreLabel.setTextFill(Color.WHITE);
-        newScoreLabel.setFont(FontLib.EMULOGIC((int) (Global.TILE_SIZE * 1.5)));
+        newScoreLabel.setFont(ResourcesManager.getFont(Global.TILE_SIZE * 1.5));
         GridPane.setHalignment(newScoreLabel, javafx.geometry.HPos.CENTER);
         GridPane.setColumnSpan(newScoreLabel, 2);
         GridPane.setMargin(newScoreLabel, new Insets(0, 0, Global.TILE_SIZE , 0));
@@ -224,27 +226,27 @@ public class ScoreScene extends GeneralScene{
 
         Label name = new Label("NAME: ");
         name.setTextFill(Color.WHITE);
-        name.setFont(FontLib.EMULOGIC((int) (Global.TILE_SIZE * 0.8)));
+        name.setFont(ResourcesManager.getFont(Global.TILE_SIZE * 0.8));
         gp.add(name, 0, 1);
 
         TextField nameField = new TextField();
-        nameField.setFont(FontLib.EMULOGIC((int) (Global.TILE_SIZE * 0.8)));
+        nameField.setFont(ResourcesManager.getFont(Global.TILE_SIZE * 0.8));
         nameField.setMinWidth(Global.TILE_SIZE * 15);
         gp.add(nameField, 1, 1);
 
         Label score = new Label("SCORE: ");
         score.setTextFill(Color.WHITE);
-        score.setFont(FontLib.EMULOGIC((int) (Global.TILE_SIZE * 0.8)));
+        score.setFont(ResourcesManager.getFont(Global.TILE_SIZE * 0.8));
         gp.add(score, 2, 1);
         GridPane.setMargin(score, new Insets(0, 0, 0, Global.TILE_SIZE * 3));
 
         Text scoreValue = new Text(String.valueOf(game.score()));
         scoreValue.setFill(Color.WHITE);
-        scoreValue.setFont(FontLib.EMULOGIC((int) (Global.TILE_SIZE * 0.8)));
+        scoreValue.setFont(ResourcesManager.getFont(Global.TILE_SIZE * 0.8));
         gp.add(scoreValue, 3, 1);
 
         Button submit = new Button("Submit");
-        submit.setFont(FontLib.EMULOGIC((int) (Global.TILE_SIZE * 0.9)));
+        submit.setFont(ResourcesManager.getFont(Global.TILE_SIZE * 0.9));
         submit.setTextFill(Color.WHITE);
         submit.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, CornerRadii.EMPTY, Insets.EMPTY)));
         submit.setBorder(new Border(new BorderStroke(Color.WHITE, BorderStrokeStyle.SOLID, new CornerRadii(10), new BorderWidths(1))));

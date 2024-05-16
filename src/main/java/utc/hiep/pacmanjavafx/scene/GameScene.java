@@ -6,7 +6,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import utc.hiep.pacmanjavafx.controller.GameController;
-import utc.hiep.pacmanjavafx.event.GameEvent;
+import utc.hiep.pacmanjavafx.model.level.GameEvent;
 import utc.hiep.pacmanjavafx.lib.*;
 import utc.hiep.pacmanjavafx.model.entity.Ghost;
 import utc.hiep.pacmanjavafx.model.level.GameModel;
@@ -21,7 +21,7 @@ public class GameScene extends GeneralScene {
     public static final int GAME_HEIGHT = TILE_SIZE * TILES_Y;
 
     private boolean isGridDisplayed = false;
-    private final Font eventTextFont = FontLib.EMULOGIC(TILE_SIZE);
+    private final Font eventTextFont = ResourcesManager.getFont(TILE_SIZE);
 
     private final GraphicsContext gc;
     private final GameModel game;
@@ -118,8 +118,8 @@ public class GameScene extends GeneralScene {
         }
     }
 
-    private final Font targetFont = FontLib.EMULOGIC(12);
-    private final Font targetTextFont = FontLib.EMULOGIC(5);
+    private final Font targetFont = ResourcesManager.getFont(12);
+    private final Font targetTextFont = ResourcesManager.getFont(5);
     private void drawTargetTile(int ghostID, Color color) {
         if(game.gameLevel().ghosts()[ghostID].targetTile().isEmpty()) return;
         iVector2D target = game.gameLevel().ghosts()[ghostID].targetTile().get();

@@ -2,6 +2,7 @@ package utc.hiep.pacmanjavafx.lib;
 
 import javafx.scene.image.Image;
 import javafx.scene.media.AudioClip;
+import javafx.scene.text.Font;
 import utc.hiep.pacmanjavafx.model.Animator;
 import utc.hiep.pacmanjavafx.model.AudioPlayer;
 
@@ -10,12 +11,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class ResourcesManeger {
+public class ResourcesManager {
 
     private final Map<String, Image> images;
     private final Map<String, AudioPlayer> sounds;
     private final Map<Integer, Animator> animators;
-    public ResourcesManeger() {
+
+    public static final String FONT_PATH = "asserts/fonts/emulogic.ttf";
+
+    public static Font getFont(double fontSize) {
+        return Font.loadFont(ResourcesManager.class.getResourceAsStream(FONT_PATH), fontSize);
+    }
+
+    public ResourcesManager() {
         images = new HashMap<>();
         sounds = new HashMap<>();
         animators = new HashMap<>();   
@@ -27,11 +35,11 @@ public class ResourcesManeger {
      * @param fileName file name of the image
      */
     public void addImage(String name, String fileName) {
-        images.put(name, new Image(Objects.requireNonNull(ResourcesManeger.class.getResourceAsStream("asserts/graphics/" + fileName))));
+        images.put(name, new Image(Objects.requireNonNull(ResourcesManager.class.getResourceAsStream("asserts/graphics/" + fileName))));
     }
     
     public void addImage(String name, String fileName, double width, double height) {
-        images.put(name, new Image(Objects.requireNonNull(ResourcesManeger.class.getResourceAsStream("asserts/graphics/" + fileName)), width, height, true, true));
+        images.put(name, new Image(Objects.requireNonNull(ResourcesManager.class.getResourceAsStream("asserts/graphics/" + fileName)), width, height, true, true));
     }
 
     public void addAllImages(Map<String, String> fileName) {
@@ -43,7 +51,7 @@ public class ResourcesManeger {
     }
     
     public void addSound(String name, String fileName) {
-        AudioPlayer ap = new AudioPlayer(new AudioClip(Objects.requireNonNull(ResourcesManeger.class.getResource("asserts/sound/" + fileName)).toExternalForm()));
+        AudioPlayer ap = new AudioPlayer(new AudioClip(Objects.requireNonNull(ResourcesManager.class.getResource("asserts/sound/" + fileName)).toExternalForm()));
         sounds.put(name, ap);
     }
     
