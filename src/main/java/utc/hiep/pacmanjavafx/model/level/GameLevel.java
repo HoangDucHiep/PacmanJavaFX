@@ -197,7 +197,6 @@ public class GameLevel {
         }
 
         if(levelState == LevelState.LEVEL_STARTED) {
-            System.out.println("Im There");
             updateLevelStartedState();
         }
 
@@ -272,7 +271,6 @@ public class GameLevel {
 
             //create bonus
             if(world.eatenFoodCount() == 70 || world.eatenFoodCount() == 170){
-                System.out.println("Create bonus");
                 bonus = new Bonus(data.bonusPoint);
                 bonus.setPosition(BONUS_POSITION.scaled(TILE_SIZE));
             }

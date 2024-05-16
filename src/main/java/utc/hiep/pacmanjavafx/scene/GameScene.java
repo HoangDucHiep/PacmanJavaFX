@@ -76,7 +76,6 @@ public class GameScene extends GeneralScene {
         }
 
         if(game.gameLevel().bonus() != null) {
-            System.out.println("Rendered");
             game.gameLevel().bonus().render(gc);
         }
 

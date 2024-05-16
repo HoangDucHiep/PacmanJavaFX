@@ -227,7 +227,6 @@ public abstract class MovableEntity extends Entity {
         if(movingDir != dir) {
             movingDir = dir;
             setVelocity(movingDir.vector().toFloatVec().scaled(velocity().length()));
-            //System.out.println("new move dir: " + movingDir + " " + this);
         }
     }
 
@@ -248,7 +247,6 @@ public abstract class MovableEntity extends Entity {
     public void setNextDir(Direction dir) {
         checkNotNull(dir);
         nextDir = nextDir != dir ? dir : nextDir;
-        //System.out.println("next move dir: " + nextDir + " " + this);
     }
 
     /**
@@ -353,7 +351,6 @@ public abstract class MovableEntity extends Entity {
     }
 
     public void setAnimator(Animator animator) {
-        System.out.println(animator);
         this.animator = animator;
     }
 
