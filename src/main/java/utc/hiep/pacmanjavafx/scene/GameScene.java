@@ -92,10 +92,14 @@ public class GameScene extends GeneralScene {
             gc.setFill(Color.YELLOW);
             gc.setFont(eventTextFont);
             gc.fillText("READY!", 11 * TILE_SIZE, 21 * TILE_SIZE);
-        } else if(game.gameLevel().currentEvent() == GameEvent.GAME_OVER) {
+        } else if(game.gameLevel().activesEvents()[GameEvent.GAME_OVER.ordinal()]) {
             gc.setFill(Color.RED);
             gc.setFont(eventTextFont);
             gc.fillText("GAME OVER", 10 * TILE_SIZE - HALF_TILE_SIZE, 21 * TILE_SIZE);
+        } else if(game.gameLevel().currentState() == LevelState.LEVEL_PAUSED) {
+            gc.setFill(Color.WHITE);
+            gc.setFont(eventTextFont);
+            gc.fillText("PAUSED", 11 * TILE_SIZE, 21 * TILE_SIZE);
         }
     }
 

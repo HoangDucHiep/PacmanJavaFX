@@ -376,7 +376,7 @@ public class GameController implements GameModel {
     private void updateGame() {
         if(currentScene == GAME_VIEW) {
             keyHandler();
-            if((gameLevel.currentState() == LevelState.LEVEL_STARTED && (gameLevel.currentEvent() != GameEvent.PAC_DIED && gameLevel.currentEvent() != GameEvent.GAME_WIN) || gameLevel.currentState() == LevelState.LEVEL_PAUSED)) {
+            if((gameLevel.currentState() == LevelState.LEVEL_STARTED && (!gameLevel.activesEvents()[GameEvent.PAC_DIED.ordinal()] && !gameLevel.activesEvents()[GameEvent.GAME_WIN.ordinal()]) || gameLevel.currentState() == LevelState.LEVEL_PAUSED)) {
                 updateAnimator();
             }
             if (gameLevel.currentState() == LevelState.LEVEL_LOST) {
@@ -384,6 +384,7 @@ public class GameController implements GameModel {
                 changeScene(SCORE_SCENE);
                 gameLoop.stop();
 
+                //if new score can be added, show sub_scene
                 if(db.scoreboard().size() < 20 || db.scoreboard().get(19).score() < score) {
                     scoreScene.showNewScoreScene();
                 }
@@ -401,38 +402,37 @@ public class GameController implements GameModel {
                 }
             }
 
+
+            //Sound control
             if(gameLevel.currentState() == LevelState.LEVEL_READY) {
                 if(!rm.getSound(GAME_START_SOUND).isPLaying())
                     rm.getSound(GAME_START_SOUND).play();
-            }else if(gameLevel.currentState() == LevelState.LEVEL_STARTED && gameLevel.currentEvent() == GameEvent.NONE) {
+            }else if(gameLevel.currentState() == LevelState.LEVEL_STARTED && !gameLevel().activesEvents()[GameEvent.PAC_EAT_ENERGIZER.ordinal()]) {
                 rm.getSound(GHOST_TURN_TO_BLUE_SOUND).stop();
                 if(!rm.getSound(SIREN_SOUND).isPLaying())
                     rm.getSound(SIREN_SOUND).play(true);
             }
 
-            if(gameLevel.currentEvent() == GameEvent.PAC_FOUND_FOOD) {
+
+            if(gameLevel.activesEvents()[GameEvent.PAC_FOUND_FOOD.ordinal()]) {
                 if(!rm.getSound(MUNCH_SOUND).isPLaying())
-                    rm.getSound(MUNCH_SOUND).play(true);
-            } else {
-                if((rm.getSound(MUNCH_SOUND).playedSec() >= 0.2 && (gameLevel.pacman().isNewTileEntered() || gameLevel.pacman().isAlignedToTile()))) {
-                    rm.getSound(MUNCH_SOUND).stop();
-                }
+                    rm.getSound(MUNCH_SOUND).play();
             }
 
-            if(gameLevel.currentEvent() == GameEvent.PAC_DIED) {
+            if(gameLevel.activesEvents()[GameEvent.PAC_DIED.ordinal()]) {
                 stopAllSoundExcept(PACMAN_DIE_SOUND);
                 if(!rm.getSound(PACMAN_DIE_SOUND).isPLaying())
                     rm.getSound(PACMAN_DIE_SOUND).play();
             }
 
-            if(gameLevel.currentEvent() == GameEvent.PAC_EAT_ENERGIZER)
+            if(gameLevel.activesEvents()[GameEvent.PAC_EAT_ENERGIZER.ordinal()])
             {
                 rm.getSound(SIREN_SOUND).stop();
                 if(!rm.getSound(GHOST_TURN_TO_BLUE_SOUND).isPLaying())
                     rm.getSound(GHOST_TURN_TO_BLUE_SOUND).play(true);
             }
 
-            if(gameLevel.currentEvent() == GameEvent.GHOST_EATEN) {
+            if(gameLevel.activesEvents()[GameEvent.GHOST_EATEN.ordinal()]) {
                 if(!rm.getSound(EAT_GHOST_SOUND).isPLaying())
                     rm.getSound(EAT_GHOST_SOUND).play();
             }
@@ -446,20 +446,24 @@ public class GameController implements GameModel {
                 }
             }
 
-            if(gameLevel.currentEvent() == GameEvent.GAME_OVER) {
+            if(gameLevel.activesEvents()[GameEvent.GAME_OVER.ordinal()]) {
                 stopAllSoundExcept(GAME_OVER_SOUND);
                 if(!rm.getSound(GAME_OVER_SOUND).isPLaying())
                     rm.getSound(GAME_OVER_SOUND).play();
             }
 
-            if(gameLevel.currentEvent() == GameEvent.GAME_WIN) {
+            if(gameLevel.activesEvents()[GameEvent.GAME_WIN.ordinal()]) {
                 stopAllSoundExcept(LEVEL_COMPLETE_SOUND);
                 if(!rm.getSound(LEVEL_COMPLETE_SOUND).isPLaying())
                     rm.getSound(LEVEL_COMPLETE_SOUND).play();
             }
 
+            if(gameLevel.activesEvents()[GameEvent.EARN_EXTRA_LIFE.ordinal()]) {
+                if(!rm.getSound(EXTEND_SOUND).isPLaying())
+                    rm.getSound(EXTEND_SOUND).play();
+            }
+
             gameLevel.update();
-            System.out.println("Current state: " + gameLevel.currentState() + " Current event: " + gameLevel.currentEvent());
             hud.update();
         }
     }
